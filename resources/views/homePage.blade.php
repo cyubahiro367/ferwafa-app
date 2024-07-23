@@ -105,7 +105,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="row">
                             @foreach ($result as $news)
-                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                <div class="col-md-6 col-sm-12 col-xs-12">
                                     <article class="type-post">
                                         <div class="entry-cover">
                                             <a href="{{ route('single.news', $news['id']) }}"><img
@@ -164,7 +164,7 @@
         <!-- Latest News /- -->
 
         <!-- Testimonial Section -->
-        <div style="background-color: rgb(232, 231, 231); class="container-fluid testimonial-section no-padding">
+        <div style="background-color: rgb(232, 231, 231);" class="container-fluid testimonial-section no-padding">
             <div class="section-padding"></div>
             <div class="container">
                 <div class="section-header">
@@ -172,7 +172,7 @@
                 </div>
                 <div class="testimonial-carousel">
                     <div class="testimonial-block row">
-                        <div class="col-md-5 col-sm-12 no-padding">
+                        <div class="col-md-5 col-sm-5 col-xs-5 no-padding">
                             <div class="testimonial-carousel-left">
                                 <div class="testimonial-box testimonial-left" style="height: 136px">
                                     <a href="https://www.minisports.gov.rw/" target="_blank">
@@ -194,12 +194,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 col-sm-12">
+                        <div class="col-md-2 col-sm-2 col-xs-2">
                             <div class="testimonial-blockquote-circle">
                                 <span><i class="fa fa-quote-right" aria-hidden="true"></i></span>
                             </div>
                         </div>
-                        <div class="col-md-5 col-sm-12 no-padding">
+                        <div class="col-md-5 col-sm-5 col-xs-5 no-padding">
                             <div class="testimonial-carousel-right">
                                 <div class="testimonial-box testimonial-right" style="height: 136px">
                                     <a href="https://bralirwa.co.rw/" target="_blank">
