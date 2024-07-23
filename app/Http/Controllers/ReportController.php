@@ -39,7 +39,7 @@ class ReportController extends Controller
 
         $request->validate([
             "title" => "required|string|max:255",
-            "reportFile" =>  'required|file|max:5000|mimes:pdf',
+            "reportFile" =>  'required|file|max:10000|mimes:pdf',
             "typeID" => 'required|integer'
         ]);
 

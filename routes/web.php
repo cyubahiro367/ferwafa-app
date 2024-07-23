@@ -20,6 +20,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TopScoreController;
 use App\Http\Controllers\UsersController;
 use App\Models\Game;
+use App\Models\Group;
 use App\Models\Status;
 use App\Models\Team;
 use App\Models\TeamStatistic;
@@ -154,12 +155,12 @@ Route::delete('/delete-season/{id}', [SeasonController::class, 'deleteSeason'])-
 // Route::put('/update-season/{id}', [SeasonController::class, 'updateSeason'])->name('update.season');
 // Route::get('/edit-season/{id}', [SeasonController::class, 'editSeason'])->name('season.page.edit');
 
-Route::get('/top-score/{categoryID}', [TopScoreController::class, 'listTopScore'])->whereNumber('categoryID')->name('top-score');
-Route::get('/add-top-score/{categoryID}', [TopScoreController::class, 'addTopScore'])->whereNumber('categoryID')->name('add.top-score');
-Route::post('/create-top-score/{categoryID}', [TopScoreController::class, 'createTopScore'])->whereNumber('categoryID')->name('create.top-score');
-Route::delete('/delete-top-score/{categoryID}/{id}', [TopScoreController::class, 'deleteTopScore'])->whereNumber(['categoryID', 'id'])->name('delete.top-score');
-Route::put('/update-top-score/{categoryID}/{id}', [TopScoreController::class, 'updateTopScore'])->whereNumber(['categoryID', 'id'])->name('update.top-score');
-Route::get('/edit-top-score/{categoryID}/{id}', [TopScoreController::class, 'editTopScore'])->whereNumber(['categoryID', 'id'])->name('top-score.page.edit');
+Route::get('/top-score/{divisionID}/{categoryID}', [TopScoreController::class, 'listTopScore'])->whereNumber(['divisionID', 'categoryID'])->name('top-score');
+Route::get('/add-top-score/{divisionID}/{categoryID}', [TopScoreController::class, 'addTopScore'])->whereNumber(['divisionID', 'categoryID'])->name('add.top-score');
+Route::post('/create-top-score/{divisionID}/{categoryID}', [TopScoreController::class, 'createTopScore'])->whereNumber(['divisionID', 'categoryID'])->name('create.top-score');
+Route::delete('/delete-top-score/{categoryID}/{id}', [TopScoreController::class, 'deleteTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('delete.top-score');
+Route::put('/update-top-score/{divisionID}/{categoryID}/{id}', [TopScoreController::class, 'updateTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('update.top-score');
+Route::get('/edit-top-score/{divisionID}/{categoryID}/{id}', [TopScoreController::class, 'editTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('top-score.page.edit');
 
 Route::get('/team-category', [TeamCategoryController::class, 'listTeamCategory'])->name('team-category');
 Route::get('/add-team-category', [TeamCategoryController::class, 'addTeamCategory'])->name('add.team-category');
@@ -169,12 +170,12 @@ Route::put('/update-team-category/{id}', [TeamCategoryController::class, 'update
 Route::get('/edit-team-category/{id}', [TeamCategoryController::class, 'editTeamCategory'])->whereNumber('id')->name('team-category.page.edit');
 
 
-Route::get('/team/{categoryID}', [TeamController::class, 'listTeam'])->name('team');
-Route::get('/add-team/{categoryID}', [TeamController::class, 'addTeam'])->name('add.team');
-Route::post('/create-team/{categoryID}', [TeamController::class, 'createTeam'])->whereNumber('categoryID')->name('create.team');
-Route::delete('/delete-team/{categoryID}/{id}', [TeamController::class, 'deleteTeam'])->whereNumber(['categoryID', 'id'])->name('delete.team');
+Route::get('/team/{divisionID}/{categoryID}', [TeamController::class, 'listTeam'])->whereNumber(['divisionID', 'categoryID'])->name('team');
+Route::get('/add-team/{divisionID}/{categoryID}', [TeamController::class, 'addTeam'])->whereNumber(['divisionID', 'categoryID'])->name('add.team');
+Route::post('/create-team/{categoryID}', [TeamController::class, 'createTeam'])->whereNumber(['categoryID'])->name('create.team');
+Route::delete('/delete-team/{divisionID}/{categoryID}/{id}', [TeamController::class, 'deleteTeam'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('delete.team');
 Route::put('/update-team/{categoryID}/{id}', [TeamController::class, 'updateTeam'])->whereNumber(['categoryID', 'id'])->name('update.team');
-Route::get('/edit-team/{categoryID}/{id}', [TeamController::class, 'editTeam'])->whereNumber(['categoryID', 'id'])->name('team.page.edit');
+Route::get('/edit-team/{divisionID}/{categoryID}/{id}', [TeamController::class, 'editTeam'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('team.page.edit');
 Route::get('/team-doc/{fileName}', [TeamController::class, 'getTeamImageDoc'])->name('team.doc');
 
 
@@ -194,6 +195,12 @@ Route::put('/add-result/{divisionID}/{categoryID}/{id}', [GameController::class,
 Route::put('/update-fixture/{categoryID}/{id}', [GameController::class, 'updateGame'])->whereNumber(['categoryID', 'id'])->name('update.fixture');
 Route::get('/edit-fixture/{id}', [GameController::class, 'updateFixture'])->whereNumber('id')->name('game.fixture.edit');
 
-Route::get('/men-first-division-table/{divisionID}/{categoryID}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['divisionID', 'categoryID'])->name('men.first-division-table');
+Route::get('/men-first-division-table/{divisionID}/{categoryID}/{groupID?}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['divisionID', 'categoryID'])->name('men.first-division-table');
 
-Route::get('/men-first-division/day/{divisionID}/{categoryID}/{id}', [CompetitionController::class, 'show'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('fixtures.show');
+Route::get('/men-first-division/day/{divisionID}/{categoryID}/{id}/{groupID?}', [CompetitionController::class, 'show'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('fixtures.show');
+
+Route::get('/division/{divisionID}/{categoryID}', function(){
+    return view('divisionTwo', [
+        "groups" => Group::all(['id', 'name'])
+    ]);
+})->whereNumber(['divisionID', 'categoryID'])->name('division');

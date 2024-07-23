@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Day;
 use App\Models\Division;
+use App\Models\Group;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TeamStatistic;
@@ -21,7 +22,7 @@ class CompetitionController extends Controller
         ]);
     }
 
-    public function show($divisionID, $categoryID, $id)
+    public function show($divisionID, $categoryID, $id, ?int $groupID = null)
     {
         $division = Division::where('id', $divisionID)->first();
         
@@ -29,7 +30,7 @@ class CompetitionController extends Controller
             return redirect('/')
                 ->with('error', 'Division not found');
         }
-        
+
         $teamCategory = TeamCategory::where('id', $categoryID)->first();
         
         if (is_null($teamCategory)) {
@@ -40,7 +41,38 @@ class CompetitionController extends Controller
         $days = Day::all();
         $day = Day::find($id);
 
-        $games = DB::table('Game')
+        if(!is_null($groupID)){
+            $group = Group::where('id', $groupID)->first();
+        
+            if (is_null($group)) {
+                return redirect('/')
+                    ->with('error', 'Group not found');
+            }
+        
+            $games = DB::table('Game')
+            ->select(
+                'homeTeam.name AS homeTeam',
+                'awayTeam.name AS awayTeam',
+                'Game.stadeName AS stadium',
+                'Game.date',
+                'Game.homeTeamGoals',
+                'Game.awayTeamGoals',
+                'Game.isPlayed',
+            )
+            ->join('Team as homeTeam', 'Game.homeTeamID', '=', 'homeTeam.id')
+            ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
+            ->join('Day', 'Game.dayID', '=', 'Day.id')
+            ->where('dayID', $id)
+            ->where('homeTeam.categoryID', $categoryID)
+            ->where('awayTeam.categoryID', $categoryID)
+            ->where('homeTeam.divisionID', $divisionID)
+            ->where('awayTeam.divisionID', $divisionID)
+            ->where('Game.groupID', $groupID)
+            ->get();
+        }
+
+        if(is_null($groupID)){
+            $games = DB::table('Game')
             ->select(
                 'homeTeam.name AS homeTeam',
                 'awayTeam.name AS awayTeam',
@@ -59,6 +91,7 @@ class CompetitionController extends Controller
             ->where('homeTeam.divisionID', $divisionID)
             ->where('awayTeam.divisionID', $divisionID)
             ->get();
+        }
 
         return view('fixtures', [
             'day' => $day,
@@ -67,7 +100,7 @@ class CompetitionController extends Controller
             "categoryID" => (int)$categoryID
         ]);
     }
-    public function menFirstDivisionTable($divisionID, $categoryID)
+    public function menFirstDivisionTable($divisionID, $categoryID, ?int $groupID = null)
     {
         $division = Division::where('id', $divisionID)->first();
         
@@ -86,13 +119,13 @@ class CompetitionController extends Controller
         $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
 
         $daysPlayed = DB::table('Game')
-                ->join('Day', 'Day.id', '=', 'Game.dayID')
-                ->join('Team','Team.id', '=', 'homeTeamID')
-                ->join('TeamCategory', 'Team.categoryID', '=','TeamCategory.id')
-                ->where('Game.isPlayed', 1)
-                ->where('TeamCategory.id',$categoryID)
-                ->orderBy('Day.id', 'DESC')
-                ->first(['Game.dayID']);
+            ->join('Day', 'Day.id', '=', 'Game.dayID')
+            ->join('Team','Team.id', '=', 'homeTeamID')
+            ->join('TeamCategory', 'Team.categoryID', '=','TeamCategory.id')
+            ->where('Game.isPlayed', 1)
+            ->where('TeamCategory.id',$categoryID)
+            ->orderBy('Day.id', 'DESC')
+            ->first(['Game.dayID']);
                 
         if($daysPlayed){
             $days = $daysPlayed;
@@ -102,7 +135,39 @@ class CompetitionController extends Controller
             ];
         }
 
-        $teamStatistics = DB::select("SELECT a.name AS name, 
+        if(!is_null($groupID)){
+            $group = Group::where('id', $groupID)->first();
+        
+            if (is_null($group)) {
+                return redirect('/')
+                    ->with('error', 'Group not found');
+            }
+
+            $teamStatistics = DB::select("SELECT a.name AS name, 
+                                            SUM(b.goalWin) AS goalWin, 
+                                            SUM(b.goalLoss) AS goalLoss, 
+                                            SUM(b.goalWin) - SUM(b.goalLoss) AS goalDifference, 
+                                            SUM(b.score) AS score,
+                                            SUM(
+                                                    CASE 
+                                                        WHEN c.isPlayed = true 
+                                                    THEN 1 
+                                                        ELSE 0 
+                                                    END
+                                            ) AS matchPlayed
+                                        FROM Team AS a
+                                        INNER JOIN TeamStatistic AS b
+                                        ON b.teamID = a.id
+                                        INNER JOIN Game AS c
+                                        ON c.id = b. gameID
+                                        WHERE a.categoryID = ? AND a.divisionID = ? AND c.groupID = ?
+                                        GROUP BY a.id
+                                        ORDER BY SUM(b.score) DESC, (SUM(b.goalWin) - SUM(b.goalLoss)) DESC, SUM(b.goalWin) DESC, a.name ASC
+                                        ",[$categoryID, $divisionID, $groupID]);
+        }
+
+        if(is_null($groupID)){
+            $teamStatistics = DB::select("SELECT a.name AS name, 
                                             SUM(b.goalWin) AS goalWin, 
                                             SUM(b.goalLoss) AS goalLoss, 
                                             SUM(b.goalWin) - SUM(b.goalLoss) AS goalDifference, 
@@ -123,6 +188,7 @@ class CompetitionController extends Controller
                                         GROUP BY a.id
                                         ORDER BY SUM(b.score) DESC, (SUM(b.goalWin) - SUM(b.goalLoss)) DESC, SUM(b.goalWin) DESC, a.name ASC
                                         ",[$categoryID, $divisionID]);
+        }
         
 
         $topScores = TopScore::orderBy('goals', 'DESC')->orderBy('name', 'ASC')->take(10)->get();

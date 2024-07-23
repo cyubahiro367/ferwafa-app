@@ -4,7 +4,7 @@
     <div class="section-padding"><center><h2>Documents</h2></center></div>
     <div class="container">
         <div class="row">
-            <div class="report-container" style="display: flex; gap: 24px">
+            <div class="report-container" style="display: flex; gap: 12px">
                 @foreach ($documents as $document)
                     <div class="report">
                         <div class="report-image">

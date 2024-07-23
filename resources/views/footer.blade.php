@@ -17,7 +17,7 @@
             <!-- Footer About -->
             <div class="footer-about">
                 <div class="logo-block">
-                    <img src="{{asset('asset/images/logo.png')}}" alt="logo" width="150" height="150" />
+                    <img src="{{asset('asset/images/file.png')}}" alt="logo" width="150" height="150" />
                 </div>
                 <div class="footer-about-content">
                     <h3 class="block-title">About Ferwafa</h3>

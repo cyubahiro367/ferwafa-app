@@ -17,7 +17,7 @@
                                                             Fixtures /</a>
                                                     </li>
                                                     <li><a style="color: white"
-                                                            href="{{ route('men.first-division-table', [request()->route('divisionID'), $categoryID]) }}">Standing</a>
+                                                            href="{{ route('men.first-division-table', [request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standing</a>
                                                     </li>
                                                 </ul>
                                             </div>

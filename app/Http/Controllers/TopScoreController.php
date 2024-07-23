@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Division;
 use App\Models\Team;
+use App\Models\TeamCategory;
 use App\Models\TopScore;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,17 +15,24 @@ use Illuminate\Support\Facades\Validator;
 
 class TopScoreController extends Controller
 {
-    public function addTopScore($categoryID)
+    public function addTopScore($divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
-        $teams = Team::where('categoryID', $categoryID)->get()->toArray();
+        $division = Division::where('id', $divisionID)->first();
+
+        if (is_null($division)) {
+            return redirect('/')
+                ->with('error', 'Division not found');
+        }
+
+        $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
 
         if (empty($teams)) {
-            return redirect("/games/$categoryID")->with('error', 'create teams first');
+            return redirect("/top-score/$divisionID/$categoryID")->with('error', 'create teams first');
         }
 
         return view('admin.create-topScore', [
@@ -31,32 +40,48 @@ class TopScoreController extends Controller
         ]);
     }
 
-    public function createTopScore($categoryID, Request $request)
+    public function createTopScore($divisionID, $categoryID, Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
+
         $request->validate([
             "name" => "required|string",
             "goals" => "required|integer",
-            "teamID" => "required|string"
-
+            "teamID" => "required|integer",
         ]);
 
-        $team = Team::where('id', $request->teamID)->first();
+        $division = Division::where('id', $divisionID)->first();
 
-        if (is_null($team)) {
-            return redirect("/games/$categoryID")->with('error', 'team Not Found');
+        if (is_null($division)) {
+            return redirect(`/create-top-score/$divisionID/$categoryID`)
+                ->with('error', 'Division not found');
         }
 
+        $teamCategory = TeamCategory::where('id', $categoryID)->first();
+
+        if (is_null($division)) {
+            return redirect(`/create-top-score/$divisionID/$categoryID`)
+                ->with('error', 'Division not found');
+        }
+
+        $team = Team::where([['divisionID', $divisionID], ['id', $request->teamID]])->first();
+
+        if (is_null($team)) {
+            return redirect(`/create-top-score/$request->divisionID/$categoryID`)->with('error', 'team Not Found');
+        }
+        
         TopScore::create([
             "name" => $request->name,
             "goals" => $request->goals,
-            "teamName" => $team->name
+            "teamName" => $team->name,
+            'categoryID' => $categoryID,
+            'divisionID' => $request->divisionID
         ]);
 
-        return redirect("/top-score/$categoryID")
+        return redirect("/top-score/$divisionID/$categoryID")
             ->with('message', 'Member is added successfully');
     }
 
@@ -68,16 +93,23 @@ class TopScoreController extends Controller
         }
     }
 
-    public function listTopScore($categoryID)
+    public function listTopScore($divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
-        $teams = Team::where('categoryID', $categoryID)->get()->toArray();
+        $division = Division::where('id', $divisionID)->first();
 
-        $topScores = TopScore::orderBy('goals', 'DESC')->get();
+        if (is_null($division)) {
+            return redirect(`/top-score/$divisionID/$categoryID`)
+                ->with('error', 'Division not found');
+        }
+
+        $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
+
+        $topScores = TopScore::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->orderBy('goals', 'DESC')->get();
 
         $finalTopScores = [];
 
@@ -101,7 +133,7 @@ class TopScoreController extends Controller
         ]);
     }
 
-    public function editTopScore($categoryID, $id)
+    public function editTopScore($divisionID, $categoryID, $id)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
@@ -113,10 +145,10 @@ class TopScoreController extends Controller
             return redirect()->back()->with('failed', 'TopScore not found');
         }
 
-        $teams = Team::where('categoryID', $categoryID)->get()->toArray();
+        $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
 
         if (empty($teams)) {
-            return redirect("/games/$categoryID")->with('error', 'create teams first');
+            return redirect("/top-score/ $divisionID/$categoryID")->with('error', 'create teams first');
         }
 
         return view('admin.update-topScore', [
@@ -126,7 +158,7 @@ class TopScoreController extends Controller
     }
 
 
-    public function updateTopScore($categoryID, Request $request, $id)
+    public function updateTopScore($divisionID, $categoryID, Request $request, $id)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
@@ -140,16 +172,23 @@ class TopScoreController extends Controller
 
         ]);
 
+        $division = Division::where('id', $divisionID)->first();
+
+        if (is_null($division)) {
+            return redirect("/top-score/ $divisionID/$categoryID")
+                ->with('error', 'Division not found');
+        }
+
         $topScore = TopScore::find($id);
 
         if (!$topScore) {
             return redirect()->back()->with('fail', 'TopScore not found');
         }
 
-        $team = Team::where('id', $request->teamID)->first();
+        $team = Team::where([['divisionID', $divisionID], ['categoryID',$categoryID], ['id', $request->teamID]])->first();
 
         if (is_null($team)) {
-            return redirect("/games/$categoryID")->with('error', 'team Not Found');
+            return redirect("/top-score/ $divisionID/$categoryID")->with('error', 'team Not Found');
         }
 
         $topScore->name = $request->name;
@@ -157,7 +196,7 @@ class TopScoreController extends Controller
         $topScore->teamName = $team->name;
         $topScore->save();
 
-        return redirect("/top-score/$categoryID")
+        return redirect("/top-score/$divisionID/$categoryID")
             ->with('message', 'updated successfully');
     }
 

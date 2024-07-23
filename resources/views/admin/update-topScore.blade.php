@@ -38,7 +38,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card-body">
-                                            <form method="POST" action="{{ route('update.top-score', [request()->route('categoryID'), $topScore->id]) }}"
+                                            <form method="POST" action="{{ route('update.top-score', [request()->route('divisionID'), request()->route('categoryID'), $topScore->id]) }}"
                                                 enctype="multipart/form-data">
                                                 @csrf
                                                 @method('PUT')

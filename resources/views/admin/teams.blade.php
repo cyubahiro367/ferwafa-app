@@ -25,7 +25,7 @@
                             <div class="card-header-form">
                                 <form>
                                     <div class="input-group">
-                                        <a href="{{ route('add.team', request()->route('categoryID')) }}" class="btn btn-primary">
+                                        <a href="{{ route('add.team', [request()->route('divisionID'), request()->route('categoryID')]) }}" class="btn btn-primary">
                                             <i class="far fa-user"> &nbsp;</i>Add Team
                                         </a>
                                         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -72,10 +72,10 @@
                                         <td>{{ $team['name'] }}</a> </td>
                                         <td>{{ $team['category'] }}</a> </td>
                                         <td>
-                                            <a href="{{ route('team.page.edit',[request()->route('categoryID'), $team['id']]) }}" class="btn btn-outline-primary">Edit</a>
+                                            <a href="{{ route('team.page.edit',[request()->route('divisionID'), request()->route('categoryID'), $team['id']]) }}" class="btn btn-outline-primary">Edit</a>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-outline-danger delete-game" data-toggle="modal" data-target="#confirmDeleteModal" data-game-id="{{ $team['id'] }}" data-category-id="{{ request()->route('categoryID')}}">Delete</button>
+                                            <button type="button" class="btn btn-outline-danger delete-game" data-toggle="modal" data-target="#confirmDeleteModal" data-game-id="{{ $team['id'] }}" data-category-id="{{ request()->route('categoryID')}}" data-division-id="{{ request()->route('divisionID')}}">Delete</button>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -98,7 +98,7 @@
                     Are you sure you want to delete this Team ?
                 </div>
                 <div class="modal-footer">
-                    <form id="deleteGameForm" method="POST" action="{{ route('delete.team',[0,0])}}">
+                    <form id="deleteGameForm" method="POST" action="{{ route('delete.team',[0,0,0])}}">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -120,9 +120,10 @@
             $('.delete-game').click(function() {
                 var gameId = $(this).data('game-id');
                 var categoryId = $(this).data('category-id');
+                var divisionId = $(this).data('division-id');
                 var form = $('#deleteGameForm');
                 var action = form.attr('action');
-                form.attr('action', action.replace(0, categoryId).replace(0, gameId));
+                form.attr('action', action.replace(0, divisionId).replace(0, categoryId).replace(0, gameId));
             });
         });
     </script>

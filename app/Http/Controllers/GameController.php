@@ -64,7 +64,7 @@ class GameController extends Controller
             ->orderBy('Day.id', 'DESC')
             ->orderBy('Game.id', 'DESC')
             ->get();
-
+                
         $finalGames = collect($games)->map(fn($item) => (array) $item)
               ->groupBy("dayID")
               ->values()

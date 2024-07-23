@@ -35,13 +35,13 @@
                     <!-- Social -->
                     <div class="col-md-2 col-sm-2 col-xs-2 logo-block">
                         <a href="/" title="Logo">
-                          <img src="{{asset('images/logo.png')}}" alt="logo" width="66" height="61" />
+                          <img src="{{asset('images/file.png')}}" alt="logo" width="66" height="61" />
                         </a>
                       </div>
                     <!-- Social /- -->
                     <!-- Logo Block -->
                     <div class="col-md-8 col-sm-8 col-xs-8 logo-block">
-                        <marquee behavior="" direction="left">
+                        {{-- <marquee behavior="" direction="left">
                             @if ($menDay)
                                 <h2 style="color:  #133E8D"> <a
                                         href="{{ route('fixtures.show', [$divisions[0]->id, $competions[0]->id, $menDay->dayID]) }}"
@@ -51,14 +51,14 @@
                                         href="{{ route('fixtures.show', [$divisions[0]->id, $competions[0]->id, 1]) }}"
                                         style="color:  #133E8D">About Primus National League Click here</a></h2>
                             @endif
-                        </marquee>
+                        </marquee> --}}
                         </a>
                     </div>
                     <!-- Logo Block /- -->
                     <!-- Register -->
                     <div class="col-md-2 col-sm-2 col-xs-2 logo-block">
                         <a href="/" title="Logo">
-                          <img src="{{asset('images/primus.png')}}" alt="logo" width="66" height="61" />
+                          <img src="{{asset('images/file.png')}}" alt="logo" width="66" height="61" />
                         </a>
                       </div>
                 </div>
@@ -83,7 +83,7 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a title="Logo" href="#" class="navbar-brand"><img src="../asset/images/logo.png"
+                            <a title="Logo" href="#" class="navbar-brand"><img src="../asset/images/file.png"
                                     alt="logo" /><span>Ferwafa</span></a>
                         </div>
                         <div class="navbar-collapse collapse" id="navbar">
@@ -117,7 +117,7 @@
                                                     @endif
                                                 </li>
                                                 <li>
-                                                    <a title="Event List" href="{{ route('fixtures.show', [$divisions[1]->id, $competions[0]->id, 1]) }}">Second Division</a>
+                                                    <a title="Event List" href="{{ route('division', [$divisions[1]->id, $competions[0]->id]) }}">Second Division</a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -141,11 +141,11 @@
                                                 <li>
                                                     @if ($womenDay)
                                                         <a title="Event List"
-                                                            href="{{ route('fixtures.show', [$divisions[1]->id, $competions[1]->id, $womenDay->dayID]) }}">Second
+                                                            href="{{ route('division', [$divisions[1]->id, $competions[1]->id]) }}">Second
                                                             Division</a>
                                                     @else
                                                         <a title="Event List"
-                                                            href="{{ route('fixtures.show', [$divisions[1]->id, $competions[1]->id, 1]) }}">Second
+                                                            href="{{ route('division', [$divisions[1]->id, $competions[1]->id]) }}">Second
                                                             Division</a>
                                                     @endif
                                                     {{-- <a title="Event List" href="#">Second Division</a> --}}
@@ -227,7 +227,7 @@
                                             <i class="ddl-switch fa fa-angle-down"></i>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a title="Event List" href="#">Laws
+                                                    <a title="Event List" href="{{route('laws.page.show')}}">Laws
                                                         of The Games</a>
                                                 </li>
                                                 <li>

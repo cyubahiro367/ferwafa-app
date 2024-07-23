@@ -45,7 +45,7 @@
 
                         <div class="card-body p-0">
                             <div class="row">
-                                @if (request()->route('divisionID') == 2)
+                                @if (request()->route('divisionID') == 6)
                                 <div class="table-responsive col-sm-12 col-md-6 col-xl-6 ">
                                     <div> <h2>Group A</h2></div>
                                 @else
@@ -68,28 +68,30 @@
                                             <th colspan="2">Action</th>
                                         </tr>
                                         @foreach ($data as $key => $game)
-                                        <tr @if ($game['isPlayed']) style='font-weight: bold' @endif>
-                                            <td class="text-truncate">{{ $key + 1 }}</td>
-                                            <td> {{ $game['homeTeam'] }}</td>
-                                            <td>{{ $game['awayTeam'] }} </td>
-                                            <td> {{ $game['stadium'] }}</td>
-                                            <td> {{ $game['date'] }}</td>
-                                            <td> @if(!$game['isPlayed']) - @else {{ $game['homeTeamGoals'] }} @endif</td>
-                                            <td> @if(!$game['isPlayed']) - @else {{ $game['awayTeamGoals'] }} @endif</td>
-                                            <td>
-                                                <a href="{{ route('game.page.edit',[request()->route('divisionID'), request()->route('categoryID'), $game['id']]) }}" class="btn btn-outline-primary">Add Scores</a>
+                                            @if ($game['groupID'] == 1 || is_null($game['groupID']))
+                                                <tr @if ($game['isPlayed']) style='font-weight: bold' @endif>
+                                                    <td class="text-truncate">{{ $key + 1 }}</td>
+                                                    <td> {{ $game['homeTeam'] }}</td>
+                                                    <td>{{ $game['awayTeam'] }} </td>
+                                                    <td> {{ $game['stadium'] }}</td>
+                                                    <td> {{ $game['date'] }}</td>
+                                                    <td> @if(!$game['isPlayed']) - @else {{ $game['homeTeamGoals'] }} @endif</td>
+                                                    <td> @if(!$game['isPlayed']) - @else {{ $game['awayTeamGoals'] }} @endif</td>
+                                                    <td>
+                                                        <a href="{{ route('game.page.edit',[request()->route('divisionID'), request()->route('categoryID'), $game['id']]) }}" class="btn btn-outline-primary">Add Scores</a>
 
-                                            </td>
+                                                    </td>
 
-                                            <td>
-                                                <button type="button" class="btn btn-outline-danger delete-game" data-toggle="modal" data-target="#confirmDeleteModal" data-game-id="{{ $game['id'] }}" data-category-id="{{ request()->route('categoryID')}}">Delete</button>
-                                            </td>
-                                        </tr>
+                                                    <td>
+                                                        <button type="button" class="btn btn-outline-danger delete-game" data-toggle="modal" data-target="#confirmDeleteModal" data-game-id="{{ $game['id'] }}" data-category-id="{{ request()->route('categoryID')}}">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     </table>
                                     @endforeach
                                 </div>
-                                @if (request()->route('divisionID') == 2)
+                                @if (request()->route('divisionID') == 6)
                                     <div class="table-responsive col-sm-12 col-md-6 col-xl-6">
                                         <div> <h2>Group B</h2></div>
                                         @foreach ($games as $data)

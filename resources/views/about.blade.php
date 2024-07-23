@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="howwecan-top">
-                        <img src="../asset/images/logo.png" alt="howwecan3" width="300" height="200" />
+                        <img src="../asset/images/file.png" alt="howwecan3" width="300" height="200" />
                     </div>
                 </div>
                 <div class="col-md-8 col-sm-6 col-xs-12">
@@ -183,7 +183,7 @@
                 @foreach ($committe as $value)
                     <li data-thumb="{{ route('comitte.doc', $value['url']) }}">
                         <div class="col-md-6 no-padding larg-thumb">
-                            <img src="{{ route('comitte.doc', $value['url']) }}" style="width: 400px; height: 470px;"
+                            <img src="{{ route('comitte.doc', $value['url']) }}" style="width: 400px; height: auto;"
                                 alt="team1" />
                         </div>
                         <div class="container">
@@ -192,10 +192,7 @@
                                     <h3>{{ $value['name'] }}</h3>
                                     <a href="#" title="Public Speaker">{{ $value['position'] }}</a>
                                     <p>
-                                        The first mate and his Skipper too will do their very best to
-                                        make the others comfortable in their tropic island nest. And
-                                        if you threw a party - invited everyone you knew. You would
-                                        see the biggest gift would be from me and the card.
+                                        
                                     </p>
                                     <ul>
                                         <li class="fb">

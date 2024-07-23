@@ -22,24 +22,31 @@ class TeamController extends Controller
     }
 
 
-    public function addTeam($categoryID)
+    public function addTeam($divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
+        $division = Division::where('id', $divisionID)->first();
+        
+        if (is_null($division)) {
+            return redirect('/')
+                ->with('error', 'Division not found');
+        }
+
         $teamCategory = TeamCategory::all()->toArray();
 
         if (empty($teamCategory)) {
-            return redirect("/team/$categoryID")
+            return redirect("/team/$divisionID/$categoryID")
                 ->with('error', 'Create Team Category first');
         }
 
         $divisions = Division::all()->toArray();
 
         if (empty($divisions)) {
-            return redirect("/team/$categoryID")
+            return redirect("/team/$divisionID/$categoryID")
                 ->with('error', 'Contact Support');
         }
 
@@ -89,7 +96,7 @@ class TeamController extends Controller
             ]);
         });
 
-        return redirect("/team/$categoryID")
+        return redirect("/team/$request->divisionID/$categoryID")
             ->with('message', 'Member is added successfully');
     }
 
@@ -101,17 +108,25 @@ class TeamController extends Controller
         }
     }
 
-    public function listTeam($categoryID)
+    public function listTeam($divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
+        $division = Division::where('id', $divisionID)->first();
+
+        if (is_null($division)) {
+            return redirect(`/team/$divisionID/$categoryID`)
+                ->with('error', 'Division not found');
+        }
+
         $teams = DB::table("Team AS a")
             ->join("TeamCategory AS b", "a.categoryID", "=", "b.id")
             ->select(["a.id", "a.name", "a.logo", "b.name AS category"])
             ->where('categoryID', $categoryID)
+            ->where('divisionID', $divisionID)
             ->orderBy('name', 'asc')
             ->get();
 
@@ -133,12 +148,20 @@ class TeamController extends Controller
         ]);
     }
 
-    public function editTeam($categoryID, $id)
+    public function editTeam($divisionID, $categoryID, $id)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
+
+        $division = Division::where('id', $divisionID)->first();
+        
+        if (is_null($division)) {
+            return redirect('/')
+                ->with('error', 'Division not found');
+        }
+
         $team = Team::find($id);
         $teamCategory = TeamCategory::all()->toArray();
 
@@ -149,7 +172,7 @@ class TeamController extends Controller
         $divisions = Division::all()->toArray();
 
         if (empty($divisions)) {
-            return redirect("/team/$categoryID")
+            return redirect("/team/$divisionID/$categoryID")
                 ->with('error', 'Contact Support');
         }
 
@@ -204,16 +227,23 @@ class TeamController extends Controller
         $team->divisionID = $request->divisionID;
         $team->save();
 
-        return redirect("/team/$categoryID")
+        return redirect("/team/$request->divisionID/$categoryID")
             ->with('message', 'updated successfully');
     }
 
 
-    public function deleteTeam($categoryID,$id)
+    public function deleteTeam($divisionID, $categoryID,$id)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
+        }
+
+        $division = Division::where('id', $divisionID)->first();
+
+        if (is_null($division)) {
+            return redirect(`/team/$divisionID/$categoryID`)
+                ->with('error', 'Division not found');
         }
 
         $team = Team::find($id);
@@ -232,7 +262,7 @@ class TeamController extends Controller
         Storage::delete($team->logo);
         $team->delete();
 
-        return redirect("/team/$categoryID")
+        return redirect("/team/$divisionID/$categoryID")
             ->with('message', 'deleted successfully');
     }
 }

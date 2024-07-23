@@ -25,7 +25,7 @@
                             <div class="card-header-form">
                                 <form>
                                     <div class="input-group">
-                                        <a href="{{ route('add.top-score', request()->route('categoryID')) }}" class="btn btn-primary">
+                                        <a href="{{ route('add.top-score', [request()->route('divisionID'), request()->route('categoryID')]) }}" class="btn btn-primary">
                                             <i class="far fa-user"> &nbsp;</i>Add Top Score
                                         </a>
                                         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -59,7 +59,7 @@
                                         <td>{{ $topScore["goals"] }}</td>
                                         <td>{{ $topScore["teamName"] }}</td>
                                         <td>
-                                            <a href="{{ route('top-score.page.edit', [request()->route('categoryID'), $topScore['id']]) }}" class="btn btn-outline-primary">Edit</a>
+                                            <a href="{{ route('top-score.page.edit', [request()->route('divisionID'), request()->route('categoryID'), $topScore['id']]) }}" class="btn btn-outline-primary">Edit</a>
                                         </td>
 
                                         <td>

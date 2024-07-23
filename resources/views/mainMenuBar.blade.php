@@ -53,7 +53,7 @@
 
         .report-image {
             width: 100%;
-            height: 60%;
+            height: 40%;
             display: flex;
             align-items: center;
             justify-content: center;

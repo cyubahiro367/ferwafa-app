@@ -4,7 +4,7 @@
     <div class="section-padding"><center><h2>Circular</h2></center></div>
     <div class="container">
         <div class="row">
-            <div class="report-container">
+            <div class="report-container" style="display: flex; gap: 12px">
                 @foreach ($circularDocuments as $circularDocument)
                     <div class="report">
                         <div class="report-image">

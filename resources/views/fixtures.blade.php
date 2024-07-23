@@ -56,7 +56,7 @@
     <div class="container-fluid eventlist blog blogpost upcoming-event latest-blog no-padding">
     <div class="container mt-5">
         <div class="row">
-            <div class="col-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1">
+            <div class="col-12 col-md-12 offset-md-1 col-lg-12 offset-lg-1">
                 <div class="card card-primary">
                     {{-- <div class="row m-0"> --}}
                         <div class="col-12 col-md-12 col-lg-12 p-0">

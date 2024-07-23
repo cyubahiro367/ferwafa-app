@@ -52,8 +52,7 @@
                             @else
                                 <div class="item">
                         @endif
-                        <img src="{{ route('news.images.show', $topResult['image_url']) }}" alt="slide1"
-                            style="width: 1920px; height: 770px" />
+                        <img src="{{ route('news.images.show', $topResult['image_url']) }}" alt="slide1" style="width: 100vw; height: auto" />
                         <div class="carousel-caption">
                             <div class="container">
                                 <div class="col-md-5 col-sm-6 col-xs-9 pull-right">

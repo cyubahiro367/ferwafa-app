@@ -4,7 +4,7 @@
     <div class="section-padding"></div>
     <div class="container">
         <div class="row">
-            <div class="report-container">
+            <div class="report-container" style="display: flex; gap: 12px">
                 @foreach ($gameRules as $gameRule)
                     <div class="report">
                         <div class="report-image">
@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-
+    <div class="section-padding"></div>
 </div>
 
 @include('footer')
