@@ -10,6 +10,7 @@ use App\Models\Season;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TeamStatistic;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -19,11 +20,17 @@ use Illuminate\Validation\Rule;
 
 class GameController extends Controller
 {
-    public function listGames(int $divisionID, int $categoryID)
+    public function listGames(Request $request, int $divisionID, int $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect("/games/$divisionID/$categoryID");
+        }
+
+        $season = empty($request->all()) ? Season::orderBy('created_at', 'DESC')->first() : Season::where('id', $request->seasonID)->first();
+
+        if (is_null($season)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'create season first');
         }
 
         $division = Division::where('id', $divisionID)->first();
@@ -61,6 +68,7 @@ class GameController extends Controller
             ->where('awayTeam.categoryID', $categoryID)
             ->where('homeTeam.divisionID', $divisionID)
             ->where('awayTeam.divisionID', $divisionID)
+            ->where('Game.seasonID', $season->id)
             ->orderBy('Day.id', 'DESC')
             ->orderBy('Game.id', 'DESC')
             ->get();
@@ -68,10 +76,21 @@ class GameController extends Controller
         $finalGames = collect($games)->map(fn($item) => (array) $item)
               ->groupBy("dayID")
               ->values()
-              ->toArray();    
-        
+              ->toArray(); 
+
+        $seasons = Season::all()->toArray();
+              
+        $seasons = array_map(function($item){
+            $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
+            $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
+
+            return $item;
+        }, $seasons);
+
         return view('admin.games', [
-            'games' => $finalGames
+            'games' => $finalGames,
+            'seasonID' => $season->id,
+            'seasons' => $seasons
         ]);
     }
 
@@ -108,7 +127,7 @@ class GameController extends Controller
             return redirect("/games/$divisionID/$categoryID")->with('error', 'create teams first');
         }
 
-        $days = Day::where('seasonID', $seasonID->id)->get();
+        $days = Day::all();
 
         if (is_null($days)) {
             return redirect("/games/$divisionID/$categoryID")->with('error', 'create day first');
@@ -120,11 +139,24 @@ class GameController extends Controller
             return redirect("/games/$divisionID/$categoryID")->with('error', 'No Group Found');
         }
 
+        $seasons = Season::all()->toArray();
+
+        if (empty($seasons)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'No Season Found');
+        }
+
+        $seasons = array_map(function($item){
+            $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
+            $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
+
+            return $item;
+        }, $seasons);
+
         return view('admin.create-game', [
             'groups' => $groups,
             'teams' => $teams,
             'days' => $days,
-            'seasonID' => $seasonID
+            'seasons' => $seasons
         ]);
     }
 
@@ -136,12 +168,13 @@ class GameController extends Controller
         }
 
         $request->validate([
-            "homeTeamID" => "required|integer",
-            "awayTeamID" => "required|integer",
+            "homeTeamID" => "required|numeric|min:1",
+            "awayTeamID" => "required|numeric|min:1",
             "stade" => "required|string",
             "date" => "required|date",
-            "dayID" => "required|integer",
+            "dayID" => "required|numeric|min:1",
             "groupID" => [Rule::requiredIf($divisionID == 2), "nullable", "integer"],
+            "seasonID" => "required|numeric|min:1",
         ]);
 
         if ($request->homeTeamID == $request->awayTeamID) {
@@ -163,6 +196,7 @@ class GameController extends Controller
                     "date" => $request->date,
                     "dayID" => $request->dayID,
                     "groupID" => $request->groupID,
+                    "seasonID" => $request->seasonID,
                 ]);
 
                 TeamStatistic::create([
@@ -182,7 +216,7 @@ class GameController extends Controller
                 ]);
             });
 
-            return redirect("/games/$divisionID/$categoryID")
+            return redirect("/games/$request->seasonID/$divisionID/$categoryID")
                 ->with('message', 'Game added successfully');
         } catch (\Throwable $th) {
             return redirect()->back()->with('something wrong');

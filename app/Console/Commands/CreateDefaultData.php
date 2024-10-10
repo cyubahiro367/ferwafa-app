@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\CommitteeCategory;
 use App\Models\Division;
 use App\Models\DocumentType;
 use App\Models\Group;
@@ -82,86 +83,69 @@ class CreateDefaultData extends Command
             "Women"
         ];
 
+        $committeeCategory = [
+            "Conflicts resolution committee",
+            "Player Status Committee",
+            "Ethic Committee",
+            "Disciplinary committee",
+            "Appeal Committee",
+            "Audit committee",
+            "Electoral Committee",
+            "Appeal Electoral Committee",
+            "Club licensing|FBI",
+            "Club licensing|SIB",
+            "Executive Committee"
+        ];
+
         try {
-            DB::transaction(function () use ($documentTypes, $status, $permissions, $newsTypes, $divisions, $groups, $teamCategory) {
+            DB::transaction(function () use ($documentTypes, $status, $permissions, $newsTypes, $divisions, $groups, $teamCategory, $committeeCategory) {
 
                 foreach ($documentTypes as $documentType) {
-                    $type = DocumentType::where('name', $documentType)->first();
-
-                    if (!is_null($type)) {
-                        continue;
-                    } else {
-
-                        DocumentType::create([
-                            "name" => $documentType
-                        ]);
-                    }
+                    DocumentType::firstOrCreate([
+                        "name" => $documentType
+                    ]);
                 }
 
                 foreach ($status as $value) {
-                    $stat = Status::where('name', $value)->first();
-                    if (!is_null($stat)) {
-                        continue;
-                    } else{
-                        Status::create([
-                            "name" => $value
-                        ]);
-                    }
+                    Status::firstOrCreate([
+                        "name" => $value
+                    ]);
                 }
 
                 foreach ($permissions as $value) {
-                    $permission = Permission::where('name', $value)->first();
-                    if (!is_null($permission)) {
-                        continue;
-                    } else {
-                        Permission::create([
-                            "name" => $value
-                        ]);
-                    }
+                    Permission::firstOrCreate([
+                        "name" => $value
+                    ]);
                 }
 
                 foreach ($newsTypes as $value) {
-                    $newsType = NewsType::where('name', $value)->first();
-                    if (!is_null($newsType)) {
-                        continue;
-                    } else {
-                        NewsType::create([
-                            'name' => $value
-                        ]);
-                    }
+                    NewsType::firstOrCreate([
+                        'name' => $value
+                    ]);
                 }
 
                 foreach ($divisions as $value) {
-                    $division = Division::where('name', $value)->first();
-                    if (!is_null($division)) {
-                        continue;
-                    } else {
-                        Division::create([
-                            'name' => $value
-                        ]);
-                    }
+                    Division::firstOrCreate([
+                        'name' => $value
+                    ]);
                 }
 
                 foreach ($groups as $value) {
-                    $group = Group::where('name', $value)->first();
-                    if (!is_null($group)) {
-                        continue;
-                    } else {
-                        Group::create([
-                            'name' => $value
-                        ]);
-                    }
+                    Group::firstOrCreate([
+                        'name' => $value
+                    ]);
                 }
 
                 foreach ($teamCategory as $value) {
-                    $category = TeamCategory::where('name', $value)->first();
-                    if (!is_null($category)) {
-                        continue;
-                    } else {
-                        TeamCategory::create([
-                            'name' => $value
-                        ]);
-                    }
+                    TeamCategory::firstOrCreate([
+                        'name' => $value
+                    ]);
+                }
+                
+                foreach ($committeeCategory as $value) {
+                    CommitteeCategory::firstOrCreate([
+                        'name' => $value
+                    ]);
                 }
             });
             $this->info('Default Data Inserted successfully');

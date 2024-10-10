@@ -64,6 +64,11 @@
             ->where('TeamCategory.id', $competions[1]->id)
             ->orderBy('Day.id', 'DESC')
             ->first(['Game.dayID']);
+
+        $season = DB::table('Season')
+        ->select('id')
+        ->orderBy('created_at', 'DESC')
+        ->first();
     @endphp
     <header>
         <div class="headerbox">
@@ -125,10 +130,10 @@
                             <a href="#">{{ $competions[1]->name }}</a>
                             <ul class="sub-current">
                                 @if ($womenDay)
-                                    <li><a href="{{ route('fixtures.show', [$competions[1]->id, $womenDay->dayID]) }}">First
+                                    <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, $womenDay->dayID]) }}">First
                                             Division</a></li>
                                 @else
-                                    <li><a href="{{ route('fixtures.show', [$competions[1]->id, 1]) }}">First
+                                    <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, 1]) }}">First
                                             Division</a></li>
                                 @endif
                                 <li><a href="#">Second Division</a></li>
@@ -245,10 +250,10 @@
                         <a href="#">{{ $competions[1]->name }}</a>
                         <ul class="#">
                             @if ($womenDay)
-                                <li><a href="{{ route('fixtures.show', [$competions[1]->id, $womenDay->dayID]) }}">First
+                                <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, $womenDay->dayID]) }}">First
                                         Division</a></li>
                             @else
-                                <li><a href="{{ route('fixtures.show', [$competions[1]->id, 1]) }}">First Division</a>
+                                <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, 1]) }}">First Division</a>
                                 </li>
                             @endif
                             <li><a href="#">Second Division</a></li>

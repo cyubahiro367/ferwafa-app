@@ -438,39 +438,39 @@
             initialize("map-canvas-contact");
         }
 
-        /* -- Quick Contact Form */
-        $("#btn_submit").on("click", function (event) {
-            event.preventDefault();
-            var mydata = $("form").serialize();
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: "contact.php",
-                data: mydata,
-                success: function (data) {
-                    if (data["type"] == "error") {
-                        $("#alert-msg").html(data["msg"]);
-                        $("#alert-msg").removeClass("alert-msg-success");
-                        $("#alert-msg").addClass("alert-msg-failure");
-                        $("#alert-msg").show();
-                    } else {
-                        $("#alert-msg").html(data["msg"]);
-                        $("#alert-msg").addClass("alert-msg-success");
-                        $("#alert-msg").removeClass("alert-msg-failure");
-                        $("#input_name").val("");
-                        $("#input_email").val("");
-                        $("#input_phone").val("");
-                        $("#textarea_message").val("");
-                        $("#alert-msg").show();
-                    }
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    alert(textStatus);
-                },
-            });
-            return false;
-            $("#contact-form").attr("action", "saveQuery").submit();
-        });
+        // /* -- Quick Contact Form */
+        // $("#btn_submit").on("click", function (event) {
+        //     event.preventDefault();
+        //     var mydata = $("form").serialize();
+        //     $.ajax({
+        //         type: "POST",
+        //         dataType: "json",
+        //         url: "contact.php",
+        //         data: mydata,
+        //         success: function (data) {
+        //             if (data["type"] == "error") {
+        //                 $("#alert-msg").html(data["msg"]);
+        //                 $("#alert-msg").removeClass("alert-msg-success");
+        //                 $("#alert-msg").addClass("alert-msg-failure");
+        //                 $("#alert-msg").show();
+        //             } else {
+        //                 $("#alert-msg").html(data["msg"]);
+        //                 $("#alert-msg").addClass("alert-msg-success");
+        //                 $("#alert-msg").removeClass("alert-msg-failure");
+        //                 $("#input_name").val("");
+        //                 $("#input_email").val("");
+        //                 $("#input_phone").val("");
+        //                 $("#textarea_message").val("");
+        //                 $("#alert-msg").show();
+        //             }
+        //         },
+        //         error: function (xhr, textStatus, errorThrown) {
+        //             alert(textStatus);
+        //         },
+        //     });
+        //     return false;
+        //     $("#contact-form").attr("action", "saveQuery").submit();
+        // });
     }); /* -- Document Ready /- */
 
     $(window).on("resize", function () {

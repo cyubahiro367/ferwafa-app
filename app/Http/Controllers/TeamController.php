@@ -52,7 +52,9 @@ class TeamController extends Controller
 
         return view('admin.create-team', [
             "categories" => $teamCategory,
-            "divisions" => $divisions
+            "divisions" => $categoryID == 1 ? array_filter($divisions, function($item){
+                                return $item['id'] == 2;
+                            }) : $divisions
         ]);
     }
 

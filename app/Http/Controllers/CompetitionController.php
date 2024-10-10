@@ -4,26 +4,42 @@ namespace App\Http\Controllers;
 
 use App\Models\Day;
 use App\Models\Division;
+use App\Models\Game;
 use App\Models\Group;
+use App\Models\Season;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TeamStatistic;
 use App\Models\TopScore;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CompetitionController extends Controller
 {
     public function listDays()
-    {
+    {     
         $days = Day::all();
+
+        if (is_null($days)) {
+            return redirect("/")->with('error', 'No days Found');
+        }
 
         return view('competition-menus', [
             'days' => $days
         ]);
     }
 
-    public function show($divisionID, $categoryID, $id, ?int $groupID = null)
+    public function show(Request $request, int $seasonID, int $divisionID, int $categoryID, int $id, ?int $groupID = null)
     {
+        // dd("jjhbg");
+        $season = empty($request->all()) ? Season::orderBy('created_at', 'DESC')->first() : Season::where('id', $request->seasonID)->first();
+        
+        if (is_null($season)) {
+            return redirect('/')
+                ->with('error', 'Season not found');
+        }
+
         $division = Division::where('id', $divisionID)->first();
         
         if (is_null($division)) {
@@ -39,7 +55,8 @@ class CompetitionController extends Controller
         }
 
         $days = Day::all();
-        $day = Day::find($id);
+
+        $day = empty($request->all()) ? Day::where('id', $id)->first() : Day::where('id', $request->dayID)->first();
 
         if(!is_null($groupID)){
             $group = Group::where('id', $groupID)->first();
@@ -55,6 +72,7 @@ class CompetitionController extends Controller
                 'awayTeam.name AS awayTeam',
                 'Game.stadeName AS stadium',
                 'Game.date',
+                'Game.seasonID',
                 'Game.homeTeamGoals',
                 'Game.awayTeamGoals',
                 'Game.isPlayed',
@@ -62,7 +80,8 @@ class CompetitionController extends Controller
             ->join('Team as homeTeam', 'Game.homeTeamID', '=', 'homeTeam.id')
             ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
             ->join('Day', 'Game.dayID', '=', 'Day.id')
-            ->where('dayID', $id)
+            ->where('Game.seasonID', $season->id)
+            ->where('Day.id', $id)
             ->where('homeTeam.categoryID', $categoryID)
             ->where('awayTeam.categoryID', $categoryID)
             ->where('homeTeam.divisionID', $divisionID)
@@ -85,7 +104,8 @@ class CompetitionController extends Controller
             ->join('Team as homeTeam', 'Game.homeTeamID', '=', 'homeTeam.id')
             ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
             ->join('Day', 'Game.dayID', '=', 'Day.id')
-            ->where('dayID', $id)
+            ->where('Game.seasonID', $season->id)
+            ->where('Day.id', $id)
             ->where('homeTeam.categoryID', $categoryID)
             ->where('awayTeam.categoryID', $categoryID)
             ->where('homeTeam.divisionID', $divisionID)
@@ -93,11 +113,26 @@ class CompetitionController extends Controller
             ->get();
         }
 
+        $seasons = Season::all()->toArray();
+
+        if (empty($seasons)) {
+            return redirect("/")->with('error', 'No Season Found');
+        }
+
+        $seasons = array_map(function($item){
+            $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
+            $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
+
+            return $item;
+        }, $seasons);
+        
         return view('fixtures', [
             'day' => $day,
             'days' => $days,
             'games' => $games,
-            "categoryID" => (int)$categoryID
+            "categoryID" => (int)$categoryID,
+            'seasons' => $seasons,
+            'seasonID' => $season->id
         ]);
     }
     public function menFirstDivisionTable($divisionID, $categoryID, ?int $groupID = null)

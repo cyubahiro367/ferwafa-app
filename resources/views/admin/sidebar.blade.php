@@ -34,13 +34,11 @@
 <body>
     {{-- <div class="loader"></div> --}}
     @php
-        $category = DB::table('TeamCategory')
-            ->select('id', 'name')
-            ->get();
+        $category = DB::table('TeamCategory')->select('id', 'name')->get();
 
-        $divisions = DB::table('Division')
-            ->select('id', 'name')
-            ->get();
+        $divisions = DB::table('Division')->select('id', 'name')->get();
+
+        $season = DB::table('Season')->select('id')->orderBy('created_at', 'DESC')->first();
     @endphp
     <div id="app">
         <div class="main-wrapper main-wrapper-1">
@@ -96,8 +94,7 @@
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
                         <a href="{{ url('/') }}">
-                            <img alt="image" src="{{ asset('asset/images/file.png') }}"
-                                class="header-logo" />
+                            <img alt="image" src="{{ asset('asset/images/file.png') }}" class="header-logo" />
                             <span class="logo-name">Ferwafa</span>
                         </a>
                     </div>
@@ -160,18 +157,25 @@
                                         <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                 data-feather="mail"></i><span>Men</span></a>
                                         <ul class="dropdown-menu">
+                                            {{-- <li class="dropdown">
+                                                <a class="nav-link" href="{{ route('team', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li> --}}
                                             <li class="dropdown">
-                                                <a class="nav-link" href="{{ route('team', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li>
-                                            <li class="dropdown">
-                                                <a class="nav-link" href="{{ route('team', [$divisions[1]->id, $category[0]->id]) }}">Second Division</a></li>
+                                                <a class="nav-link"
+                                                    href="{{ route('team', [$divisions[1]->id, $category[0]->id]) }}">Second
+                                                    Division</a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="dropdown">
                                         <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                 data-feather="mail"></i><span>Women</span></a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="nav-link" href="{{ route('team', [$divisions[0]->id, $category[1]->id]) }}">First Division</a></li>
-                                            <li><a class="nav-link" href="{{ route('team', [$divisions[1]->id, $category[1]->id]) }}">Second Division</a></li>
+                                            <li><a class="nav-link"
+                                                    href="{{ route('team', [$divisions[0]->id, $category[1]->id]) }}">First
+                                                    Division</a></li>
+                                            <li><a class="nav-link"
+                                                    href="{{ route('team', [$divisions[1]->id, $category[1]->id]) }}">Second
+                                                    Division</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -184,18 +188,25 @@
                                         <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                 data-feather="mail"></i><span>Men</span></a>
                                         <ul class="dropdown-menu">
+                                            {{-- <li class="dropdown">
+                                                <a class="nav-link" href="{{ route('fixtures', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li> --}}
                                             <li class="dropdown">
-                                                <a class="nav-link" href="{{ route('fixtures', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li>
-                                            <li class="dropdown">
-                                                <a class="nav-link" href="{{ route('fixtures', [$divisions[1]->id, $category[0]->id]) }}">Second Division</a></li>
+                                                <a class="nav-link"
+                                                    href="{{ route('fixtures', [$divisions[1]->id, $category[0]->id]) }}">Second
+                                                    Division</a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="dropdown">
                                         <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                 data-feather="mail"></i><span>Women</span></a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="nav-link" href="{{ route('fixtures', [$divisions[0]->id, $category[1]->id]) }}">First Division</a></li>
-                                            <li><a class="nav-link" href="{{ route('fixtures', [$divisions[1]->id, $category[1]->id]) }}">Second Division</a></li>
+                                            <li><a class="nav-link"
+                                                    href="{{ route('fixtures', [$divisions[0]->id, $category[1]->id]) }}">First
+                                                    Division</a></li>
+                                            <li><a class="nav-link"
+                                                    href="{{ route('fixtures', [$divisions[1]->id, $category[1]->id]) }}">Second
+                                                    Division</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -216,23 +227,29 @@
                                         <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                 data-feather="mail"></i><span>Men</span></a>
                                         <ul class="dropdown-menu">
+                                            {{-- <li class="dropdown">
+                                                <a class="nav-link" href="{{ route('top-score', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li> --}}
                                             <li class="dropdown">
-                                                <a class="nav-link" href="{{ route('top-score', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li>
-                                            <li class="dropdown">
-                                                <a class="nav-link" href="{{ route('top-score', [$divisions[1]->id, $category[0]->id]) }}">Second Division</a></li>
+                                                <a class="nav-link"
+                                                    href="{{ route('top-score', [$divisions[1]->id, $category[0]->id]) }}">Second
+                                                    Division</a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="dropdown">
                                         <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                 data-feather="mail"></i><span>Women</span></a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="nav-link" href="{{ route('top-score', [$divisions[0]->id, $category[1]->id]) }}">First Division</a></li>
-                                            <li><a class="nav-link" href="{{ route('top-score', [$divisions[1]->id, $category[1]->id]) }}">Second Division</a></li>
+                                            <li><a class="nav-link"
+                                                    href="{{ route('top-score', [$divisions[0]->id, $category[1]->id]) }}">First
+                                                    Division</a></li>
+                                            <li><a class="nav-link"
+                                                    href="{{ route('top-score', [$divisions[1]->id, $category[1]->id]) }}">Second
+                                                    Division</a></li>
                                         </ul>
                                     </li>
                                 </ul>
                             </li>
-
                         @else
                             @can('is-dcm')
                                 <li class="dropdown">
@@ -289,18 +306,25 @@
                                             <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                     data-feather="mail"></i><span>Men</span></a>
                                             <ul class="dropdown-menu">
+                                                {{-- <li class="dropdown">
+                                                    <a class="nav-link" href="{{ route('team', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li> --}}
                                                 <li class="dropdown">
-                                                    <a class="nav-link" href="{{ route('team', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li>
-                                                <li class="dropdown">
-                                                    <a class="nav-link" href="{{ route('team', [$divisions[1]->id, $category[0]->id]) }}">Second Division</a></li>
+                                                    <a class="nav-link"
+                                                        href="{{ route('team', [$divisions[1]->id, $category[0]->id]) }}">Second
+                                                        Division</a>
+                                                </li>
                                             </ul>
                                         </li>
                                         <li class="dropdown">
                                             <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                     data-feather="mail"></i><span>Women</span></a>
                                             <ul class="dropdown-menu">
-                                                <li><a class="nav-link" href="{{ route('team', [$divisions[0]->id, $category[1]->id]) }}">First Division</a></li>
-                                                <li><a class="nav-link" href="{{ route('team', [$divisions[1]->id, $category[1]->id]) }}">Second Division</a></li>
+                                                <li><a class="nav-link"
+                                                        href="{{ route('team', [$divisions[0]->id, $category[1]->id]) }}">First
+                                                        Division</a></li>
+                                                <li><a class="nav-link"
+                                                        href="{{ route('team', [$divisions[1]->id, $category[1]->id]) }}">Second
+                                                        Division</a></li>
                                             </ul>
                                         </li>
                                     </ul>
@@ -313,18 +337,25 @@
                                             <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                     data-feather="mail"></i><span>Men</span></a>
                                             <ul class="dropdown-menu">
+                                                {{-- <li class="dropdown">
+                                                    <a class="nav-link" href="{{ route('fixtures', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li> --}}
                                                 <li class="dropdown">
-                                                    <a class="nav-link" href="{{ route('fixtures', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li>
-                                                <li class="dropdown">
-                                                    <a class="nav-link" href="{{ route('fixtures', [$divisions[1]->id, $category[0]->id]) }}">Second Division</a></li>
+                                                    <a class="nav-link"
+                                                        href="{{ route('fixtures', [$divisions[1]->id, $category[0]->id]) }}">Second
+                                                        Division</a>
+                                                </li>
                                             </ul>
                                         </li>
                                         <li class="dropdown">
                                             <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                     data-feather="mail"></i><span>Women</span></a>
                                             <ul class="dropdown-menu">
-                                                <li><a class="nav-link" href="{{ route('fixtures', [$divisions[0]->id, $category[1]->id]) }}">First Division</a></li>
-                                                <li><a class="nav-link" href="{{ route('fixtures', [$divisions[1]->id, $category[1]->id]) }}">Second Division</a></li>
+                                                <li><a class="nav-link"
+                                                        href="{{ route('fixtures', [$divisions[0]->id, $category[1]->id]) }}">First
+                                                        Division</a></li>
+                                                <li><a class="nav-link"
+                                                        href="{{ route('fixtures', [$divisions[1]->id, $category[1]->id]) }}">Second
+                                                        Division</a></li>
                                             </ul>
                                         </li>
                                     </ul>
@@ -337,18 +368,25 @@
                                             <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                     data-feather="mail"></i><span>Men</span></a>
                                             <ul class="dropdown-menu">
+                                                {{-- <li class="dropdown">
+                                                    <a class="nav-link" href="{{ route('top-score', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li> --}}
                                                 <li class="dropdown">
-                                                    <a class="nav-link" href="{{ route('top-score', [$divisions[0]->id, $category[0]->id]) }}">First Division</a></li>
-                                                <li class="dropdown">
-                                                    <a class="nav-link" href="{{ route('top-score', [$divisions[1]->id, $category[0]->id]) }}">Second Division</a></li>
+                                                    <a class="nav-link"
+                                                        href="{{ route('top-score', [$divisions[1]->id, $category[0]->id]) }}">Second
+                                                        Division</a>
+                                                </li>
                                             </ul>
                                         </li>
                                         <li class="dropdown">
                                             <a href="#" class="menu-toggle nav-link has-dropdown"><i
                                                     data-feather="mail"></i><span>Women</span></a>
                                             <ul class="dropdown-menu">
-                                                <li><a class="nav-link" href="{{ route('top-score', [$divisions[0]->id, $category[1]->id]) }}">First Division</a></li>
-                                                <li><a class="nav-link" href="{{ route('top-score', [$divisions[1]->id, $category[1]->id]) }}">Second Division</a></li>
+                                                <li><a class="nav-link"
+                                                        href="{{ route('top-score', [$divisions[0]->id, $category[1]->id]) }}">First
+                                                        Division</a></li>
+                                                <li><a class="nav-link"
+                                                        href="{{ route('top-score', [$divisions[1]->id, $category[1]->id]) }}">Second
+                                                        Division</a></li>
                                             </ul>
                                         </li>
                                     </ul>

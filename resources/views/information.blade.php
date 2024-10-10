@@ -55,6 +55,17 @@
             <h3>Leave A Message</h3>
             <span>Feel Free to Contact Us</span>
           </div>
+          @if (session()->has('error'))
+            <div class="alert alert-danger">
+                {{ session()->get('error') }}
+            </div>
+          @endif
+
+          @if (session()->has('message'))
+                        <div class="alert alert-success">
+                            {{ session()->get('message') }}
+                        </div>
+                        @endif
           <form method="POST" action="{{ route('post.send.info') }}" id="contact-form" class="contactus-form">
             @csrf
             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -136,13 +147,14 @@
             </div>
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="form-group">
-                <input
+                <button id="btn_submit">Send Message</button>
+                {{-- <input
                   type="submit"
                   value="Send Message"
                   id="btn_submit"
                   title="Send"
                   name="post"
-                />
+                /> --}}
               </div>
             </div>
             <div id="alert-msg" class="alert-msg"></div>

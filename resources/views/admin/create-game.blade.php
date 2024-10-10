@@ -102,17 +102,18 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- <div class="form-group row mb-4">
-                                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Start time</label>
+                                                <div class="form-group row mb-4">
+                                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Season</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <input type="datetime" name="starttime" class="form-control">
-                                                        @error('starttime')
-                                                        <div style="color: red;">
-                                                            {{ $message }}
-                                                        </div>
-                                                        @enderror
+                                                         <select name="seasonID" class="form-control selectric">
+                                                            @foreach($seasons as $season)
+                                                            <option value="{{ $season['id'] }}">{{ $season['from'] }} - {{ $season['to'] }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
-                                                </div> -->
+                                                    </div>
+                                                    </div>
+                                                </div>
 
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Stade</label>

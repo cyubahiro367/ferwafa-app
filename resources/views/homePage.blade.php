@@ -7,11 +7,9 @@
     <title>Ferwafa</title>
     <meta content="Ferwafa" name="description" />
     <!-- Mobile Metas -->
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        name="viewport" />
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
     <!-- Standard Favicon -->
-    <link rel="icon" type="image/x-icon"
-        href="{{ asset('images/favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}" />
 
     <!-- For iPhone 4 Retina display: -->
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ asset('images/apple-icon-114x114.png') }}" />
@@ -52,7 +50,8 @@
                             @else
                                 <div class="item">
                         @endif
-                        <img src="{{ route('news.images.show', $topResult['image_url']) }}" alt="slide1" style="width: 100vw; height: auto" />
+                        <img src="{{ route('news.images.show', $topResult['image_url']) }}" alt="slide1"
+                            style="width: 100vw; height: auto" />
                         <div class="carousel-caption">
                             <div class="container">
                                 <div class="col-md-5 col-sm-6 col-xs-9 pull-right">
@@ -67,7 +66,8 @@
                                             </p>
                                         </div>
                                         <div class="col-md-12 col-sm-12 col-xs-6 no-padding">
-                                            <a href="{{ route('single.news', $topResult['id']) }}" title="Register now">Read
+                                            <a href="{{ route('single.news', $topResult['id']) }}"
+                                                title="Register now">Read
                                                 More</a>
                                         </div>
                                     </div>
@@ -168,7 +168,7 @@
             <div class="section-padding"></div>
             <div class="container">
                 <div class="section-header">
-                    <h3>Our Partener</h3>
+                    <h3>Our Partners</h3>
                 </div>
                 <div class="testimonial-carousel">
                     <div class="testimonial-block row">
@@ -188,8 +188,8 @@
                                 </div>
                                 <div class="testimonial-box testimonial-left" style="height: 136px">
                                     <a href="https://olympicrwanda.org/" target="_blank">
-                                        <img src="{{ asset('images/Logo Institu CNOSR sans fond.png') }}" alt="testimonial1"
-                                            style="width: 144px; height: 136px" />
+                                        <img src="{{ asset('images/Logo Institu CNOSR sans fond.png') }}"
+                                            alt="testimonial1" style="width: 144px; height: 136px" />
                                     </a>
                                 </div>
                             </div>

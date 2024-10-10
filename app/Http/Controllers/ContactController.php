@@ -30,14 +30,18 @@ class ContactController extends Controller
             "content" => "required|string"
         ]);
 
-        Mail::to(Env('INFO_EMAIL'))->send(new sendInfo(
-            $request->name,
-            $request->email,
-            $request->subject,
-            $request->content
-        ));
-
-        return redirect('/information');
+        try {
+            Mail::to(env('MAIL_FROM_ADDRESS'))->send(new sendInfo(
+                $request->name,
+                $request->email,
+                $request->subject,
+                $request->content
+            ));
+    
+            return redirect('/information')->with('message', 'Thank you for messaging us!');
+        } catch (\Throwable $th) {
+            return redirect('/information')->with('error', 'failed to send information message');
+        }
     }
 
     public function sendWhistleblowers(Request $request)

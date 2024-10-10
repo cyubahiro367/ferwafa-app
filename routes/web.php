@@ -9,6 +9,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\IndependentBodiesController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\ReportController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\TopScoreController;
 use App\Http\Controllers\UsersController;
 use App\Models\Game;
 use App\Models\Group;
+use App\Models\Season;
 use App\Models\Status;
 use App\Models\Team;
 use App\Models\TeamStatistic;
@@ -65,6 +67,9 @@ Route::get('/committe', [CommitteController::class, 'listCommitte'])->name('comm
 Route::get('/add-committe', [CommitteController::class, 'addMember'])->name('add.committe');
 Route::post('/create-committe', [CommitteController::class, 'createCommitte'])->name('create.committe');
 Route::delete('/delete/{id}', [CommitteController::class, 'deleteCommitte'])->whereNumber('id')->name('delete.committe');
+
+Route::get('/committe/{id}', [IndependentBodiesController::class, 'index'])->name('independent-bodies');
+Route::post("/messages", [IndependentBodiesController::class, 'sendMessage'])->name("independent.message");
 
 Route::get('/report', [ReportController::class, 'get'])->name('report');
 Route::get('/document/{fileName}', [ReportController::class, 'getReportDoc'])->name('report.doc');
@@ -186,7 +191,7 @@ Route::post('/create-day', [DayController::class, 'createDay'])->name('create.da
 Route::delete('/delete-day/{id}', [DayController::class, 'deleteDay'])->whereNumber('id')->name('delete.day.season');
 
 
-Route::get('/games/{divisionID}/{categoryID}', [GameController::class, 'listGames'])->whereNumber(['divisionID', 'categoryID'])->name('fixtures');
+Route::get('/games/{divisionID}/{categoryID}', [GameController::class, 'listGames'])->whereNumber(['seasonID', 'divisionID', 'categoryID'])->name('fixtures');
 Route::get('/add-game/{divisionID}/{categoryID}', [GameController::class, 'addGame'])->whereNumber(['divisionID', 'categoryID'])->name('add.game');
 Route::get('/edit-game/{divisionID}/{categoryID}/{id}', [GameController::class, 'addMatchResult'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('game.page.edit');
 Route::post('/create-game/{divisionID}/{categoryID}', [GameController::class, 'createGame'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('create.game');
@@ -197,10 +202,11 @@ Route::get('/edit-fixture/{id}', [GameController::class, 'updateFixture'])->wher
 
 Route::get('/men-first-division-table/{divisionID}/{categoryID}/{groupID?}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['divisionID', 'categoryID'])->name('men.first-division-table');
 
-Route::get('/men-first-division/day/{divisionID}/{categoryID}/{id}/{groupID?}', [CompetitionController::class, 'show'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('fixtures.show');
+Route::get('/men-first-division/day/{seasonID}/{divisionID}/{categoryID}/{id}/{groupID?}', [CompetitionController::class, 'show'])->whereNumber(['seasonID', 'divisionID', 'categoryID', 'id'])->name('fixtures.show');
 
 Route::get('/division/{divisionID}/{categoryID}', function(){
     return view('divisionTwo', [
+        "seasonID" => Season::orderBy('created_at', 'DESC')->first()->id,
         "groups" => Group::all(['id', 'name'])
     ]);
 })->whereNumber(['divisionID', 'categoryID'])->name('division');

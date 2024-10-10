@@ -1,15 +1,4 @@
-<!DOCTYPE html>
 
-<head>
-    <!-- Basic -->
-    <meta charset="utf-8" />
-    <title>Ferwafa</title>
-    <meta content="Ferwafa" name="description" />
-    <!-- Mobile Metas -->
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-</head>
-
-<body>
 
     <footer class="footer-main container-fluid no-padding">
         <!-- Container -->

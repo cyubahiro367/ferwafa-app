@@ -2191,7 +2191,31 @@
     -o-transition: all 1s ease 0s;
 }
 
+.sendMessage {
+    color: #fff;
+    font-size: 14px;
+    display: inline-block;
+    font-family: "Raleway", sans-serif;
+    font-weight: 600;
+    background-color: #133e8d;
+    padding: 9px 37px;
+    letter-spacing: 1.12px;
+    text-transform: uppercase;
+    border: none;
+    text-decoration: none;
+    margin: 42px 15px 0;
+    transition: all 1s ease 0s;
+    -webkit-transition: all 1s ease 0s;
+    -moz-transition: all 1s ease 0s;
+    -o-transition: all 1s ease 0s;
+}
+
 .comment-form input[type="submit"]:hover {
+    color: #fff;
+    background-color: #222;
+}
+
+.sendMessage:hover {
     color: #fff;
     background-color: #222;
 }
@@ -3460,7 +3484,34 @@
     outline: none;
 }
 
+.sendMessage {
+    padding: 5px 36px;
+    border-radius: 0;
+    background-color: #133e8d;
+    border: none;
+    color: #fff;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.56px;
+    line-height: 30px;
+    transition: all 1s ease 0s;
+    -webkit-transition: all 1s ease 0s;
+    -moz-transition: all 1s ease 0s;
+    -o-transition: all 1s ease 0s;
+    margin-top: 10px;
+    -webkit-box-shadow: none;
+    -webkit-appearance: none;
+    box-shadow: none;
+    outline: none;
+}
+
 .contact-form-section input[type="submit"]:hover {
+    background-color: #999;
+}
+
+.sendMessage:hover {
     background-color: #999;
 }
 

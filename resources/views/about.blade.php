@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="howwecan-top">
-                        <img src="../asset/images/file.png" alt="howwecan3" width="300" height="200" />
+                        <img src="{{ asset('../asset/images/file.png')}}" alt="howwecan3" width="300" height="200" />
                     </div>
                 </div>
                 <div class="col-md-8 col-sm-6 col-xs-12">
