@@ -1,71 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
+@include('mainMenuBar', ['name' => 'Other Career'])
 
-<head>
-    <!-- Basic -->
-    <meta charset="utf-8" />
-    <title>Ferwafa</title>
-    <meta content="Ferwafa" name="description" />
-    <!-- Mobile Metas -->
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <link href="/static/CACHE/css/output.718a7af03b3d.css" media="screen" rel="stylesheet" type="text/css" />
-    <script src="http://127.0.0.1:35729/livereload.js"></script>
-</head>
+<!-- Blog News -->
+<div
+class="container-fluid eventlist blog upcoming-event latest-blog no-padding"
+>
+<div class="section-padding"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 content-area">
+      <div class="row" >
+        {{-- @foreach ($tenders as $tender)
+        <div class="col-md-12 col-sm-12 col-xs-12 blog-box">
+          <article class="type-post">
+            <div class="entry-cover">
+              <a href="blogpost-page.html"
+                ><img
+                  src="{{ route('news.images.show', $news['image_url']) }}"
+                  alt="blog"
+                  width="297"
+                  height="298"
+              /></a>
+            </div>
+            <div class="entry-block">
 
-<body>
-    <div id="layout">
-        @include('header')
-        <div class="section-title" style="background: url(../static/img/background/footballnew.jpg)">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h1 class="banner-title-main">Other Careers</h1>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="breadcrumbs">
-                            <ul>
-                                <li><a href="/">Home</a></li>
-                                <li>Other Careers</li>
-                            </ul>
-                        </div>
-                    </div>
+              <div class="entry-meta">
+                <div class="post-date">
+                  <a href="#" title=""
+                    ><i class="fa fa-calendar" aria-hidden="true"></i
+                    ><span>{{ date('jS M Y', strtotime($news['created_at'])) }} </span></a
+                  >
                 </div>
+              </div>
+              <div class="entry-title">
+                <a
+                  href="blogpost-page.html"
+                  title="We know Flipper lives in a world full of wonder flying there under under the sea"
+                >
+                  <h3>
+                    <a href="{{ route('single.news', $news['id']) }}">
+                        {{ $news['title'] }}
+                    </a>
+                  </h3>
+                </a>
+              </div>
+              <div class="entry-content">
+                <p>
+                    {{ $news['caption'] }}
+                </p>
+              </div>
+              <a
+                href="{{ route('single.news', $news['id']) }}"
+                class="learn-more"
+                title="Learn More"
+                >Learn More</a
+              >
             </div>
+          </article>
         </div>
+        @endforeach --}}
+      </div>
 
-        <section class="section-report">
-            <h3 class="main-report-title">Other Careers</h3>
-            <div class="report-container">
-                @foreach ($otherCareers as $otherCareer)
-                    <div class="report">
-                        <div class="report-image">
-                            <a><img alt="" src="/static/img/icons/document.png" /></a>
-                            <a><img alt="" class="click-report" src="/static/img/icons/click.png" /></a>
-                        </div>
-                        <div class="report-title">
-                            <a href="{{ route('report.doc', $otherCareer['url']) }}" target="_blank">
-                                <p>{{ $otherCareer['title'] }}</p>
-                            </a>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            <div class="pagination">
-                <ul>
-                    <li class="arrow-pagination">
-                        <a href="#!"><img alt="" src="/static/img/icons/arrow-left.png" /></a>
-                    </li>
-                    <li><a href="#!">1</a></li>
-                    <li><a href="#!">2</a></li>
-                    <li><a href="#!">3</a></li>
-                    <li><a href="#!">4</a></li>
-                    <li><a href="#!">5</a></li>
-                    <li class="arrow-pagination">
-                        <a href="#!"><img alt="" src="/static/img/icons/arrow-right.png" /></a>
-                    </li>
-                </ul>
-            </div>
-        </section>
-        @include('footer')
-    </div>
-</body>
+      <!-- Ow Pagination -->
+      <div class="ow-pagination">
+        <nav>
+          <ul class="pager">
+            <li class="page-prv">
+              <a href="#" title="Previous"
+                ><i class="fa fa-long-arrow-left" aria-hidden="true"></i
+                >Previous Event</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fa fa-th" aria-hidden="true"></i></a>
+            </li>
+            <li class="page-next">
+              <a href="#" title="Next"
+                >Next Event<i
+                  class="fa fa-long-arrow-right"
+                  aria-hidden="true"
+                ></i
+              ></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+  </div>
+</div>
+<div class="section-padding"></div>
+</div>
+<!-- Latest News /- -->
+
+@include('footer')

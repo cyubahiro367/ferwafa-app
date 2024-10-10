@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Division;
 use App\Models\Game;
 use App\Models\Team;
 use App\Models\TeamCategory;
@@ -21,22 +22,39 @@ class TeamController extends Controller
     }
 
 
-    public function addTeam($categoryID)
+    public function addTeam($divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
+        $division = Division::where('id', $divisionID)->first();
+        
+        if (is_null($division)) {
+            return redirect('/')
+                ->with('error', 'Division not found');
+        }
+
         $teamCategory = TeamCategory::all()->toArray();
 
         if (empty($teamCategory)) {
-            return redirect("/team/$categoryID")
+            return redirect("/team/$divisionID/$categoryID")
                 ->with('error', 'Create Team Category first');
         }
 
+        $divisions = Division::all()->toArray();
+
+        if (empty($divisions)) {
+            return redirect("/team/$divisionID/$categoryID")
+                ->with('error', 'Contact Support');
+        }
+
         return view('admin.create-team', [
-            "categories" => $teamCategory
+            "categories" => $teamCategory,
+            "divisions" => $categoryID == 1 ? array_filter($divisions, function($item){
+                                return $item['id'] == 2;
+                            }) : $divisions
         ]);
     }
 
@@ -46,22 +64,41 @@ class TeamController extends Controller
             Auth::logout();
             return redirect('/');
         }
+
         $request->validate([
             "name" => "required|string",
             "logo" => "required|file|max:5000|mimes:png,jpg,jpeg,svg",
-            "categoryID" => "required|integer"
+            "categoryID" => "required|integer",
+            "divisionID" => "required|integer"
 
         ]);
+
+        $division = Division::where('id', $request->divisionID)->first();
+        
+        if (is_null($division)) {
+            return redirect('/')
+                ->with('error', 'Division not found');
+        }
+
+        $teamCategory = TeamCategory::where('id', $request->categoryID)->first();
+        
+        if (is_null($teamCategory)) {
+            return redirect('/')
+                ->with('error', 'Team category not found');
+        }
 
         $path = $request->logo->store('team');
+        
+        DB::transaction(function() use($request, $path, $teamCategory, $division){
+            Team::create([
+                "name" => $request->name,
+                "categoryID" => $teamCategory->id,
+                "logo" => $path,
+                "divisionID" => $division->id
+            ]);
+        });
 
-        Team::create([
-            "name" => $request->name,
-            "categoryID" => $request->categoryID,
-            "logo" => $path
-        ]);
-
-        return redirect("/team/$categoryID")
+        return redirect("/team/$request->divisionID/$categoryID")
             ->with('message', 'Member is added successfully');
     }
 
@@ -73,17 +110,25 @@ class TeamController extends Controller
         }
     }
 
-    public function listTeam($categoryID)
+    public function listTeam($divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
+        $division = Division::where('id', $divisionID)->first();
+
+        if (is_null($division)) {
+            return redirect(`/team/$divisionID/$categoryID`)
+                ->with('error', 'Division not found');
+        }
+
         $teams = DB::table("Team AS a")
             ->join("TeamCategory AS b", "a.categoryID", "=", "b.id")
             ->select(["a.id", "a.name", "a.logo", "b.name AS category"])
             ->where('categoryID', $categoryID)
+            ->where('divisionID', $divisionID)
             ->orderBy('name', 'asc')
             ->get();
 
@@ -105,12 +150,20 @@ class TeamController extends Controller
         ]);
     }
 
-    public function editTeam($categoryID, $id)
+    public function editTeam($divisionID, $categoryID, $id)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
+
+        $division = Division::where('id', $divisionID)->first();
+        
+        if (is_null($division)) {
+            return redirect('/')
+                ->with('error', 'Division not found');
+        }
+
         $team = Team::find($id);
         $teamCategory = TeamCategory::all()->toArray();
 
@@ -118,9 +171,17 @@ class TeamController extends Controller
             return redirect()->back()->with('errors', 'Team not found');
         }
 
+        $divisions = Division::all()->toArray();
+
+        if (empty($divisions)) {
+            return redirect("/team/$divisionID/$categoryID")
+                ->with('error', 'Contact Support');
+        }
+
         return view('admin.update-team', [
             'team' => $team,
-            'categories' => $teamCategory
+            'categories' => $teamCategory,
+            'divisions' => $divisions
         ]);
     }
 
@@ -135,9 +196,23 @@ class TeamController extends Controller
         $request->validate([
             "name" => "required|string",
             "logo" => "required|file|max:5000|mimes:png,jpg,jpeg,svg",
-            "categoryID" => "required|integer"
-
+            "categoryID" => "required|integer",
+            "divisionID" => "required|integer"
         ]);
+        
+        $division = Division::where('id', $request->divisionID)->first();
+        
+        if (is_null($division)) {
+            return redirect('/')
+                ->with('error', 'Division not found');
+        }
+
+        $teamCategory = TeamCategory::where('id', $request->categoryID)->first();
+        
+        if (is_null($teamCategory)) {
+            return redirect('/')
+                ->with('error', 'Team category not found');
+        }
 
         $team = Team::find($id);
 
@@ -151,18 +226,26 @@ class TeamController extends Controller
         $team->name = $request->name;
         $team->logo = $path;
         $team->categoryID = $request->categoryID;
+        $team->divisionID = $request->divisionID;
         $team->save();
 
-        return redirect("/team/$categoryID")
+        return redirect("/team/$request->divisionID/$categoryID")
             ->with('message', 'updated successfully');
     }
 
 
-    public function deleteTeam($categoryID,$id)
+    public function deleteTeam($divisionID, $categoryID,$id)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
+        }
+
+        $division = Division::where('id', $divisionID)->first();
+
+        if (is_null($division)) {
+            return redirect(`/team/$divisionID/$categoryID`)
+                ->with('error', 'Division not found');
         }
 
         $team = Team::find($id);
@@ -181,7 +264,7 @@ class TeamController extends Controller
         Storage::delete($team->logo);
         $team->delete();
 
-        return redirect("/team/$categoryID")
+        return redirect("/team/$divisionID/$categoryID")
             ->with('message', 'deleted successfully');
     }
 }

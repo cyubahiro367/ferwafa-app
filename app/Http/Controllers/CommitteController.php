@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Committe;
+use App\Models\CommitteeCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,12 @@ class CommitteController extends Controller
             Auth::logout();
             return redirect('/');
         }
-        return view('admin.create-committe');
+
+        $committees = CommitteeCategory::all()->toArray();
+
+        return view('admin.create-committe', [
+           "committees" => $committees
+        ]);
     }
 
     public function createCommitte(Request $request)
@@ -35,18 +41,27 @@ class CommitteController extends Controller
         }
 
         $request->validate([
+            "committeeCategoryID" => "required|integer|min:1",
             "name" => "required|string",
             "position" => "required|string|max:255",
             "image" => "required|file|max:5000|mimes:png,jpg,jpeg"
 
         ]);
 
+        $committeeCategory = CommitteeCategory::where('id', $request->committeeCategoryID)->First();
+
+        if(is_null($committeeCategory))
+        {
+            return redirect()->back()->with('error', 'Committee category is not found');
+        }
+
         $path = $request->image->store('committe');
 
         Committe::create([
             "name" => $request->name,
             "position" => $request->position,
-            "image_url" => $path
+            "image_url" => $path,
+            'committeeCategoryID' => $request->committeeCategoryID
         ]);
 
         return redirect('/committe')
@@ -92,7 +107,7 @@ class CommitteController extends Controller
 
     public function listAllCommitte()
     {
-        $committe = Committe::all();
+        $committe = Committe::where("committeeCategoryID", 11)->get();
 
         $finalCommitte = [];
 

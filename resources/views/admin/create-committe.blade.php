@@ -33,6 +33,11 @@
                         <div class="card-header">
                             <h4>Add Member</h4>
                         </div>
+                        @if (session()->has('error'))
+                            <div class="badge badge-danger">
+                                {{ session()->get('error') }}
+                            </div>
+                        @endif
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <div class="row">
@@ -40,6 +45,18 @@
                                         <div class="card-body">
                                             <form method="POST" action="{{ route('create.committe') }}" enctype="multipart/form-data">
                                                 @csrf
+                                                <div class="form-group row mb-4">
+                                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Category</label>
+                                                    <div class="col-sm-12 col-md-7">
+                                                        
+                                                        <select name="committeeCategoryID" class="form-control selectric">
+                                                            <option >Select Category</option>
+                                                            @foreach($committees as $committee)
+                                                                <option value="{{ $committee['id'] }}">{{ $committee['name'] }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Name</label>
                                                     <div class="col-sm-12 col-md-7">

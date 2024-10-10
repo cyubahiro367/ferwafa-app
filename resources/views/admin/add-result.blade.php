@@ -38,7 +38,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card-body">
-                                            <form method="POST" action="{{ route('create.game.result',[request()->route('categoryID'), $gameID]) }}" enctype="multipart/form-data">
+                                            <form method="POST" action="{{ route('create.game.result',[request()->route('divisionID'), request()->route('categoryID'), $gameID]) }}" enctype="multipart/form-data">
                                                 @csrf
                                                 @method('PUT')
                                                 <div class="form-group row mb-4">

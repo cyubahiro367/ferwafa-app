@@ -49,7 +49,7 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Title</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <input type="text" name="title" class="form-control">
+                                                        <input type="text" name="title" class="form-control" required>
                                                         @error('title')
                                                         <div style="color: red;">
                                                             {{ $message }}
@@ -60,7 +60,7 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Caption</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <input type="text" name="caption" class="form-control">
+                                                        <input type="text" name="caption" class="form-control" required>
                                                         @error('caption')
                                                         <div style="color: red;">
                                                             {{ $message }}
@@ -71,7 +71,7 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">status</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <select name="statusID" class="form-control selectric">
+                                                        <select name="statusID" class="form-control selectric" required>
                                                             @foreach($statuses as $status)
                                                             <option value="{{ $status->id }}">{{ $status->name }}</option>
                                                             @endforeach
@@ -81,7 +81,7 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">News Type</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <select name="newsTypeID" class="form-control selectric">
+                                                        <select name="newsTypeID" class="form-control selectric" required>
                                                             @foreach($newsTypes as $newsType)
                                                             <option value="{{ $newsType->id }}">{{ $newsType->name }}</option>
                                                             @endforeach
@@ -91,7 +91,7 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Is Top News</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <select name="is_top" class="form-control selectric">
+                                                        <select name="is_top" class="form-control selectric" required>
                                                             <option value="0">False</option>
                                                             <option value="1">True</option>
                                                         </select>
@@ -100,7 +100,7 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Select Image</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <input type="file" id="imageInput" name="image" class="form-control">
+                                                        <input type="file" id="imageInput" name="image" class="form-control" required>
                                                         @error('image')
                                                         <div style="color: red;">
                                                             {{ $message }}

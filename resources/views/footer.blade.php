@@ -1,123 +1,130 @@
-<!DOCTYPE html>
 
-<head>
-    <!-- Basic -->
-    <meta charset="utf-8" />
-    <title>Ferwafa</title>
-    <meta content="Ferwafa" name="description" />
-    <!-- Mobile Metas -->
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <link href="./static/CACHE/css/output.718a7af03b3d.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="./static/img/federation/ferwafa.png" rel="shortcut icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
-    <script src="http://127.0.0.1:35729/livereload.js"></script>
-</head>
-
-<body>
-
-    <footer class="footer-3 design-bg" id="footer">
-
-        <div class="top-footer">
-            <div class="col-lg-12">
-                <div class="logo-footer">
-                    <h2>FERWAFA</h2>
+    <footer class="footer-main container-fluid no-padding">
+        <!-- Container -->
+        <div class="container">
+            <!-- Footer About -->
+            <div class="footer-about">
+                <div class="logo-block">
+                    <img src="{{asset('asset/images/file.png')}}" alt="logo" width="150" height="150" />
+                </div>
+                <div class="footer-about-content">
+                    <h3 class="block-title">About Ferwafa</h3>
+                    <p>
+                        Rwandese Federation of Association Football (FERWAFA) was founded in
+                        1972 and became a FIFA and FIFA affiliate in 1978. From the above
+                        setting, Ferwafa operates within the framework of the FIFA/CAF
+                        regulations; holding itself to respect them and its members to
+                        comply with its own statute and the directives/decisions from
+                        FIFA/CAF. FERWAFA’s motto is “Unity, Discipline and Victory”,
+                    </p>
                 </div>
             </div>
-            <ul class="social">
-                <li>
-                    <div class="new-social-icon">
-                        <a class="facebook" href="https://www.facebook.com/RwandaFA/" target="_blank"><i
-                                style="color: #133e8d" class="fa fa-facebook"></i></a>
-                    </div>
-                </li>
-                <li>
-                    <div class="new-social-icon">
-                        <a class="twitter-icon" href="https://twitter.com/FERWAFA" target="_blank"><i
-                                style="color: #133e8d" class="fa fa-twitter"></i></a>
-                    </div>
-                </li>
-                <li>
-                    <div class="new-social-icon">
-                        <a class="instagram-icon" href="https://www.instagram.com/ferwafa/" target="_blank"><i
-                                style="color: #133e8d" class="fa fa-instagram"></i></a>
-                    </div>
-                </li>
-                <li>
-                    <div class="new-social-icon">
-                        <a class="youtube" href="https://www.youtube.com/@ferwafatv761" target="_blank"><i
-                                style="color: #133e8d" class="fa fa-youtube"></i></a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="links-footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-5">
-                        <div class="info-links">
-                            <h5>Ferwafa</h5>
-                            <img src="{{ asset('static/img/federation/ferwafa.png') }}" />
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-7">
-                        <div class="info-links">
-                            <h5>Reach Out</h5>
-                            <ul>
-                                <li>
-                                    <i style="color: #fff" class="fa fa-mobile-phone"></i>
-                                    &nbsp;<a href="#!">+250 788 608 988</a>
-                                </li>
-                                <li>
-                                    <i style="color: #fff" class="fa fa-location-arrow"></i>&nbsp;<a href="#!">23
-                                        KG 234 ST</a>
-                                </li>
-                                <li>
-                                    <i style="color: #fff" class="fa fa-envelope"></i>&nbsp;<a
-                                        style="text-transform: lowercase" href="#!">ferwafa@yahoo.fr</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-5">
-                        <div class="info-links">
-                            <h5>Key links</h5>
-                            <ul>
-                                <li><a href="#!">About</a></li>
-                                <li><a href="#!">Team</a></li>
-                                <li><a href="#!">Statistics</a></li>
-                                <li><a href="#!">Contact</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-7">
-                        <div class="info-links">
-                            <h5>Subscribe</h5>
-                            <p style="color: #f3f3f3">
-                                You can enter your E mail to subscribe to our website, so as to receive the latest news.
+            <!-- Footer About /- -->
+
+            <div class="row">
+                <!-- Quick Links Widget -->
+                <aside class="col-md-4 col-sm-6 col-xs-6 widget widget_quick_links">
+                    <h3 class="block-title">Quick links</h3>
+                    <ul>
+                        <li><a title="News" href="#">News</a></li>
+                        <li><a title="Events" href="#">Events</a></li>
+                        <li><a title="Career" href="#">Career</a></li>
+                        <li>
+                            <a title="Contact us" href="#">Contact us</a>
+                        </li>
+                    </ul>
+                </aside>
+                <!-- Quick Links Widget /- -->
+
+                <!-- ContactUs Widget -->
+                <aside class="col-md-4 col-sm-6 col-xs-6 widget widget_contactus">
+                    <h3 class="block-title">REACH OUT</h3>
+                    <div class="contactinfo-box">
+                        <div class="contactinfo-box">
+                            <i class="fa fa-phone"></i>
+                            <p>
+                                <a title="+250 788 608 988" href="tel:+250 788 608 988">+250 788 608 988</a>
                             </p>
-                            <div class="subscribe">
-                                <input placeholder="Enter mail" type="email" /><button>
-                                    <i class="fa fa-paper-plane"></i>
-                                </button>
-                            </div>
                         </div>
+                        <div class="contactinfo-box">
+                            <i class="fa fa-location-arrow"></i>
+                            <p>
+                                <a title="PO. Box:2000 Kigali-Rwanda" href="tel:PO. Box:2000 Kigali-Rwanda">PO. Box:2000
+                                    Kigali-Rwanda</a>
+                            </p>
+                        </div>
+                        <div class="contactinfo-box">
+                            <i class="fa fa-envelope"></i>
+                            <p style="margin-left: 25px">
+                                <a href="mailto:ferwafa@yahoo.fr" title="ferwafa@yahoo.fr">ferwafa@yahoo.fr</a>
+                            </p>
+                        </div>
+                </aside>
+                <!-- ContactUs Widget /- -->
+
+                <!-- NewsLetter Widget -->
+                <aside class="col-md-4 col-sm-12 col-xs-12 widget widget_newsletter">
+                    <h3 class="block-title">News Letter</h3>
+                    <p>You can enter your E mail to subscribe to our website, so as to receive the latest news.</p>
+                    <div class="input-group">
+                        <input type="text" placeholder="Enter Address" class="form-control" />
+                        <span class="input-group-btn">
+                            <button type="button" title="Subscribe" class="btn">Go</button>
+                        </span>
                     </div>
-                </div>
+                    <ul style="display: flex; justify-content:center; align-items:center; gap: 24px">
+                        <li>
+                            <a title="Facebook" data-toggle="tooltip" href="https://www.facebook.com/RwandaFA/"><i
+                                    class="fa fa-facebook"></i></a>
+                        </li>
+                        <li>
+                            <a title="Twitter" data-toggle="tooltip" href="https://twitter.com/FERWAFA"><i
+                                    class="fa fa-twitter"></i></a>
+                        </li>
+                        <li>
+                            <a title="Instagram" data-toggle="tooltip" href="https://www.instagram.com/ferwafa/"><i
+                                    class="fa fa-instagram"></i></a>
+                        </li>
+                        <li>
+                            <a title="Youtube" data-toggle="tooltip" href="https://www.youtube.com/@ferwafatv761"><i
+                                    class="fa fa-youtube"></i></a>
+                        </li>
+                    </ul>
+                </aside>
+                <!-- NewsLetter Widget /- -->
             </div>
         </div>
-        <div class="footer-down">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <p>
-                            &copy <span id="currentYear"></span> Ferwafa . All Rights
-                            Reserved
-                        </p>
-                    </div>
+        <!-- Container /- -->
+
+        <!-- Container -->
+        <div class="container">
+            <div class="footer-menu" style="display:flex; justify-content:center; align-atimes: center">
+                <!-- Copyrights -->
+                <div class="copyrights ow-pull-left">
+                    <p>Copyright &copy; <span id="currentYear"></span> FERWAFA. All rights Reserved</p>
                 </div>
+                <!-- Copyrights /- -->
             </div>
+            <!-- Footer Menu /- -->
         </div>
+        <!-- Container /- -->
     </footer>
-    <script src="./static/CACHE/js/output.037fb98d23ee.js"></script>
+
+    <script>
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+    </script>
+
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+
+    <!-- Library - Js -->
+    <script src="{{ asset('libraries/lib.js') }}"></script>
+    <!-- Bootstrap JS File v3.3.5 -->
+    <script src="{{ asset('libraries/jquery.countdown.min.js') }}"></script>
+
+    <script src="{{ asset('libraries/lightslider-master/lightslider.js') }}"></script>
+    <!-- Library - Google Map API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn3Z6i1AYolP3Y2SGis5qhbhRwmxxo1wU"></script>
+    <script src="{{ asset('js/functions.js') }}"></script>
 </body>

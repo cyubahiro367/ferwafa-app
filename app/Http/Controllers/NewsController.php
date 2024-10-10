@@ -491,6 +491,34 @@ class NewsController extends Controller
 
     public function getNews()
     {
+        $topNews = DB::select('SELECT a.*,b.image_url,c.name FROM 
+                                News AS a
+                                JOIN NewsUrl AS b
+                                ON b.news_id = a.id
+                                JOIN Status AS c
+                                ON a.statusID = c.id
+                                WHERE  c.id = 1 AND a.is_top = 1
+                                ORDER BY created_at DESC
+                                LIMIT 4');
+
+        $topResults = [];
+
+        foreach ($topNews as $topNew) {
+            $fileUrl = explode('/', $topNew->image_url)[1];
+            $singleTopNews = [
+                "id" => $topNew->id,
+                "title" => $topNew->title,
+                "caption" => $topNew->caption,
+                "description" => $topNew->description,
+                "is_top" => $topNew->is_top,
+                "status" => $topNew->name,
+                "created_at" => Carbon::parse($topNew->created_at)->format('d-m-Y'),
+                "updated_at" => Carbon::parse($topNew->updated_at)->format('d-m-Y'),
+                "image_url" => $fileUrl
+            ];
+            array_push($topResults, $singleTopNews);
+        }                        
+
         $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
                                 News AS a
                                 JOIN NewsUrl AS b
@@ -536,6 +564,7 @@ class NewsController extends Controller
         }
 
         return view('homePage', [
+            "topResults" => $topResults,
             "result" => $result,
             'partners' => $finalPartners
         ]);

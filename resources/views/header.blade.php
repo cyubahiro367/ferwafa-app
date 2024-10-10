@@ -6,12 +6,35 @@
     <title>Ferwafa</title>
     <meta content="Ferwafa" name="description" />
     <!-- Mobile Metas -->
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <link href="{{ asset('static/CACHE/css/output.718a7af03b3d.css') }}" media="screen" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('static/img/federation/ferwafa.png') }}" rel="shortcut icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        name="viewport />
+    <!-- Standard Favicon -->
+    <link rel="icon" type="image/x-icon"
+        href="{{ asset('images/favicon.ico') }}" />
 
-    <script src="http://127.0.0.1:35729/livereload.js"></script>
+    <!-- For iPhone 4 Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ asset('images/apple-icon-114x114.png') }}" />
+
+    <!-- For iPad: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ asset('images/apple-icon-72x72.png') }}" />
+
+    <!-- For iPhone: -->
+    <link rel="apple-touch-icon-precomposed" href="{{ asset('images/apple-icon-57x57.png') }}" />
+
+    <!-- Library - Bootstrap v3.3.5 -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('libraries/lib.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('libraries/Stroke-Gap-Icon/stroke-gap-icon.css') }}" />
+
+    <!-- Custom - Common CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/navigation-menu.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('libraries/lightslider-master/lightslider.css') }}" />
+
+    <!-- Custom - Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/shortcode.css') }}" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -41,6 +64,11 @@
             ->where('TeamCategory.id', $competions[1]->id)
             ->orderBy('Day.id', 'DESC')
             ->first(['Game.dayID']);
+
+        $season = DB::table('Season')
+        ->select('id')
+        ->orderBy('created_at', 'DESC')
+        ->first();
     @endphp
     <header>
         <div class="headerbox">
@@ -57,13 +85,11 @@
                         <div style="margin-top: 20px;">
                             <marquee behavior="" direction="left">
                                 @if ($menDay)
-                                    <h2 style="color:  #133E8D"> <a
-                                            href="{{ route('fixtures.show', [$competions[0]->id, $menDay->dayID]) }}"
-                                            style="color:  #133E8D">About Primus National League Click here</a></h2>
+                                    <h2 style="color:  #133E8D"> <a href="#}" style="color:  #133E8D">About Primus
+                                            National League Click here</a></h2>
                                 @else
-                                    <h2 style="color:  #133E8D"> <a
-                                            href="{{ route('fixtures.show', [$competions[0]->id, 1]) }}"
-                                            style="color:  #133E8D">About Primus National League Click here</a></h2>
+                                    <h2 style="color:  #133E8D"> <a href="#" style="color:  #133E8D">About Primus
+                                            National League Click here</a></h2>
                                 @endif
                             </marquee>
                         </div>
@@ -90,10 +116,10 @@
                             <a href="#">{{ $competions[0]->name }}</a>
                             <ul class="sub-current">
                                 @if ($menDay)
-                                    <li><a href="{{ route('fixtures.show', [$competions[0]->id, $menDay->dayID]) }}">Primus
+                                    <li><a href="#}">Primus
                                             National</a></li>
                                 @else
-                                    <li><a href="{{ route('fixtures.show', [$competions[0]->id, 1]) }}">Primus
+                                    <li><a href="#">Primus
                                             National</a></li>
                                 @endif
                                 <li><a href="#">Second Division</a></li>
@@ -104,10 +130,10 @@
                             <a href="#">{{ $competions[1]->name }}</a>
                             <ul class="sub-current">
                                 @if ($womenDay)
-                                    <li><a href="{{ route('fixtures.show', [$competions[1]->id, $womenDay->dayID]) }}">First
+                                    <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, $womenDay->dayID]) }}">First
                                             Division</a></li>
                                 @else
-                                    <li><a href="{{ route('fixtures.show', [$competions[1]->id, 1]) }}">First
+                                    <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, 1]) }}">First
                                             Division</a></li>
                                 @endif
                                 <li><a href="#">Second Division</a></li>
@@ -210,10 +236,10 @@
                         <a href="#">{{ $competions[0]->name }}</a>
                         <ul class="#">
                             @if ($menDay)
-                                <li><a href="{{ route('fixtures.show', [$competions[0]->id, $menDay->dayID]) }}">Primus
+                                <li><a href="#}">Primus
                                         National</a></li>
                             @else
-                                <li><a href="{{ route('fixtures.show', [$competions[0]->id, 1]) }}">Primus
+                                <li><a href="#">Primus
                                         National</a></li>
                             @endif
                             <li><a href="#">Second Division</a></li>
@@ -224,10 +250,10 @@
                         <a href="#">{{ $competions[1]->name }}</a>
                         <ul class="#">
                             @if ($womenDay)
-                                <li><a href="{{ route('fixtures.show', [$competions[1]->id, $womenDay->dayID]) }}">First
+                                <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, $womenDay->dayID]) }}">First
                                         Division</a></li>
                             @else
-                                <li><a href="{{ route('fixtures.show', [$competions[1]->id, 1]) }}">First Division</a>
+                                <li><a href="{{ route('fixtures.show', [$season->id, $competions[1]->id, 1]) }}">First Division</a>
                                 </li>
                             @endif
                             <li><a href="#">Second Division</a></li>
@@ -317,7 +343,19 @@
         </ul>
         <!-- End Menu-->
     </div>
-    <script src="./static/CACHE/js/output.037fb98d23ee.js"></script>
+
+    <!-- built files will be auto injected -->
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+
+    <!-- Library - Js -->
+    <script src="{{ asset('libraries/lib.js') }}"></script>
+    <!-- Bootstrap JS File v3.3.5 -->
+    <script src="{{ asset('libraries/jquery.countdown.min.js') }}"></script>
+
+    <script src="{{ asset('libraries/lightslider-master/lightslider.js') }}"></script>
+    <!-- Library - Google Map API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn3Z6i1AYolP3Y2SGis5qhbhRwmxxo1wU"></script>
+    <script src="{{ asset('js/functions.js') }}"></script>
 </body>
 
 </html>

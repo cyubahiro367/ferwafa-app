@@ -29,16 +29,16 @@
         <section class="section">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div style="height: 90%" class="card">
                         <div class="card-header">
                             <h4>Create Top Score {{request()->route('categoryID')}}</h4>
                         </div>
-                        <div class="card-body p-0">
+                        <div  class="card-body p-0">
                             <div class="table-responsive">
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card-body">
-                                            <form method="POST" action="{{ route('create.top-score',[request()->route('categoryID')]) }}" enctype="multipart/form-data">
+                                            <form method="POST" action="{{ route('create.top-score',[request()->route('divisionID'), request()->route('categoryID')]) }}" enctype="multipart/form-data">
                                                 @csrf
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">names</label>

@@ -17,6 +17,7 @@ class Committe extends Model
         'age',
         'nationality',
         'description',
-        'image_url'
+        'image_url',
+        'committeeCategoryID'
     ];
 }

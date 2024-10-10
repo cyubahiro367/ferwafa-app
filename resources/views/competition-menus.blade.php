@@ -1,68 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12 col-sm-12 col-xs-12 bg-red rounded shadow-sm p-4">
+            <div class="entry-meta text-center">
+                <br>
+                <!-- Season Select -->
+                <form action="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id]) }}" method="GET">
+                    {{-- <div class="mb-4"> --}}
+                        <label for="seasonSelect" class="form-label fs-5">Select Season:</label>
+                        <select id="seasonSelect" name="seasonID" class="form-select form-select-lg" required>
+                            @foreach ($seasons as $season)
+                                <option value="{{ $season['id'] }}"  {{ $seasonID === $season['id'] ? 'selected' : '' }}>
+                                    {{ $season['from'] }} - {{ $season['to'] }}
+                                </option>
+                            @endforeach
+                        </select>
 
-<head>
-    <!-- Basic -->
-    <meta charset="utf-8" />
-    <title>Ferwafa</title>
-    <meta content="Ferwafa" name="description" />
-    <!-- Mobile Metas -->
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <link href="./static/CACHE/css/output.718a7af03b3d.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="./static/img/federation/ferwafa.png" rel="shortcut icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+                        <label for="daySelect" class="form-label fs-5">Select Day:</label>
+                        <select id="daySelect" name="dayID" class="form-select form-select-lg" required>
+                            @foreach ($days as $value)
+                                <option value="{{ $value->id }}"  {{ $day->id === $value->id ? 'selected' : '' }}>
+                                    {{ $value->abbreviation }}
+                                </option>
+                            @endforeach
+                        </select>
 
-    <script src="http://127.0.0.1:35729/livereload.js"></script>
+                        <button type="submit" class="btn btn-primary btn-md">Show martch</button>
+                    {{-- </div> --}}
+                </form>
 
-    <style>
-        .menus {
-            list-style: none;
-        }
-
-        .menus li {
-            display: inline-block;
-            margin-right: 10px;
-            /* add spacing between items */
-        }
-    </style>
-</head>
-
-<body>
-    <section class="section">
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1">
-                    <div class="card card-primary">
-                        <div class="row m-0">
-                            <div class="col-12 col-md-12 col-lg-12 p-0">
-                                <div class="col-12 col-md-12 card-header text-center">
-                                    <ul class="menus">
-                                        @if ($day)
-                                            <li><a href="{{ route('fixtures.show', [$categoryID, $day->id]) }}">Results
-                                                    & Fixtures</a></li> /
-                                            <li><a
-                                                    href="{{ route('men.first-division-table', $categoryID) }}">Standing</a>
-                                            </li>
-                                        @else
-                                            <h1>No Available Fixtures</h1>
-                                        @endif
-                                    </ul>
-                                    <ul class="menus">
-                                        @foreach ($days as $day)
-                                            <li><a
-                                                    href="{{ route('fixtures.show', [$categoryID, $day->id]) }}">{{ $day->abbreviation }}</a>
-                                            </li>/
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                <div class="row m-0">
-
-                                </div>
-                            </div>
+                <!-- Day Results and Fixtures -->
+                <div class="mb-4">
+                    @if ($day)
+                        <div class="btn-group">
+                            <a href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id]) }}" class="btn btn-primary">
+                                Results & Fixtures
+                            </a>
+                            <a href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id, request()->route('groupID')]) }}" class="btn btn-secondary">
+                                Standing
+                            </a>
                         </div>
-                    </div>
+                    @else
+                        <h4 class="text-danger">No Available Fixtures</h4>
+                    @endif
+                </div>
+                <!-- Day Select -->
+                <div class="days-select mb-4">
+                    <br>
+                    {{-- <label class="form-label fs-5">Select Day:</label>
+                    <div class="d-flex justify-content-center flex-wrap">
+                        @foreach ($days as $day)
+                            <a href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id]) }}" class="btn btn-outline-dark mx-2 my-2">
+                                {{ $day->abbreviation }}
+                            </a>
+                        @endforeach
+                    </div> --}}
                 </div>
             </div>
         </div>
-    </section>
-</body>
+    </div>
+</div>

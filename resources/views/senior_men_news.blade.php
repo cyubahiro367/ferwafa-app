@@ -48,7 +48,7 @@
                     </div>
                     <!-- content Column Left -->
                     @foreach ($result as $news)
-                        <div class="col-lg-6 col-xl-6">
+                        <div class="col-lg-4 col-xl-4">
                             <div class="single-home-news">
                                 <div class="news-img">
                                     <img src="{{ route('news.images.show', $news['image_url']) }}">

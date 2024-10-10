@@ -9,6 +9,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\IndependentBodiesController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\ReportController;
@@ -20,6 +21,8 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TopScoreController;
 use App\Http\Controllers\UsersController;
 use App\Models\Game;
+use App\Models\Group;
+use App\Models\Season;
 use App\Models\Status;
 use App\Models\Team;
 use App\Models\TeamStatistic;
@@ -42,8 +45,8 @@ Route::get('/home', function () {
 Route::get('/', [NewsController::class, 'getNews']);
 Route::get('/news-file/{fileName}', [NewsController::class, 'getNewsImage'])->name('news.images.show');
 Route::get('/all-news', [NewsController::class, 'allNews'])->name('all.news');
-Route::get('/single-news/{id}', [NewsController::class, 'getSingleNews'])->name('single.news');
-Route::delete('/news/{id}', [NewsController::class, 'deleteNews'])->name('news.delete');
+Route::get('/single-news/{id}', [NewsController::class, 'getSingleNews'])->whereNumber('id')->name('single.news');
+Route::delete('/news/{id}', [NewsController::class, 'deleteNews'])->whereNumber('id')->name('news.delete');
 Route::get('/about', [CommitteController::class, 'listAllCommitte'])->name('about');
 Route::get('/all-news', [NewsController::class, 'allNews'])->name('all.news');
 
@@ -63,7 +66,10 @@ Route::get('/development-youth-news', [NewsController::class, 'youth'])->name('y
 Route::get('/committe', [CommitteController::class, 'listCommitte'])->name('committe');
 Route::get('/add-committe', [CommitteController::class, 'addMember'])->name('add.committe');
 Route::post('/create-committe', [CommitteController::class, 'createCommitte'])->name('create.committe');
-Route::delete('/delete/{id}', [CommitteController::class, 'deleteCommitte'])->name('delete.committe');
+Route::delete('/delete/{id}', [CommitteController::class, 'deleteCommitte'])->whereNumber('id')->name('delete.committe');
+
+Route::get('/committe/{id}', [IndependentBodiesController::class, 'index'])->name('independent-bodies');
+Route::post("/messages", [IndependentBodiesController::class, 'sendMessage'])->name("independent.message");
 
 Route::get('/report', [ReportController::class, 'get'])->name('report');
 Route::get('/document/{fileName}', [ReportController::class, 'getReportDoc'])->name('report.doc');
@@ -75,9 +81,9 @@ Route::get('/gallery-view', [GalleryController::class, 'galleryList'])->name('ad
 Route::get('/add-photo', [GalleryController::class, 'addGallery'])->name('post.photo.view');
 Route::post('/create-photo', [GalleryController::class, 'createGallery'])->name('post.photo');
 
-Route::get('/edit-gallery/{id}', [GalleryController::class, 'edit'])->name('edit.gallery');
-Route::put('/update-gallery/{id}', [GalleryController::class, 'update'])->name('update.photo');
-Route::delete('/delete-gallery/{id}', [GalleryController::class, 'destroy'])->name('delete.photo');
+Route::get('/edit-gallery/{id}', [GalleryController::class, 'edit'])->whereNumber('id')->name('edit.gallery');
+Route::put('/update-gallery/{id}', [GalleryController::class, 'update'])->whereNumber('id')->name('update.photo');
+Route::delete('/delete-gallery/{id}', [GalleryController::class, 'destroy'])->whereNumber('id')->name('delete.photo');
 
 
 Route::get('/admin', [AdminController::class, 'adminView'])->name('dashboard.view');
@@ -89,7 +95,7 @@ Route::get('/create-event', [AdminController::class, 'createEventsView'])->name(
 Route::post('/post-event', [EventController::class, 'createEvent'])->name('post.event');
 Route::get('/event-file/{fileName}', [EventController::class, 'getEventImage'])->name('events.images.show');
 Route::get('/all-events', [EventController::class, 'allEvents'])->name('all.events');
-Route::get('/single-event/{id}', [EventController::class, 'getSingleEvent'])->name('single.event');
+Route::get('/single-event/{id}', [EventController::class, 'getSingleEvent'])->whereNumber('id')->name('single.event');
 
 Route::get('/send-key', [SendingKeyController::class, 'sendKey'])->name('send.key');
 Route::post('/sending-key', [SendingKeyController::class, 'sendingKey'])->name('sending.key');
@@ -113,17 +119,17 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/users', [UsersController::class, 'getUsers'])->name('users.view');
-Route::delete('/user/{id}', [UsersController::class, 'deleteSingleUser'])->name('users.delete');
+Route::delete('/user/{id}', [UsersController::class, 'deleteSingleUser'])->whereNumber('id')->name('users.delete');
 
 
 Route::get('/parteners', [PartnerController::class, 'listPartner'])->name('partner');
 Route::get('/add-partener', [PartnerController::class, 'addPartner'])->name('add.partner');
 Route::post('/create-partener', [PartnerController::class, 'createPartner'])->name('create.partner');
-Route::delete('/delete-partner/{id}', [PartnerController::class, 'deletePartner'])->name('delete.partner');
+Route::delete('/delete-partner/{id}', [PartnerController::class, 'deletePartner'])->whereNumber('id')->name('delete.partner');
 Route::get('/partner-doc/{fileName}', [PartnerController::class, 'getPartnerImageDoc'])->name('partner.doc');
 
 Route::post('/create', [ReportController::class, 'create'])->name('create.report');
-Route::delete('/report-delete/{id}', [ReportController::class, 'deleteReport'])->name('delete.report');
+Route::delete('/report-delete/{id}', [ReportController::class, 'deleteReport'])->whereNumber('id')->name('delete.report');
 
 Route::get('/document', [DocumentController::class, 'showDocumentPage'])->name('document.page.show');
 Route::get('/games-rules', [DocumentController::class, 'showGameRules'])->name('laws.page.show');
@@ -133,48 +139,48 @@ Route::get('/tender', [DocumentController::class, 'showTendersPage'])->name('ten
 Route::get('/jobs', [DocumentController::class, 'showJobsPage'])->name('jobs.page.show');
 Route::get('/other-career', [DocumentController::class, 'showOtherCareerPage'])->name('career.page.show');
 
-Route::put('/update-report/{id}', [ReportController::class, 'updateReport'])->name('update.report');
-Route::get('/edit-report/{id}', [ReportController::class, 'editReport'])->name('document.page.edit');
+Route::put('/update-report/{id}', [ReportController::class, 'updateReport'])->whereNumber('id')->name('update.report');
+Route::get('/edit-report/{id}', [ReportController::class, 'editReport'])->whereNumber('id')->name('document.page.edit');
 
-Route::put('/update-committe/{id}', [CommitteController::class, 'updateCommitte'])->name('update.committe');
-Route::get('/edit-committe/{id}', [CommitteController::class, 'editCommitte'])->name('committe.page.edit');
+Route::put('/update-committe/{id}', [CommitteController::class, 'updateCommitte'])->whereNumber('id')->name('update.committe');
+Route::get('/edit-committe/{id}', [CommitteController::class, 'editCommitte'])->whereNumber('id')->name('committe.page.edit');
 
-Route::put('/update-partner/{id}', [PartnerController::class, 'updatePartner'])->name('update.partner');
-Route::get('/edit-partner/{id}', [PartnerController::class, 'editPartner'])->name('partner.page.edit');
+Route::put('/update-partner/{id}', [PartnerController::class, 'updatePartner'])->whereNumber('id')->name('update.partner');
+Route::get('/edit-partner/{id}', [PartnerController::class, 'editPartner'])->whereNumber('id')->name('partner.page.edit');
 
 
-Route::put('/news/{id}', [NewsController::class, 'updateSingleNews'])->name('news.page.update');
-Route::get('/update-news/{id}', [NewsController::class, 'editSingleNews'])->name('news.page.edit');
+Route::put('/news/{id}', [NewsController::class, 'updateSingleNews'])->whereNumber('id')->name('news.page.update');
+Route::get('/update-news/{id}', [NewsController::class, 'editSingleNews'])->whereNumber('id')->name('news.page.edit');
 
 
 Route::get('/seasons', [SeasonController::class, 'listSeason'])->name('season');
 Route::get('/add-season', [SeasonController::class, 'addSeason'])->name('add.season');
 Route::post('/create-season', [SeasonController::class, 'createSeason'])->name('create.season');
-Route::delete('/delete-season/{id}', [SeasonController::class, 'deleteSeason'])->name('delete.season');
+Route::delete('/delete-season/{id}', [SeasonController::class, 'deleteSeason'])->whereNumber('id')->name('delete.season');
 // Route::put('/update-season/{id}', [SeasonController::class, 'updateSeason'])->name('update.season');
 // Route::get('/edit-season/{id}', [SeasonController::class, 'editSeason'])->name('season.page.edit');
 
-Route::get('/top-score/{categoryID}', [TopScoreController::class, 'listTopScore'])->name('top-score');
-Route::get('/add-top-score/{categoryID}', [TopScoreController::class, 'addTopScore'])->name('add.top-score');
-Route::post('/create-top-score/{categoryID}', [TopScoreController::class, 'createTopScore'])->name('create.top-score');
-Route::delete('/delete-top-score/{categoryID}/{id}', [TopScoreController::class, 'deleteTopScore'])->name('delete.top-score');
-Route::put('/update-top-score/{categoryID}/{id}', [TopScoreController::class, 'updateTopScore'])->name('update.top-score');
-Route::get('/edit-top-score/{categoryID}/{id}', [TopScoreController::class, 'editTopScore'])->name('top-score.page.edit');
+Route::get('/top-score/{divisionID}/{categoryID}', [TopScoreController::class, 'listTopScore'])->whereNumber(['divisionID', 'categoryID'])->name('top-score');
+Route::get('/add-top-score/{divisionID}/{categoryID}', [TopScoreController::class, 'addTopScore'])->whereNumber(['divisionID', 'categoryID'])->name('add.top-score');
+Route::post('/create-top-score/{divisionID}/{categoryID}', [TopScoreController::class, 'createTopScore'])->whereNumber(['divisionID', 'categoryID'])->name('create.top-score');
+Route::delete('/delete-top-score/{categoryID}/{id}', [TopScoreController::class, 'deleteTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('delete.top-score');
+Route::put('/update-top-score/{divisionID}/{categoryID}/{id}', [TopScoreController::class, 'updateTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('update.top-score');
+Route::get('/edit-top-score/{divisionID}/{categoryID}/{id}', [TopScoreController::class, 'editTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('top-score.page.edit');
 
 Route::get('/team-category', [TeamCategoryController::class, 'listTeamCategory'])->name('team-category');
 Route::get('/add-team-category', [TeamCategoryController::class, 'addTeamCategory'])->name('add.team-category');
 Route::post('/create-team-category', [TeamCategoryController::class, 'createTeamCategory'])->name('create.team-category');
-Route::delete('/delete-team-category/{id}', [TeamCategoryController::class, 'deleteTeamCategory'])->name('delete.team-category');
-Route::put('/update-team-category/{id}', [TeamCategoryController::class, 'updateTeamCategory'])->name('update.team-category');
-Route::get('/edit-team-category/{id}', [TeamCategoryController::class, 'editTeamCategory'])->name('team-category.page.edit');
+Route::delete('/delete-team-category/{id}', [TeamCategoryController::class, 'deleteTeamCategory'])->whereNumber('id')->name('delete.team-category');
+Route::put('/update-team-category/{id}', [TeamCategoryController::class, 'updateTeamCategory'])->whereNumber('id')->name('update.team-category');
+Route::get('/edit-team-category/{id}', [TeamCategoryController::class, 'editTeamCategory'])->whereNumber('id')->name('team-category.page.edit');
 
 
-Route::get('/team/{categoryID}', [TeamController::class, 'listTeam'])->name('team');
-Route::get('/add-team/{categoryID}', [TeamController::class, 'addTeam'])->name('add.team');
-Route::post('/create-team/{categoryID}', [TeamController::class, 'createTeam'])->name('create.team');
-Route::delete('/delete-team/{categoryID}/{id}', [TeamController::class, 'deleteTeam'])->name('delete.team');
-Route::put('/update-team/{categoryID}/{id}', [TeamController::class, 'updateTeam'])->name('update.team');
-Route::get('/edit-team/{categoryID}/{id}', [TeamController::class, 'editTeam'])->name('team.page.edit');
+Route::get('/team/{divisionID}/{categoryID}', [TeamController::class, 'listTeam'])->whereNumber(['divisionID', 'categoryID'])->name('team');
+Route::get('/add-team/{divisionID}/{categoryID}', [TeamController::class, 'addTeam'])->whereNumber(['divisionID', 'categoryID'])->name('add.team');
+Route::post('/create-team/{categoryID}', [TeamController::class, 'createTeam'])->whereNumber(['categoryID'])->name('create.team');
+Route::delete('/delete-team/{divisionID}/{categoryID}/{id}', [TeamController::class, 'deleteTeam'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('delete.team');
+Route::put('/update-team/{categoryID}/{id}', [TeamController::class, 'updateTeam'])->whereNumber(['categoryID', 'id'])->name('update.team');
+Route::get('/edit-team/{divisionID}/{categoryID}/{id}', [TeamController::class, 'editTeam'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('team.page.edit');
 Route::get('/team-doc/{fileName}', [TeamController::class, 'getTeamImageDoc'])->name('team.doc');
 
 
@@ -182,18 +188,25 @@ Route::get('/team-doc/{fileName}', [TeamController::class, 'getTeamImageDoc'])->
 Route::get('/days', [DayController::class, 'listDays'])->name('day.season');
 Route::get('/add-day', [DayController::class, 'addDay'])->name('add.day.season');
 Route::post('/create-day', [DayController::class, 'createDay'])->name('create.day.season');
-Route::delete('/delete-day/{id}', [DayController::class, 'deleteDay'])->name('delete.day.season');
+Route::delete('/delete-day/{id}', [DayController::class, 'deleteDay'])->whereNumber('id')->name('delete.day.season');
 
 
-Route::get('/games/{categoryID}', [GameController::class, 'listGames'])->name('fixtures');
-Route::get('/add-game/{categoryID}', [GameController::class, 'addGame'])->name('add.game');
-Route::get('/edit-game/{categoryID}/{id}', [GameController::class, 'addMatchResult'])->name('game.page.edit');
-Route::post('/create-game/{categoryID}', [GameController::class, 'createGame'])->name('create.game');
-Route::delete('/delete-game/{categoryID}/{id}', [GameController::class, 'deleteGame'])->name('delete.game');
-Route::put('/add-result/{categoryID}/{id}', [GameController::class, 'createMatchResult'])->name('create.game.result');
-Route::put('/update-fixture/{categoryID}/{id}', [GameController::class, 'updateGame'])->name('update.fixture');
-Route::get('/edit-fixture/{id}', [GameController::class, 'updateFixture'])->name('game.fixture.edit');
+Route::get('/games/{divisionID}/{categoryID}', [GameController::class, 'listGames'])->whereNumber(['seasonID', 'divisionID', 'categoryID'])->name('fixtures');
+Route::get('/add-game/{divisionID}/{categoryID}', [GameController::class, 'addGame'])->whereNumber(['divisionID', 'categoryID'])->name('add.game');
+Route::get('/edit-game/{divisionID}/{categoryID}/{id}', [GameController::class, 'addMatchResult'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('game.page.edit');
+Route::post('/create-game/{divisionID}/{categoryID}', [GameController::class, 'createGame'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('create.game');
+Route::delete('/delete-game/{categoryID}/{id}', [GameController::class, 'deleteGame'])->whereNumber(['categoryID', 'id'])->name('delete.game');
+Route::put('/add-result/{divisionID}/{categoryID}/{id}', [GameController::class, 'createMatchResult'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('create.game.result');
+Route::put('/update-fixture/{categoryID}/{id}', [GameController::class, 'updateGame'])->whereNumber(['categoryID', 'id'])->name('update.fixture');
+Route::get('/edit-fixture/{id}', [GameController::class, 'updateFixture'])->whereNumber('id')->name('game.fixture.edit');
 
-Route::get('/men-first-division-table/{categoryID}', [CompetitionController::class, 'menFirstDivisionTable'])->name('men.first-division-table');
+Route::get('/men-first-division-table/{divisionID}/{categoryID}/{groupID?}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['divisionID', 'categoryID'])->name('men.first-division-table');
 
-Route::get('/men-first-division/day/{categoryID}/{id}', [CompetitionController::class, 'show'])->name('fixtures.show');
+Route::get('/men-first-division/day/{seasonID}/{divisionID}/{categoryID}/{id}/{groupID?}', [CompetitionController::class, 'show'])->whereNumber(['seasonID', 'divisionID', 'categoryID', 'id'])->name('fixtures.show');
+
+Route::get('/division/{divisionID}/{categoryID}', function(){
+    return view('divisionTwo', [
+        "seasonID" => Season::orderBy('created_at', 'DESC')->first()->id,
+        "groups" => Group::all(['id', 'name'])
+    ]);
+})->whereNumber(['divisionID', 'categoryID'])->name('division');

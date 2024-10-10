@@ -1,74 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
+@include('mainMenuBar', ['name' => 'Grassroots FootBall News'])
 
-<head>
-    <!-- Basic -->
-    <meta charset="utf-8" />
-    <title>Ferwafa</title>
-    <meta content="Ferwafa" name="description" />
-    <!-- Mobile Metas -->
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <link href="./static/CACHE/css/output.718a7af03b3d.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="./static/img/federation/ferwafa.png" rel="shortcut icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-
-    <script src="http://127.0.0.1:35729/livereload.js"></script>
-</head>
-
-<body>
-    <div id="layout">
-        @include('header')
-        <div class="section-title big-title" style="background: url(../static/img/background/footballnew.jpg)">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h1 class="banner-title-main">Grassroots FootBall News</h1>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="breadcrumbs">
-                            <ul>
-                                <li><a href="/">Home</a></li>
-                                <li>News</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+<!-- Blog News -->
+<div
+class="container-fluid eventlist blog upcoming-event latest-blog no-padding"
+>
+<div class="section-padding"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 content-area">
+      <div class="row" >
+        @foreach ($result as $news)
+        <div class="col-md-12 col-sm-12 col-xs-12 blog-box">
+          <article class="type-post">
+            <div class="entry-cover">
+              <a href="{{ route('single.news', $news['id']) }}"
+                ><img
+                  src="{{ route('news.images.show', $news['image_url']) }}"
+                  alt="blog"
+                  width="297"
+                  height="298"
+              /></a>
             </div>
+            <div class="entry-block">
+
+              <div class="entry-meta">
+                <div class="post-date">
+                  <a href="#" title=""
+                    ><i class="fa fa-calendar" aria-hidden="true"></i
+                    ><span>{{ date('jS M Y', strtotime($news['created_at'])) }} </span></a
+                  >
+                </div>
+              </div>
+              <div class="entry-title">
+                <a
+                  href="{{ route('single.news', $news['id']) }}"
+                  title="We know Flipper lives in a world full of wonder flying there under under the sea"
+                >
+                  <h3>
+                    <a href="{{ route('single.news', $news['id']) }}">
+                        {{ $news['title'] }}
+                    </a>
+                  </h3>
+                </a>
+              </div>
+              <div class="entry-content">
+                <p>
+                    {{ $news['caption'] }}
+                </p>
+              </div>
+              <a
+                href="{{ route('single.news', $news['id']) }}"
+                class="learn-more"
+                title="Learn More"
+                >Learn More</a
+              >
+            </div>
+          </article>
         </div>
-        <section class="content-info">
-            <!-- Content Central -->
-            <div class="container padding-top recent-news">
-                <div class="row container-news">
-                    <div class="col-lg-12 col-lg12">
-                        <div class="panel-box">
-                            <div class="titles">
-                                <h4>Grassroots FootBall News</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- content Column Left -->
-                    @foreach ($result as $news)
-                        <div class="col-lg-6 col-xl-6">
-                            <div class="single-home-news">
-                                <div class="news-img">
-                                    <img src="{{ route('news.images.show', $news['image_url']) }}">
-                                </div>
-                                <div class="news-information">
-                                    <h5>
-                                        <a href="{{ route('single.news', $news['id']) }}">{{ $news['title'] }}</a>
-                                    </h5>
-                                    <span class="data-info">{{ date('jS M Y', strtotime($news['created_at'])) }}</span>
-                                    <p>
-                                        {{ $news['caption'] }}
-                                    </p>
-                                    <a href="{{ route('single.news', $news['id']) }}">Read More [+]</a>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-        @include('footer')
-    </div>
-</body>
+        @endforeach
+      </div>
+
+      <!-- Ow Pagination -->
+      <div class="ow-pagination">
+        <nav>
+          <ul class="pager">
+            <li class="page-prv">
+              <a href="#" title="Previous"
+                ><i class="fa fa-long-arrow-left" aria-hidden="true"></i
+                >Previous Event</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fa fa-th" aria-hidden="true"></i></a>
+            </li>
+            <li class="page-next">
+              <a href="#" title="Next"
+                >Next Event<i
+                  class="fa fa-long-arrow-right"
+                  aria-hidden="true"
+                ></i
+              ></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+  </div>
+</div>
+<div class="section-padding"></div>
+</div>
+<!-- Latest News /- -->
+
+@include('footer')
+
