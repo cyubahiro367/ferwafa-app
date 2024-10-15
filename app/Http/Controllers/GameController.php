@@ -185,6 +185,36 @@ class GameController extends Controller
         //     return redirect("/games/$categoryID")->with('error', 'date is invalid you need to select future dates');
         // }
 
+        $homeTeam = Team::where('id', $request->homeTeamID)->first();
+
+        if (is_null($homeTeam)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'Home team not found');
+        }
+
+        $awayTeam = Team::where('id', $request->awayTeamID)->first();
+
+        if (is_null($awayTeam)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'Home team not found');
+        }
+
+        $day = Day::where('id', $request->dayID)->first();
+
+        if (is_null($day)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'Day not found');
+        }
+
+        $homeGame = Game::where([['homeTeamID', $request->homeTeamID], ['dayID', $request->dayID], ["seasonID", $request->seasonID]])->first();
+
+        if (!is_null($homeGame)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', "You have created game of home team on $day->name");
+        }
+
+        $awayGame = Game::where([['homeTeamID', $request->awayTeamID], ['dayID', $request->dayID], ["seasonID", $request->seasonID]])->first();
+
+        if (!is_null($awayGame)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', "You have created game of away team on $day->name");
+        }
+
         try {
             DB::transaction(function () use ($request) {
                 $game = Game::create([
@@ -216,10 +246,10 @@ class GameController extends Controller
                 ]);
             });
 
-            return redirect("/games/$request->seasonID/$divisionID/$categoryID")
+            return redirect("/games/$divisionID/$categoryID")
                 ->with('message', 'Game added successfully');
         } catch (\Throwable $th) {
-            return redirect()->back()->with('something wrong');
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 
