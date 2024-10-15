@@ -267,7 +267,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                {{-- <li class="dropdown">
+                                <li class="dropdown">
                                     <a aria-expanded="false" aria-haspopup="true" role="button" class="dropdown-toggle"
                                         title="Pages" href="#">Independent Bodies<i
                                             class="fa fa-angle-down"></i></a>
@@ -281,48 +281,40 @@
                                             <ul class="dropdown-menu">
                                                 <li>
                                                     <a title="Event List"
-                                                        href="#">Conflicts resolution committee</a>
+                                                        href="{{ route('independent-bodies', 1) }}">Conflicts resolution committee</a>
                                                 </li>
                                                 <li>
-                                                    <a title="Event List" href="{{ route('independent-bodies', 1) }}">Player Status Committee</a>
+                                                    <a title="Event List" href="{{ route('independent-bodies', 2) }}">Player Status Committee</a>
                                                 </li>
                                                 <li>
-                                                    <a title="Event List" href="#">ethic Committee</a>
+                                                    <a title="Event List" href="{{ route('independent-bodies', 3) }}">ethic Committee</a>
                                                 </li>
                                                 <li>
-                                                    <a title="Event List" href="#">Disciplinary committee</a>
+                                                    <a title="Event List" href="{{ route('independent-bodies', 4) }}">Disciplinary committee</a>
                                                 </li>
                                                 <li>
-                                                    <a title="Event List" href="#">Appeal Committee</a>
+                                                    <a title="Event List" href="{{ route('independent-bodies', 5) }}">Appeal Committee</a>
                                                 </li>
                                             </ul>
                                         </li>
-                                        <li class="dropdown">
-                                            <a title="Event Grid" href="#"
-                                                style="display: flex; justify-content:space-between"><span>Judicial Bodies</span>
-                                                <i class="fa fa-angle-right"></i></a>
-                                            <i class="ddl-switch fa fa-angle-down"></i>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a title="Event List"
-                                                        href="#">Audit committee</a>
-                                                </li>
-                                                <li>
-                                                    <a title="Event List" href="#">Electoral Committee</a>
-                                                </li>
-                                                <li>
-                                                    <a title="Event List" href="#">Appeal Electoral Committee</a>
-                                                </li>
-                                                <li>
-                                                    <a title="Event List" href="#">Club licensing|FBI</a>
-                                                </li>
-                                                <li>
-                                                    <a title="Event List" href="#">Club licensing|SIB</a>
-                                                </li>
-                                            </ul>
+                                        <li>
+                                            <a title="Event List"
+                                                href="{{ route('independent-bodies', 6) }}">Audit committee</a>
+                                        </li>
+                                        <li>
+                                            <a title="Event List" href="{{ route('independent-bodies', 7) }}">Electoral Committee</a>
+                                        </li>
+                                        <li>
+                                            <a title="Event List" href="{{ route('independent-bodies', 8) }}">Appeal Electoral Committee</a>
+                                        </li>
+                                        <li>
+                                            <a title="Event List" href="{{ route('independent-bodies', 9) }}">Club licensing|FBI</a>
+                                        </li>
+                                        <li>
+                                            <a title="Event List" href="{{ route('independent-bodies', 10) }}">Club licensing|SIB</a>
                                         </li>
                                     </ul>
-                                </li> --}}
+                                </li>
                                 <li class="dropdown">
                                     <a aria-expanded="false" aria-haspopup="true" role="button"
                                         class="dropdown-toggle" title="Pages" href="#">Contact Us <i

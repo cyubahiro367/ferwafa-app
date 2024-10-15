@@ -44,7 +44,7 @@ class CommitteController extends Controller
             "committeeCategoryID" => "required|integer|min:1",
             "name" => "required|string",
             "position" => "required|string|max:255",
-            "image" => "required|file|max:5000|mimes:png,jpg,jpeg"
+            "image" => "nullable|file|max:5000|mimes:png,jpg,jpeg"
 
         ]);
 
@@ -55,7 +55,7 @@ class CommitteController extends Controller
             return redirect()->back()->with('error', 'Committee category is not found');
         }
 
-        $path = $request->image->store('committe');
+        $path = !is_null($request->image) ? $request->image->store('committe') : null;
 
         Committe::create([
             "name" => $request->name,
@@ -88,7 +88,7 @@ class CommitteController extends Controller
         $finalCommitte = [];
 
         foreach ($committe as $value) {
-            $fileUrl = explode('/', $value->image_url)[1];
+            $fileUrl = !is_null($value->image_url) ? explode('/', $value->image_url)[1] : null;
             $committeMember = [
                 "id" => $value->id,
                 "name" => $value->name,

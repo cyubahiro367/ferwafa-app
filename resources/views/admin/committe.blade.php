@@ -52,7 +52,12 @@
                                         <td class="text-truncate">
                                             <ul class="list-unstyled order-list m-b-0 m-b-0">
                                                 <li class="team-member team-member-sm">
+                                                    @if (is_null($committe['url']))
+                                                        <img class="rounded-circle" src="{{ asset('../../asset/images/default-pic.png') }}" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
+                                                        {{-- <li data-thumb="{{ asset('../asset/images/default-pic.png') }}"> --}}
+                                                    @else
                                                     <img class="rounded-circle" src="{{ route('comitte.doc', $committe['url']) }}" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
+                                                    @endif
                                                 </li>
                                             </ul>
                                         </td>
