@@ -24,7 +24,7 @@ class IndependentBodiesController extends Controller
         $committe = Committe::where("committeeCategoryID", $id)->get();
 
         foreach ($committe as $value) {
-            $fileUrl = explode('/', $value->image_url)[1];
+            $fileUrl = !is_null($value->image_url) ? explode('/', $value->image_url)[1] : null;
             $committeMember = [
                 "id" => $value->id,
                 "name" => $value->name,
