@@ -200,7 +200,7 @@ Route::put('/add-result/{divisionID}/{categoryID}/{id}', [GameController::class,
 Route::put('/update-fixture/{categoryID}/{id}', [GameController::class, 'updateGame'])->whereNumber(['categoryID', 'id'])->name('update.fixture');
 Route::get('/edit-fixture/{id}', [GameController::class, 'updateFixture'])->whereNumber('id')->name('game.fixture.edit');
 
-Route::get('/men-first-division-table/{divisionID}/{categoryID}/{groupID?}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['divisionID', 'categoryID'])->name('men.first-division-table');
+Route::get('/men-first-division-table/{seasonID}/{divisionID}/{categoryID}/{groupID?}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['seasonID', 'divisionID', 'categoryID'])->name('men.first-division-table');
 
 Route::get('/men-first-division/day/{seasonID}/{divisionID}/{categoryID}/{id}/{groupID?}', [CompetitionController::class, 'show'])->whereNumber(['seasonID', 'divisionID', 'categoryID', 'id'])->name('fixtures.show');
 

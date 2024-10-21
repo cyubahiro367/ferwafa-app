@@ -32,7 +32,7 @@ class CompetitionController extends Controller
 
     public function show(Request $request, int $seasonID, int $divisionID, int $categoryID, int $id, ?int $groupID = null)
     {
-        // dd("jjhbg");
+        
         $season = empty($request->all()) ? Season::orderBy('created_at', 'DESC')->first() : Season::where('id', $request->seasonID)->first();
         
         if (is_null($season)) {
@@ -57,37 +57,39 @@ class CompetitionController extends Controller
         $days = Day::all();
 
         $day = empty($request->all()) ? Day::where('id', $id)->first() : Day::where('id', $request->dayID)->first();
-
-        if(!is_null($groupID)){
-            $group = Group::where('id', $groupID)->first();
         
+        if(!is_null($groupID)){
+
+            $group = Group::where('id', $groupID)->first();
+
             if (is_null($group)) {
                 return redirect('/')
                     ->with('error', 'Group not found');
             }
         
             $games = DB::table('Game')
-            ->select(
-                'homeTeam.name AS homeTeam',
-                'awayTeam.name AS awayTeam',
-                'Game.stadeName AS stadium',
-                'Game.date',
-                'Game.seasonID',
-                'Game.homeTeamGoals',
-                'Game.awayTeamGoals',
-                'Game.isPlayed',
-            )
-            ->join('Team as homeTeam', 'Game.homeTeamID', '=', 'homeTeam.id')
-            ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
-            ->join('Day', 'Game.dayID', '=', 'Day.id')
-            ->where('Game.seasonID', $season->id)
-            ->where('Day.id', $id)
-            ->where('homeTeam.categoryID', $categoryID)
-            ->where('awayTeam.categoryID', $categoryID)
-            ->where('homeTeam.divisionID', $divisionID)
-            ->where('awayTeam.divisionID', $divisionID)
-            ->where('Game.groupID', $groupID)
-            ->get();
+                ->select(
+                    'homeTeam.name AS homeTeam',
+                    'awayTeam.name AS awayTeam',
+                    'Game.stadeName AS stadium',
+                    'Game.date',
+                    'Game.seasonID',
+                    'Game.homeTeamGoals',
+                    'Game.awayTeamGoals',
+                    'Game.isPlayed',
+                )
+                ->join('Team as homeTeam', 'Game.homeTeamID', '=', 'homeTeam.id')
+                ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
+                ->join('Day', 'Game.dayID', '=', 'Day.id')
+                ->where('Game.seasonID', $season->id)
+                ->where('Day.id', $day->id)
+                ->where('homeTeam.categoryID', $categoryID)
+                ->where('awayTeam.categoryID', $categoryID)
+                ->where('homeTeam.divisionID', $divisionID)
+                ->where('awayTeam.divisionID', $divisionID)
+                ->where('Game.groupID', $group->id)
+                ->orderBy('Game.id', 'DESC')
+                ->get();
         }
 
         if(is_null($groupID)){
@@ -105,11 +107,12 @@ class CompetitionController extends Controller
             ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
             ->join('Day', 'Game.dayID', '=', 'Day.id')
             ->where('Game.seasonID', $season->id)
-            ->where('Day.id', $id)
+            ->where('Day.id', $day->id)
             ->where('homeTeam.categoryID', $categoryID)
             ->where('awayTeam.categoryID', $categoryID)
             ->where('homeTeam.divisionID', $divisionID)
             ->where('awayTeam.divisionID', $divisionID)
+            ->orderBy('Game.id', 'DESC')
             ->get();
         }
 
@@ -135,13 +138,20 @@ class CompetitionController extends Controller
             'seasonID' => $season->id
         ]);
     }
-    public function menFirstDivisionTable($divisionID, $categoryID, ?int $groupID = null)
+    public function menFirstDivisionTable($seasonID, $divisionID, $categoryID, ?int $groupID = null)
     {
         $division = Division::where('id', $divisionID)->first();
         
         if (is_null($division)) {
             return redirect('/')
                 ->with('error', 'Division not found');
+        }
+
+        $season = Season::where('id', $seasonID)->first();
+        
+        if (is_null($season)) {
+            return redirect('/')
+                ->with('error', 'Season not found');
         }
 
         $teamCategory = TeamCategory::where('id', $categoryID)->first();
@@ -157,7 +167,7 @@ class CompetitionController extends Controller
             ->join('Day', 'Day.id', '=', 'Game.dayID')
             ->join('Team','Team.id', '=', 'homeTeamID')
             ->join('TeamCategory', 'Team.categoryID', '=','TeamCategory.id')
-            ->where('Game.isPlayed', 1)
+            ->where([['Game.isPlayed', 1], ['Game.seasonID', $seasonID]])
             ->where('TeamCategory.id',$categoryID)
             ->orderBy('Day.id', 'DESC')
             ->first(['Game.dayID']);
