@@ -205,10 +205,10 @@ class CompetitionController extends Controller
                                         ON b.teamID = a.id
                                         INNER JOIN Game AS c
                                         ON c.id = b. gameID
-                                        WHERE a.categoryID = ? AND a.divisionID = ? AND c.groupID = ?
+                                        WHERE a.categoryID = ? AND a.divisionID = ? AND c.groupID = ? AND c.seasonID = ?
                                         GROUP BY a.id
                                         ORDER BY SUM(b.score) DESC, (SUM(b.goalWin) - SUM(b.goalLoss)) DESC, SUM(b.goalWin) DESC, a.name ASC
-                                        ",[$categoryID, $divisionID, $groupID]);
+                                        ",[$categoryID, $divisionID, $groupID, $seasonID]);
         }
 
         if(is_null($groupID)){
@@ -229,10 +229,10 @@ class CompetitionController extends Controller
                                         ON b.teamID = a.id
                                         INNER JOIN Game AS c
                                         ON c.id = b. gameID
-                                        WHERE a.categoryID = ? AND a.divisionID = ?
+                                        WHERE a.categoryID = ? AND a.divisionID = ?AND c.seasonID = ?
                                         GROUP BY a.id
                                         ORDER BY SUM(b.score) DESC, (SUM(b.goalWin) - SUM(b.goalLoss)) DESC, SUM(b.goalWin) DESC, a.name ASC
-                                        ",[$categoryID, $divisionID]);
+                                        ",[$categoryID, $divisionID, $seasonID]);
         }
         
 
