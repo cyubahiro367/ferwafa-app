@@ -41,12 +41,12 @@
                 <aside class="col-md-4 col-sm-6 col-xs-6 widget widget_contactus">
                     <h3 class="block-title">REACH OUT</h3>
                     <div class="contactinfo-box">
-                        <div class="contactinfo-box">
+                        {{-- <div class="contactinfo-box">
                             <i class="fa fa-phone"></i>
                             <p>
                                 <a title="+250 788 608 988" href="tel:+250 788 608 988">+250 788 608 988</a>
                             </p>
-                        </div>
+                        </div> --}}
                         <div class="contactinfo-box">
                             <i class="fa fa-location-arrow"></i>
                             <p>

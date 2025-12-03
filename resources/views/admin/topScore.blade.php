@@ -29,10 +29,17 @@
                                             <i class="far fa-user"> &nbsp;</i>Add Top Score
                                         </a>
                                         &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="text" class="form-control" placeholder="Search" />
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                        </div>
+                                        &nbsp;&nbsp;
+                                        <form action="{{ route('top-score', [request()->route('divisionID'), request()->route('categoryID')]) }}" method="GET">
+                                            <select class="btn btn-primary" name="seasonID">
+                                                @foreach ($seasons as $season)
+                                                    <option value="{{$season['id']}}" {{ $seasonID === $season['id'] ? 'selected' : '' }}>{{ $season['from'] }} - {{ $season['to'] }}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="input-group-btn">
+                                                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </form>
                             </div>

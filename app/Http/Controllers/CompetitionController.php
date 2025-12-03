@@ -236,7 +236,7 @@ class CompetitionController extends Controller
         }
         
 
-        $topScores = TopScore::orderBy('goals', 'DESC')->orderBy('name', 'ASC')->take(10)->get();
+        $topScores = TopScore::where('seasonID', $seasonID)->orderBy('goals', 'DESC')->orderBy('name', 'ASC')->take(10)->get();
 
         $finalTopScores = [];
 

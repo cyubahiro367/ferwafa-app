@@ -19,9 +19,9 @@
               <span class="icon icon-Phone2"></span>
               <div class="infobox">
                 <h3>Call Us On</h3>
-                <a href="tel:+250 788 608 988" title="+250 788 608 988"
+                {{-- <a href="tel:+250 788 608 988" title="+250 788 608 988"
                   >+250 788 608 988</a
-                >
+                > --}}
                 <a href="tel:PO. Box:2000 Kigali-Rwanda" title="PO. Box:2000 Kigali-Rwanda"
                   >PO. Box:2000 Kigali-Rwanda</a
                 >

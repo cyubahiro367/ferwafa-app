@@ -38,10 +38,24 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card-body">
-                                            <form method="POST" action="{{ route('update.top-score', [request()->route('divisionID'), request()->route('categoryID'), $topScore->id]) }}"
+                                            <form method="POST"
+                                                action="{{ route('update.top-score', [request()->route('divisionID'), request()->route('categoryID'), $topScore->id]) }}"
                                                 enctype="multipart/form-data">
                                                 @csrf
                                                 @method('PUT')
+                                                <div class="form-group row mb-4">
+                                                    <label
+                                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Season</label>
+                                                    <div class="col-sm-12 col-md-7">
+                                                        <select name="seasonID" class="form-control selectric">
+                                                            @foreach ($seasons as $season)
+                                                                <option value="{{ $season['id'] }}" {{ $topScore->seasonID === $season['id'] ? 'selected' : '' }}>
+                                                                    {{ $season['from'] }} - {{ $season['to'] }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="form-group row mb-4">
                                                     <label
                                                         class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Names</label>
@@ -109,17 +123,17 @@
 
 
 
-    <script src="{{ asset('assets/js/app.min.js')}}"></script>
+    <script src="{{ asset('assets/js/app.min.js') }}"></script>
     <!-- JS Libraies -->
-    <script src="{{ asset('assets/bundles/summernote/summernote-bs4.js')}}"></script>
-    <script src="{{ asset('assets/bundles/codemirror/lib/codemirror.js')}}"></script>
-    <script src="{{ asset('assets/bundles/codemirror/mode/javascript/javascript.js')}}"></script>
-    <script src="{{ asset('assets/bundles/jquery-selectric/jquery.selectric.min.js')}}"></script>
-    <script src="{{ asset('assets/bundles/ckeditor/ckeditor.js')}}"></script>
+    <script src="{{ asset('assets/bundles/summernote/summernote-bs4.js') }}"></script>
+    <script src="{{ asset('assets/bundles/codemirror/lib/codemirror.js') }}"></script>
+    <script src="{{ asset('assets/bundles/codemirror/mode/javascript/javascript.js') }}"></script>
+    <script src="{{ asset('assets/bundles/jquery-selectric/jquery.selectric.min.js') }}"></script>
+    <script src="{{ asset('assets/bundles/ckeditor/ckeditor.js') }}"></script>
     <!-- Page Specific JS File -->
-    <script src="{{ asset('assets/js/page/ckeditor.js')}}"></script>
+    <script src="{{ asset('assets/js/page/ckeditor.js') }}"></script>
     <!-- Template JS File -->
-    <script src="{{ asset('assets/js/scripts.js')}}"></script>
+    <script src="{{ asset('assets/js/scripts.js') }}"></script>
     <!-- Custom JS File -->
-    <script src="{{ asset('assets/js/custom.js')}}"></script>
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
 </body>
