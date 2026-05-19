@@ -11,5 +11,5 @@ class TopScore extends Model
 
     protected $table = 'TopScore';
 
-    protected $fillable = ['name', 'goals', 'teamName', 'divisionID', 'categoryID'];
+    protected $fillable = ['name', 'goals', 'teamName', 'divisionID', 'categoryID', 'seasonID'];
 }

@@ -4,7 +4,7 @@
             <div class="entry-meta text-center">
                 <br>
                 <!-- Season Select -->
-                <form action="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id]) }}" method="GET">
+                <form action="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id, request()->route('groupID')]) }}" method="GET">
                     {{-- <div class="mb-4"> --}}
                         <label for="seasonSelect" class="form-label fs-5">Select Season:</label>
                         <select id="seasonSelect" name="seasonID" class="form-select form-select-lg" required>
@@ -24,7 +24,7 @@
                             @endforeach
                         </select>
 
-                        <button type="submit" class="btn btn-primary btn-md">Show martch</button>
+                        <button type="submit" class="btn btn-primary btn-md">Show match</button>
                     {{-- </div> --}}
                 </form>
 
@@ -32,10 +32,10 @@
                 <div class="mb-4">
                     @if ($day)
                         <div class="btn-group">
-                            <a href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id]) }}" class="btn btn-primary">
+                            <a href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id, request()->route('groupID')]) }}" class="btn btn-primary">
                                 Results & Fixtures
                             </a>
-                            <a href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id, request()->route('groupID')]) }}" class="btn btn-secondary">
+                            <a href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}" class="btn btn-secondary">
                                 Standing
                             </a>
                         </div>

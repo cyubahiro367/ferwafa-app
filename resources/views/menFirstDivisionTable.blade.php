@@ -12,12 +12,12 @@
                                 <div class="card card-primary">
                                             <div style="background-color: #133E8D;" class="col-12 col-md-12 card-header text-center">
                                                 <ul class="menus">
-                                                    <li><a style="color: white" href="{{ route('fixtures.show', [request()->route('divisionID'), $categoryID, $days->dayID]) }}">Results
+                                                    <li><a style="color: white" href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $days->dayID, request()->route('groupID')]) }}">Results
                                                             &
                                                             Fixtures /</a>
                                                     </li>
                                                     <li><a style="color: white"
-                                                            href="{{ route('men.first-division-table', [request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standing</a>
+                                                            href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standing</a>
                                                     </li>
                                                 </ul>
                                             </div>

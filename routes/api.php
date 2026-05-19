@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CommitteController;
+use App\Http\Controllers\DayController;
 use App\Http\Controllers\KeyController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PermissionController;
@@ -75,6 +76,8 @@ Route::get('/key-permission-list', [KeyController::class, 'permissionKeyList']);
 
 Route::get('/users', [UsersController::class, 'getAllUsers']);
 Route::get('/user/{id}', [UsersController::class, 'getSingleUser']);
+
+Route::get('/days/{seasonID?}', [DayController::class, 'seasonDays'])->whereNumber('seasonID')->name('api.suspension-reasons.search');
 
 
 // Route::get('/insert', function () {

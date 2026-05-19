@@ -12,6 +12,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\IndependentBodiesController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\PlayerSuspendedController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SeasonController;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,7 @@ use App\Models\Season;
 use App\Models\Status;
 use App\Models\Team;
 use App\Models\TeamStatistic;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -167,6 +169,13 @@ Route::delete('/delete-top-score/{categoryID}/{id}', [TopScoreController::class,
 Route::put('/update-top-score/{divisionID}/{categoryID}/{id}', [TopScoreController::class, 'updateTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('update.top-score');
 Route::get('/edit-top-score/{divisionID}/{categoryID}/{id}', [TopScoreController::class, 'editTopScore'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('top-score.page.edit');
 
+Route::get('/player-suspended/{divisionID}/{categoryID}', [PlayerSuspendedController::class, 'listPlayerSuspended'])->whereNumber(['divisionID', 'categoryID'])->name('player-suspended');
+Route::get('/add-player-suspended/{divisionID}/{categoryID}', [PlayerSuspendedController::class, 'addPlayerSuspended'])->whereNumber(['divisionID', 'categoryID'])->name('add.player-suspended');
+Route::post('/create-player-suspended/{divisionID}/{categoryID}', [PlayerSuspendedController::class, 'createPlayerSuspended'])->whereNumber(['divisionID', 'categoryID'])->name('create.player-suspended');
+Route::delete('/delete-player-suspended/{categoryID}/{id}', [PlayerSuspendedController::class, 'deletePlayerSuspended'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('delete.player-suspended');
+Route::put('/update-player-suspended/{divisionID}/{categoryID}/{id}', [PlayerSuspendedController::class, 'updatePlayerSuspended'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('update.player-suspended');
+Route::get('/edit-player-suspended/{divisionID}/{categoryID}/{id}', [PlayerSuspendedController::class, 'editPlayerSuspended'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('player-suspended.page.edit');
+
 Route::get('/team-category', [TeamCategoryController::class, 'listTeamCategory'])->name('team-category');
 Route::get('/add-team-category', [TeamCategoryController::class, 'addTeamCategory'])->name('add.team-category');
 Route::post('/create-team-category', [TeamCategoryController::class, 'createTeamCategory'])->name('create.team-category');
@@ -191,7 +200,7 @@ Route::post('/create-day', [DayController::class, 'createDay'])->name('create.da
 Route::delete('/delete-day/{id}', [DayController::class, 'deleteDay'])->whereNumber('id')->name('delete.day.season');
 
 
-Route::get('/games/{divisionID}/{categoryID}', [GameController::class, 'listGames'])->whereNumber(['seasonID', 'divisionID', 'categoryID'])->name('fixtures');
+Route::get('/games/{divisionID}/{categoryID}', [GameController::class, 'listGames'])->whereNumber(['divisionID', 'categoryID'])->name('fixtures');
 Route::get('/add-game/{divisionID}/{categoryID}', [GameController::class, 'addGame'])->whereNumber(['divisionID', 'categoryID'])->name('add.game');
 Route::get('/edit-game/{divisionID}/{categoryID}/{id}', [GameController::class, 'addMatchResult'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('game.page.edit');
 Route::post('/create-game/{divisionID}/{categoryID}', [GameController::class, 'createGame'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('create.game');
@@ -200,13 +209,32 @@ Route::put('/add-result/{divisionID}/{categoryID}/{id}', [GameController::class,
 Route::put('/update-fixture/{categoryID}/{id}', [GameController::class, 'updateGame'])->whereNumber(['categoryID', 'id'])->name('update.fixture');
 Route::get('/edit-fixture/{id}', [GameController::class, 'updateFixture'])->whereNumber('id')->name('game.fixture.edit');
 
-Route::get('/men-first-division-table/{divisionID}/{categoryID}/{groupID?}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['divisionID', 'categoryID'])->name('men.first-division-table');
+Route::get('/men-first-division-table/{seasonID}/{divisionID}/{categoryID}/{groupID?}', [CompetitionController::class, 'menFirstDivisionTable'])->whereNumber(['seasonID', 'divisionID', 'categoryID'])->name('men.first-division-table');
 
 Route::get('/men-first-division/day/{seasonID}/{divisionID}/{categoryID}/{id}/{groupID?}', [CompetitionController::class, 'show'])->whereNumber(['seasonID', 'divisionID', 'categoryID', 'id'])->name('fixtures.show');
 
-Route::get('/division/{divisionID}/{categoryID}', function(){
+Route::get('/division/{divisionID}/{categoryID}', function($divisionID, $categoryID){
+
+    $seasonID = Season::orderBy('created_at', 'DESC')->first()->id;
+
+    $daysPlayed = DB::table('Game')
+            ->join('Day', 'Day.id', '=', 'Game.dayID')
+            ->join('Team','Team.id', '=', 'homeTeamID')
+            ->join('TeamCategory', 'Team.categoryID', '=','TeamCategory.id')
+            ->where([['Game.isPlayed', 1], ['Game.seasonID', $seasonID]])
+            ->where('TeamCategory.id',$categoryID)
+            ->orderBy('Day.id', 'DESC')
+            ->first(['Game.dayID']);
+
+    if($daysPlayed){
+        $dayID = $daysPlayed->dayID;
+    } else {
+        $dayID = 1;
+    }
+
     return view('divisionTwo', [
-        "seasonID" => Season::orderBy('created_at', 'DESC')->first()->id,
+        "seasonID" => $seasonID,
+        "dayID" => $dayID,
         "groups" => Group::all(['id', 'name'])
     ]);
 })->whereNumber(['divisionID', 'categoryID'])->name('division');

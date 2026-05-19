@@ -44,7 +44,7 @@ class NewsController extends Controller
         }
 
         $request->validate([
-            "title" => "required|string",
+            "title" => "required|string|max:255",
             "caption" => "required|string|max:255",
             "description" => "required|string",
             "is_top" => "required|boolean",
@@ -86,7 +86,7 @@ class NewsController extends Controller
 
     public function allNews()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -121,7 +121,7 @@ class NewsController extends Controller
 
     public function seniorMen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -158,7 +158,7 @@ class NewsController extends Controller
 
     public function u23()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -195,7 +195,7 @@ class NewsController extends Controller
 
     public function u17()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -232,7 +232,7 @@ class NewsController extends Controller
 
     public function otherMen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -269,7 +269,7 @@ class NewsController extends Controller
 
     public function seniorWomen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -306,7 +306,7 @@ class NewsController extends Controller
 
     public function u20Women()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -343,7 +343,7 @@ class NewsController extends Controller
 
     public function otherWomen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -380,7 +380,7 @@ class NewsController extends Controller
 
     public function grassroots()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -417,7 +417,7 @@ class NewsController extends Controller
 
     public function schools()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -454,7 +454,7 @@ class NewsController extends Controller
 
     public function youth()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -491,7 +491,7 @@ class NewsController extends Controller
 
     public function getNews()
     {
-        $topNews = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $topNews = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -517,9 +517,9 @@ class NewsController extends Controller
                 "image_url" => $fileUrl
             ];
             array_push($topResults, $singleTopNews);
-        }                        
+        }
 
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM 
+        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id

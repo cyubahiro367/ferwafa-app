@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Division;
+use App\Models\Season;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TopScore;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -35,8 +37,22 @@ class TopScoreController extends Controller
             return redirect("/top-score/$divisionID/$categoryID")->with('error', 'create teams first');
         }
 
+        $seasons = Season::all()->toArray();
+
+        if (empty($seasons)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'No Season Found');
+        }
+
+        $seasons = array_map(function($item){
+            $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
+            $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
+
+            return $item;
+        }, $seasons);
+
         return view('admin.create-topScore', [
             'teams' => $teams,
+            'seasons' => $seasons
         ]);
     }
 
@@ -51,6 +67,7 @@ class TopScoreController extends Controller
             "name" => "required|string",
             "goals" => "required|integer",
             "teamID" => "required|integer",
+            "seasonID" => "required|numeric|min:1",
         ]);
 
         $division = Division::where('id', $divisionID)->first();
@@ -72,13 +89,20 @@ class TopScoreController extends Controller
         if (is_null($team)) {
             return redirect(`/create-top-score/$request->divisionID/$categoryID`)->with('error', 'team Not Found');
         }
+
+        $season = Season::where('id', $request->seasonID)->first();
+
+        if (is_null($season)) {
+            return redirect(`/create-top-score/$request->divisionID/$categoryID`)->with('error', 'Season Not Found');
+        }
         
         TopScore::create([
             "name" => $request->name,
             "goals" => $request->goals,
             "teamName" => $team->name,
             'categoryID' => $categoryID,
-            'divisionID' => $request->divisionID
+            'divisionID' => $request->divisionID,
+            "seasonID" => $request->seasonID,
         ]);
 
         return redirect("/top-score/$divisionID/$categoryID")
@@ -93,11 +117,22 @@ class TopScoreController extends Controller
         }
     }
 
-    public function listTopScore($divisionID, $categoryID)
+    public function listTopScore(Request $request, $divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
+        }
+
+        $season = empty($request->all()) ? Season::orderBy('created_at', 'DESC')->first() : Season::where('id', $request->seasonID)->first();
+
+        if (is_null($season)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'create season first');
+        }
+
+        if (is_null($season)) {
+            return redirect(`/top-score/$divisionID/$categoryID`)
+                ->with('error', 'Season not found');
         }
 
         $division = Division::where('id', $divisionID)->first();
@@ -109,7 +144,7 @@ class TopScoreController extends Controller
 
         $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
 
-        $topScores = TopScore::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->orderBy('goals', 'DESC')->get();
+        $topScores = TopScore::where([['seasonID', $season->id], ['divisionID', $divisionID], ['categoryID', $categoryID]])->orderBy('goals', 'DESC')->get();
 
         $finalTopScores = [];
 
@@ -128,8 +163,19 @@ class TopScoreController extends Controller
 
         }
 
+        $seasons = Season::all()->toArray();
+              
+        $seasons = array_map(function($item){
+            $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
+            $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
+
+            return $item;
+        }, $seasons);
+
         return view('admin.topScore', [
-            'topScores' => $finalTopScores
+            'topScores' => $finalTopScores,
+            'seasonID' => $season->id,
+            'seasons' => $seasons
         ]);
     }
 
@@ -151,9 +197,23 @@ class TopScoreController extends Controller
             return redirect("/top-score/ $divisionID/$categoryID")->with('error', 'create teams first');
         }
 
+        $seasons = Season::all()->toArray();
+
+        if (empty($seasons)) {
+            return redirect("/games/$divisionID/$categoryID")->with('error', 'No Season Found');
+        }
+
+        $seasons = array_map(function($item){
+            $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
+            $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
+
+            return $item;
+        }, $seasons);
+
         return view('admin.update-topScore', [
             'topScore' => $topScore,
             'teams' => $teams,
+            'seasons' => $seasons
         ]);
     }
 
@@ -168,7 +228,8 @@ class TopScoreController extends Controller
         $request->validate([
             "name" => "required|string",
             "goals" => "required|integer",
-            "teamID" => "required|integer"
+            "teamID" => "required|integer",
+            "seasonID" => "required|numeric|min:1",
 
         ]);
 
@@ -191,9 +252,16 @@ class TopScoreController extends Controller
             return redirect("/top-score/ $divisionID/$categoryID")->with('error', 'team Not Found');
         }
 
+        $season = Season::where('id', $request->seasonID)->first();
+
+        if (is_null($season)) {
+            return redirect(`/create-top-score/$request->divisionID/$categoryID`)->with('error', 'Season Not Found');
+        }
+
         $topScore->name = $request->name;
         $topScore->goals = $request->goals;
         $topScore->teamName = $team->name;
+        $topScore->seasonID = $request->seasonID;
         $topScore->save();
 
         return redirect("/top-score/$divisionID/$categoryID")

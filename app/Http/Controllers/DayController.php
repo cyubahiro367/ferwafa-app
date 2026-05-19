@@ -6,6 +6,7 @@ use App\Models\Day;
 use App\Models\Game;
 use App\Models\Season;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -105,5 +106,13 @@ class DayController extends Controller
 
         return redirect('/days')
             ->with('message', 'deleted successfully');
+    }
+
+    public function seasonDays(int $providerID): JsonResponse
+    {
+
+        $institutions = Day::where('seasonID', $providerID)->get()->toArray();
+
+        return response()->json($institutions);
     }
 }
