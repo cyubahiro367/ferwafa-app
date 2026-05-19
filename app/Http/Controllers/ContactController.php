@@ -31,13 +31,13 @@ class ContactController extends Controller
         ]);
 
         try {
-            Mail::to(env('MAIL_FROM_ADDRESS'))->send(new sendInfo(
+            Mail::to(env('INFO_EMAIL'))->send(new sendInfo(
                 $request->name,
                 $request->email,
                 $request->subject,
                 $request->content
             ));
-    
+
             return redirect('/information')->with('message', 'Thank you for messaging us!');
         } catch (\Throwable $th) {
             return redirect('/information')->with('error', 'failed to send information message');

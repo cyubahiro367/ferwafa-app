@@ -7,7 +7,7 @@
                 @foreach ($groups as $group)
                 <div style=" background-color: #133e8d; color: white; margin-left: 10px" class="col-6 col-md-6 offset-md-1 col-lg-6 offset-lg-1">
                   <div>
-                      <a style="color:white" href="{{ route('fixtures.show', [$seasonID, request()->route('divisionID'), request()->route('categoryID'), 1, $group->id]) }}"><h1>{{$group->name}}</h1></a>
+                      <a style="color:white" href="{{ route('fixtures.show', [$seasonID, request()->route('divisionID'), request()->route('categoryID'), $dayID, $group->id]) }}"><h1>{{$group->name}}</h1></a>
                   </div>
               </div> 
                 @endforeach

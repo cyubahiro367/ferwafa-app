@@ -60,7 +60,16 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Caption</label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <input type="text" name="caption" class="form-control" required>
+                                                        <input type="text" name="caption" id="caption" class="form-control" maxlength="255" required>
+
+                                                        <small id="captionWordCount" style="display:block; margin-top:5px;">
+                                                            Word Count: 0 / 255
+                                                        </small>
+
+                                                        <small id="captionError" style="color:red; display:none;">
+                                                            Maximum 255 words allowed.
+                                                        </small>
+
                                                         @error('caption')
                                                         <div style="color: red;">
                                                             {{ $message }}
@@ -123,7 +132,7 @@
                                                 <div class="form-group row mb-4">
                                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
                                                     <div class="col-sm-12 col-md-7">
-                                                        <button class="btn btn-primary">Publish</button>
+                                                        <button id="publishBtn" class="btn btn-primary">Publish</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -153,4 +162,27 @@
     <script src="./assets/js/scripts.js"></script>
     <!-- Custom JS File -->
     <script src="./assets/js/custom.js"></script>
+
+    <script>
+        function countWords(text) {
+            text = text.trim();
+            if (text === "") return 0;
+            return text.split(/\s+/).length;
+        }
+
+        $('#caption').on('input', function () {
+            var text = $(this).val();
+            var wordCount = countWords(text);
+
+            $('#captionWordCount').text("Word Count: " + wordCount + " / 255");
+
+            if (wordCount > 255) {
+                $('#captionError').show();
+                $('#publishBtn').prop('disabled', true);
+            } else {
+                $('#captionError').hide();
+                $('#publishBtn').prop('disabled', false);
+            }
+        });
+    </script>
 </body>

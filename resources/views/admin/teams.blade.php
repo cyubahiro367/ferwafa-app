@@ -1,131 +1,164 @@
 <!DOCTYPE html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Ferwafa - Available Teams</title>
+
+    <link rel="shortcut icon" href="{{ asset('static/img/federation/ferwafa.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{asset("assets/css/app.min.css")}}">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{asset("assets/css/style.css")}}">
-    <link rel="stylesheet" href="{{asset("assets/css/components.css")}}">
-    <!-- Custom style CSS -->
-    <link rel="stylesheet" href="{{asset("assets/css/custom.css")}}">
-    <link href="{{asset("static/img/federation/ferwafa.png")}}" rel="shortcut icon" />
-    <title>Ferwafa</title>
+
+    {{-- Core CSS --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 </head>
 
-
 <body>
-    @include('admin.sidebar')
-    <div class="main-content">
-        <section class="section">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Available Teams</h4>
-                            <div class="card-header-form">
-                                <form>
-                                    <div class="input-group">
-                                        <a href="{{ route('add.team', [request()->route('divisionID'), request()->route('categoryID')]) }}" class="btn btn-primary">
-                                            <i class="far fa-user"> &nbsp;</i>Add Team
-                                        </a>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="text" class="form-control" placeholder="Search" />
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                        </div>
-                                    </div>
-                                </form>
+@include('admin.sidebar')
+
+<div class="main-content">
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Available Teams</h4>
+                        <div class="card-header-form">
+                            <div class="input-group">
+                                <a href="{{ route('add.team', [request()->route('divisionID'), request()->route('categoryID')]) }}"
+                                   class="btn btn-primary">
+                                    <i class="far fa-user"></i>&nbsp; Add Team
+                                </a>
+                                &nbsp;&nbsp;
+                                <input type="text" class="form-control" placeholder="Search">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                </div>
                             </div>
                         </div>
-                        @if (session()->has('error'))
-                        <div class="badge badge-danger">
-                            {{ session()->get('error') }}
+                    </div>
+
+                    @if (session('error'))
+                        <div class="alert alert-danger m-3">{{ session('error') }}</div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger m-3">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
-                        @endif
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                @endif
-                                <table class="table table-striped">
+                    @endif
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th colspan="2">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach ($teams as $team)
                                     <tr>
-                                        <th>Image</th>
-                                        <th>name</th>
-                                        <th>Category</th>
-                                        <th colspan="2">Action</th>
-                                    </tr>
-                                    @foreach ($teams as $team)
-                                    <tr>
-                                        <td class="text-truncate">
-                                            <ul class="list-unstyled order-list m-b-0 m-b-0">
+                                        <td>
+                                            <ul class="list-unstyled order-list m-b-0">
                                                 <li class="team-member team-member-sm">
-                                                    <img class="rounded-circle" src="{{ route('team.doc', $team['url']) }}" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
+                                                    <img class="rounded-circle"
+                                                         src="{{ route('team.doc', $team['url']) }}"
+                                                         alt="{{ $team['name'] }}"
+                                                         data-toggle="tooltip"
+                                                         title="{{ $team['name'] }}">
                                                 </li>
                                             </ul>
                                         </td>
-                                        <td>{{ $team['name'] }}</a> </td>
-                                        <td>{{ $team['category'] }}</a> </td>
+                                        <td>{{ $team['name'] }}</td>
+                                        <td>{{ $team['category'] }}</td>
                                         <td>
-                                            <a href="{{ route('team.page.edit',[request()->route('divisionID'), request()->route('categoryID'), $team['id']]) }}" class="btn btn-outline-primary">Edit</a>
+                                            <a href="{{ route('team.page.edit', [request()->route('divisionID'), request()->route('categoryID'), $team['id']]) }}"
+                                               class="btn btn-outline-primary btn-sm">Edit</a>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-outline-danger delete-game" data-toggle="modal" data-target="#confirmDeleteModal" data-game-id="{{ $team['id'] }}" data-category-id="{{ request()->route('categoryID')}}" data-division-id="{{ request()->route('divisionID')}}">Delete</button>
+                                            <button type="button"
+                                                    class="btn btn-outline-danger btn-sm delete-team"
+                                                    data-toggle="modal"
+                                                    data-target="#confirmDeleteModal"
+                                                    data-team-id="{{ $team['id'] }}"
+                                                    data-category-id="{{ request()->route('categoryID') }}"
+                                                    data-division-id="{{ request()->route('divisionID') }}">
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
-                                    @endforeach
-                                </table>
-                            </div>
+                                @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
+</div>
 
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete this Team ?
-                </div>
-                <div class="modal-footer">
-                    <form id="deleteGameForm" method="POST" action="{{ route('delete.team',[0,0,0])}}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
+{{-- Delete Confirmation Modal --}}
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this team?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form id="deleteTeamForm" method="POST" action="">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
+{{-- Core JS (load once, in correct order) --}}
+<script src="{{ asset('assets/js/app.min.js') }}"></script>
 
-    <script type="module" src="{{asset("src/main.js")}}"></script>
-    <script src="{{asset("assets/js/app.min.js")}}"></script>
-    <script src="{{asset("assets/js/custom.js")}}"></script>
-    <script src="{{asset("assets/js/scripts.js")}}"></script>
-    <script src="{{asset("assets/js/scripts.js")}}"></script>
-    <script src="{{asset("assets/js/custom.js")}}"></script>
-    <script>
-        $(document).ready(function() {
-            $('.delete-game').click(function() {
-                var gameId = $(this).data('game-id');
-                var categoryId = $(this).data('category-id');
-                var divisionId = $(this).data('division-id');
-                var form = $('#deleteGameForm');
-                var action = form.attr('action');
-                form.attr('action', action.replace(0, divisionId).replace(0, categoryId).replace(0, gameId));
-            });
+{{-- Plugin JS --}}
+<script src="{{ asset('assets/bundles/jquery-selectric/jquery.selectric.min.js') }}"></script>
+
+{{-- Template & Custom JS --}}
+<script src="{{ asset('assets/js/scripts.js') }}"></script>
+<script src="{{ asset('assets/js/custom.js') }}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.delete-team').on('click', function () {
+            var teamId     = $(this).data('team-id');
+            var categoryId = $(this).data('category-id');
+            var divisionId = $(this).data('division-id');
+
+            var actionUrl  = "{{ route('delete.team', [':division', ':category', ':team']) }}"
+                .replace(':division', divisionId)
+                .replace(':category', categoryId)
+                .replace(':team', teamId);
+
+            $('#deleteTeamForm').attr('action', actionUrl);
         });
-    </script>
-
+    });
+</script>
 </body>
+</html>

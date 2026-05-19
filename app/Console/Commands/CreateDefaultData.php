@@ -6,12 +6,17 @@ use App\Models\CommitteeCategory;
 use App\Models\Division;
 use App\Models\DocumentType;
 use App\Models\Group;
+use App\Models\Key;
 use App\Models\NewsType;
 use App\Models\Permission;
+use App\Models\Season;
 use App\Models\Status;
 use App\Models\TeamCategory;
+use App\Models\User;
+use Firebase\JWT\JWT;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class CreateDefaultData extends Command
 {
@@ -141,12 +146,41 @@ class CreateDefaultData extends Command
                         'name' => $value
                     ]);
                 }
-                
+
                 foreach ($committeeCategory as $value) {
                     CommitteeCategory::firstOrCreate([
                         'name' => $value
                     ]);
                 }
+
+                $year = now()->year;
+                Season::firstOrCreate([
+                    "from" => strtotime("$year-08-01"),
+                    "to" => strtotime("$year-05-31")
+                ]);
+
+                $permission = Permission::firstOrCreate([
+                    "name" => "admin",
+                ]);
+
+                $payload =  [
+                    "permissionID" => $permission->id,
+                    "timestamp" => time(),
+                ];
+
+                $jwt = JWT::encode($payload, 'admin', 'HS256');
+
+                $key = Key::firstOrCreate([
+                    "value" => $jwt,
+                    "permissionID" => $permission->id,
+                ]);
+
+                User::firstOrCreate([
+                    'name' => "Cyubahiro Theotime",
+                    'email' => "theotimecyubahiro@gmail.com",
+                    'password' => Hash::make("password"),
+                    'keyID' => $key->id
+                ]);
             });
             $this->info('Default Data Inserted successfully');
         } catch (\Throwable $th) {
