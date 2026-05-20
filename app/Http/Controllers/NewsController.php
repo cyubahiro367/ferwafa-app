@@ -93,7 +93,8 @@ class NewsController extends Controller
                                 JOIN Status AS c
                                 ON a.statusID = c.id
                                 WHERE  c.id = 1
-                                ORDER BY created_at DESC');
+                                ORDER BY created_at DESC
+                                LIMIT 100');
 
         $result = [];
 
