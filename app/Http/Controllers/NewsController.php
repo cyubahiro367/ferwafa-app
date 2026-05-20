@@ -131,7 +131,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 1]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 1]);
 
         $result = [];
 
@@ -168,7 +169,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 2]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 2]);
 
         $result = [];
 
@@ -205,7 +207,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 3]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 3]);
 
         $result = [];
 
@@ -242,7 +245,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 4]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 4]);
 
         $result = [];
 
@@ -279,7 +283,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 5]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 5]);
 
         $result = [];
 
@@ -316,7 +321,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 6]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 6]);
 
         $result = [];
 
@@ -353,7 +359,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 7]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 7]);
 
         $result = [];
 
@@ -390,7 +397,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 8]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 8]);
 
         $result = [];
 
@@ -427,7 +435,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 9]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 9]);
 
         $result = [];
 
@@ -464,7 +473,8 @@ class NewsController extends Controller
                                 WHERE  c.id = ?
                                 AND
                                 a.newsTypeID = ?
-                                ORDER BY created_at DESC', [1, 10]);
+                                ORDER BY created_at DESC
+                                LIMIT 100', [1, 10]);
 
         $result = [];
 
