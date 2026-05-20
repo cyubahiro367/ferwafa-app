@@ -72,7 +72,7 @@ class AdminController extends Controller
                                 JOIN Status AS c
                                 ON a.statusID = c.id
                                 ORDER BY a.id DESC
-                                LIMIT 100'
+                                LIMIT 10'
         );
 
         $result = [];
