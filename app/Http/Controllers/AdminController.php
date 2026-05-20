@@ -71,7 +71,8 @@ class AdminController extends Controller
                                 ON b.news_id = a.id
                                 JOIN Status AS c
                                 ON a.statusID = c.id
-                                ORDER BY a.id DESC'
+                                ORDER BY a.id DESC
+                                LIMIT 100'
         );
 
         $result = [];
