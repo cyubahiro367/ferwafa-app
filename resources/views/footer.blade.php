@@ -1,130 +1,249 @@
+<style>
+    /* ── NEW FOOTER STYLES ── */
+    .fw-footer { background: #133E8D; color: #fff; }
 
+    .fw-footer-top { padding: 64px 0 40px; }
+    .fw-footer-wrap { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
 
-    <footer class="footer-main container-fluid no-padding">
-        <!-- Container -->
-        <div class="container">
-            <!-- Footer About -->
-            <div class="footer-about">
-                <div class="logo-block">
-                    <img src="{{asset('asset/images/file.png')}}" alt="logo" width="150" height="150" />
-                </div>
-                <div class="footer-about-content">
-                    <h3 class="block-title">About Ferwafa</h3>
-                    <p>
-                        Rwandese Federation of Association Football (FERWAFA) was founded in
-                        1972 and became a FIFA and FIFA affiliate in 1978. From the above
-                        setting, Ferwafa operates within the framework of the FIFA/CAF
-                        regulations; holding itself to respect them and its members to
-                        comply with its own statute and the directives/decisions from
-                        FIFA/CAF. FERWAFA’s motto is “Unity, Discipline and Victory”,
-                    </p>
-                </div>
-            </div>
-            <!-- Footer About /- -->
+    .fw-footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+        gap: 48px;
+    }
 
-            <div class="row">
-                <!-- Quick Links Widget -->
-                <aside class="col-md-4 col-sm-6 col-xs-6 widget widget_quick_links">
-                    <h3 class="block-title">Quick links</h3>
-                    <ul>
-                        <li><a title="News" href="#">News</a></li>
-                        <li><a title="Events" href="#">Events</a></li>
-                        <li><a title="Career" href="#">Career</a></li>
-                        <li>
-                            <a title="Contact us" href="#">Contact us</a>
-                        </li>
-                    </ul>
-                </aside>
-                <!-- Quick Links Widget /- -->
+    /* Brand column */
+    .fw-footer-brand-logo {
+        display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .fw-footer-logo-badge {
+        width: 54px; height: 54px; border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        display: flex; align-items: center; justify-content: center;
+        border: 2px solid #F5A800; overflow: hidden; flex-shrink: 0;
+    }
+    .fw-footer-logo-badge img { width: 100%; height: 100%; object-fit: cover; }
+    .fw-footer-logo-title {
+        font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700;
+        color: #fff; letter-spacing: 2px; line-height: 1;
+    }
+    .fw-footer-logo-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 3px; }
+    .fw-footer-desc {
+        font-size: 13px; line-height: 1.75; color: #fff;
+        margin-bottom: 24px;
+    }
+    .fw-footer-social { display: flex; gap: 10px; }
+    .fw-footer-social a {
+        width: 38px; height: 38px; border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.2);
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(255,255,255,0.75); font-size: 15px; text-decoration: none;
+        transition: background .2s, color .2s, border-color .2s;
+    }
+    .fw-footer-social a:hover {
+        background: #F5A800; color: #1a1a2e; border-color: #F5A800;
+    }
 
-                <!-- ContactUs Widget -->
-                <aside class="col-md-4 col-sm-6 col-xs-6 widget widget_contactus">
-                    <h3 class="block-title">REACH OUT</h3>
-                    <div class="contactinfo-box">
-                        {{-- <div class="contactinfo-box">
-                            <i class="fa fa-phone"></i>
-                            <p>
-                                <a title="+250 788 608 988" href="tel:+250 788 608 988">+250 788 608 988</a>
-                            </p>
-                        </div> --}}
-                        <div class="contactinfo-box">
-                            <i class="fa fa-location-arrow"></i>
-                            <p>
-                                <a title="PO. Box:2000 Kigali-Rwanda" href="tel:PO. Box:2000 Kigali-Rwanda">PO. Box:2000
-                                    Kigali-Rwanda</a>
-                            </p>
+    /* Column headings */
+    .fw-footer-col h4 {
+        font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700;
+        letter-spacing: 2px; text-transform: uppercase; color: #fff;
+        margin-bottom: 20px; padding-bottom: 10px;
+        border-bottom: 2px solid #F5A800; display: inline-block;
+    }
+
+    /* Quick links */
+    .fw-footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .fw-footer-links li a {
+        font-size: 13px; color: #fff; text-decoration: none;
+        display: flex; align-items: center; gap: 8px; transition: color .2s;
+    }
+    .fw-footer-links li a::before { content: '›'; color: #F5A800; font-size: 16px; line-height: 1; }
+    .fw-footer-links li a:hover { color: #F5A800; }
+
+    /* Contact */
+    .fw-footer-contact { display: flex; flex-direction: column; gap: 14px; }
+    .fw-footer-contact-item {
+        display: flex; align-items: flex-start; gap: 12px;
+        font-size: 13px; color: #fff;
+    }
+    .fw-footer-contact-item i { color: #F5A800; margin-top: 2px; font-size: 14px; flex-shrink: 0; }
+    .fw-footer-contact-item a { color: #fff; text-decoration: none; transition: color .2s; }
+    .fw-footer-contact-item a:hover { color: #F5A800; }
+
+    /* Newsletter */
+    .fw-footer-newsletter-desc {
+        font-size: 13px; color: #fff; line-height: 1.65; margin-bottom: 14px;
+    }
+    .fw-footer-newsletter-form { display: flex; }
+    .fw-footer-newsletter-form input {
+        flex: 1; padding: 11px 14px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2); border-right: none;
+        color: #fff; font-size: 13px; font-family: 'Barlow', sans-serif;
+        border-radius: 4px 0 0 4px; outline: none;
+    }
+    .fw-footer-newsletter-form input::placeholder { color: rgba(255,255,255,0.4); }
+    .fw-footer-newsletter-form button {
+        background: #F5A800; color: #1a1a2e;
+        border: none; padding: 0 20px;
+        font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 700;
+        letter-spacing: 1px; text-transform: uppercase;
+        cursor: pointer; border-radius: 0 4px 4px 0; transition: background .2s;
+        white-space: nowrap;
+    }
+    .fw-footer-newsletter-form button:hover { background: #C98500; }
+
+    /* Divider */
+    .fw-footer-divider {
+        border: none; border-top: 1px solid rgba(255,255,255,0.12);
+        margin: 0;
+    }
+
+    /* Bottom bar */
+    .fw-footer-bottom { padding: 18px 0; }
+    .fw-footer-bottom-inner {
+        display: flex; justify-content: space-between; align-items: center;
+        flex-wrap: wrap; gap: 12px;
+    }
+    .fw-footer-copy { font-size: 12px; color: #fff; }
+    .fw-footer-bottom-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .fw-footer-bottom-links a {
+        font-size: 12px; color: #fff; text-decoration: none; transition: color .2s;
+    }
+    .fw-footer-bottom-links a:hover { color: #F5A800; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .fw-footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+    }
+    @media (max-width: 600px) {
+        .fw-footer-grid { grid-template-columns: 1fr; gap: 28px; }
+        .fw-footer-bottom-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+</style>
+
+<footer class="fw-footer">
+    <div class="fw-footer-top">
+        <div class="fw-footer-wrap">
+            <div class="fw-footer-grid">
+
+                {{-- ── Brand ── --}}
+                <div>
+                    <div class="fw-footer-brand-logo">
+                        <div class="fw-footer-logo-badge">
+                            <img src="{{ asset('images/file.png') }}" alt="FERWAFA" />
                         </div>
-                        <div class="contactinfo-box">
-                            <i class="fa fa-envelope"></i>
-                            <p style="margin-left: 25px">
-                                <a href="mailto:ferwafa@yahoo.fr" title="ferwafa@yahoo.fr">ferwafa@yahoo.fr</a>
-                            </p>
+                        <div>
+                            <div class="fw-footer-logo-title">FERWAFA</div>
+                            <div class="fw-footer-logo-sub">Rwanda Football Federation</div>
                         </div>
-                </aside>
-                <!-- ContactUs Widget /- -->
-
-                <!-- NewsLetter Widget -->
-                <aside class="col-md-4 col-sm-12 col-xs-12 widget widget_newsletter">
-                    <h3 class="block-title">News Letter</h3>
-                    <p>You can enter your E mail to subscribe to our website, so as to receive the latest news.</p>
-                    <div class="input-group">
-                        <input type="text" placeholder="Enter Address" class="form-control" />
-                        <span class="input-group-btn">
-                            <button type="button" title="Subscribe" class="btn">Go</button>
-                        </span>
                     </div>
-                    <ul style="display: flex; justify-content:center; align-items:center; gap: 24px">
-                        <li>
-                            <a title="Facebook" data-toggle="tooltip" href="https://www.facebook.com/RwandaFA/"><i
-                                    class="fa fa-facebook"></i></a>
-                        </li>
-                        <li>
-                            <a title="Twitter" data-toggle="tooltip" href="https://twitter.com/FERWAFA"><i
-                                    class="fa fa-twitter"></i></a>
-                        </li>
-                        <li>
-                            <a title="Instagram" data-toggle="tooltip" href="https://www.instagram.com/ferwafa/"><i
-                                    class="fa fa-instagram"></i></a>
-                        </li>
-                        <li>
-                            <a title="Youtube" data-toggle="tooltip" href="https://www.youtube.com/@ferwafatv761"><i
-                                    class="fa fa-youtube"></i></a>
-                        </li>
-                    </ul>
-                </aside>
-                <!-- NewsLetter Widget /- -->
-            </div>
-        </div>
-        <!-- Container /- -->
-
-        <!-- Container -->
-        <div class="container">
-            <div class="footer-menu" style="display:flex; justify-content:center; align-atimes: center">
-                <!-- Copyrights -->
-                <div class="copyrights ow-pull-left">
-                    <p>Copyright &copy; <span id="currentYear"></span> FERWAFA. All rights Reserved</p>
+                    <p class="fw-footer-desc">
+                        The Fédération Rwandaise de Football Association (FERWAFA) was established
+                        in 1972 and became affiliated with CAF and FIFA in 1978. Guided by our motto
+                        — <em>"Unity, Discipline, and Victory"</em> — we promote the development,
+                        integrity, and excellence of football in Rwanda.
+                    </p>
+                    <div class="fw-footer-social">
+                        <a href="https://www.facebook.com/RwandaFA/" target="_blank" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/FERWAFA" target="_blank" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.instagram.com/ferwafa/" target="_blank" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@ferwafatv761" target="_blank" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
                 </div>
-                <!-- Copyrights /- -->
+
+                {{-- ── Quick Links ── --}}
+                <div class="fw-footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="fw-footer-links">
+                        <li><a href="{{ route('all.news') }}">News</a></li>
+                        <li><a href="#">Competitions</a></li>
+                        <li><a href="{{ route('seniorMen.news') }}">National Teams</a></li>
+                        <li><a href="{{ route('grassroots.news') }}">Development</a></li>
+                        <li><a href="{{ route('jobs.page.show') }}">Career</a></li>
+                        <li><a href="{{ route('document.page.show') }}">Documents</a></li>
+                        <li><a href="{{ route('whistleblowers') }}">Whistleblowers</a></li>
+                    </ul>
+                </div>
+
+                {{-- ── Contact ── --}}
+                <div class="fw-footer-col">
+                    <h4>Reach Out</h4>
+                    <div class="fw-footer-contact">
+                        <div class="fw-footer-contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>PO. Box 2000, Kigali, Rwanda</span>
+                        </div>
+                        <div class="fw-footer-contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:sgoffice@ferwafa.com">sgoffice@ferwafa.com</a>
+                        </div>
+                        <div class="fw-footer-contact-item">
+                            <i class="fab fa-facebook"></i>
+                            <a href="https://www.facebook.com/RwandaFA/" target="_blank">facebook.com/RwandaFA</a>
+                        </div>
+                        <div class="fw-footer-contact-item">
+                            <i class="fab fa-twitter"></i>
+                            <a href="https://twitter.com/FERWAFA" target="_blank">@FERWAFA</a>
+                        </div>
+                        <div class="fw-footer-contact-item">
+                            <i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/ferwafa/" target="_blank">@ferwafa</a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ── Newsletter ── --}}
+                <div class="fw-footer-col">
+                    <h4>Newsletter</h4>
+                    <p class="fw-footer-newsletter-desc">
+                        Subscribe to receive the latest Rwanda football news, match results,
+                        and updates directly to your inbox.
+                    </p>
+                    <div class="fw-footer-newsletter-form">
+                        <input type="email" placeholder="Your email address" />
+                        <button type="button">Subscribe</button>
+                    </div>
+                </div>
+
             </div>
-            <!-- Footer Menu /- -->
         </div>
-        <!-- Container /- -->
-    </footer>
+    </div>
 
-    <script>
-        document.getElementById("currentYear").textContent =
-            new Date().getFullYear();
-    </script>
+    <hr class="fw-footer-divider" />
 
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <div class="fw-footer-bottom">
+        <div class="fw-footer-wrap">
+            <div class="fw-footer-bottom-inner">
+                <p class="fw-footer-copy">
+                    Copyright &copy; <span id="fwFooterYear"></span> FERWAFA. All Rights Reserved.
+                </p>
+                <div class="fw-footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="{{ route('whistleblowers') }}">Whistleblowers</a>
+                    <a href="{{ route('information') }}">Contact</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
 
-    <!-- Library - Js -->
-    <script src="{{ asset('libraries/lib.js') }}"></script>
-    <!-- Bootstrap JS File v3.3.5 -->
-    <script src="{{ asset('libraries/jquery.countdown.min.js') }}"></script>
+<script>
+    document.getElementById('fwFooterYear').textContent = new Date().getFullYear();
+</script>
 
-    <script src="{{ asset('libraries/lightslider-master/lightslider.js') }}"></script>
-    <!-- Library - Google Map API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn3Z6i1AYolP3Y2SGis5qhbhRwmxxo1wU"></script>
-    <script src="{{ asset('js/functions.js') }}"></script>
-</body>
+{{-- ── Site Scripts (keep your original order) ── --}}
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+<script src="{{ asset('libraries/lib.js') }}"></script>
+<script src="{{ asset('libraries/jquery.countdown.min.js') }}"></script>
+<script src="{{ asset('libraries/lightslider-master/lightslider.js') }}"></script>
+<script src="{{ asset('js/functions.js') }}"></script>
