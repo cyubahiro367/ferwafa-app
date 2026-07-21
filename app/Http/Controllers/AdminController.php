@@ -67,7 +67,7 @@ class AdminController extends Controller
         $news = DB::table('News as a')
                     ->join('NewsUrl as b', 'b.news_id', '=', 'a.id')
                     ->join('Status as c', 'a.statusID', '=', 'c.id')
-                    ->select('a.*', 'b.image_url', 'c.name')
+                    ->select('a.id', 'a.title', 'a.caption', 'a.description', 'a.is_top', 'a.created_at', 'a.updated_at', 'b.image_url', 'c.name')
                     ->orderBy('a.id', 'DESC')
                     ->limit(10)
                     ->get()
