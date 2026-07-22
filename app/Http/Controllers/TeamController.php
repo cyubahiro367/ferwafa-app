@@ -102,8 +102,11 @@ class TeamController extends Controller
             ->with('message', 'Member is added successfully');
     }
 
-    public function getTeamImageDoc($fileName)
+    public function getTeamImageDoc($id)
     {
+        $record = Team::findOrFail($id);
+        $fileName = basename($record->logo);
+
         if (Storage::exists('team/' . $fileName)) {
             return Storage::response('team/' . $fileName);
         }

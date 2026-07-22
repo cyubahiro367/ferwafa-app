@@ -17,9 +17,9 @@
                             <img src="{{ asset('../asset/images/default-pic.png') }}" style="width: 400px; height: auto;"
                                 alt="team1" />
                 @else
-                    <li data-thumb="{{ route('comitte.doc', $value['url']) }}?v=1">
+                    <li data-thumb="{{ route('comitte.doc', $value['id']) }}">
                         <div class="col-md-6 no-padding larg-thumb">
-                            <img src="{{ route('comitte.doc', $value['url']) }}?v=1" style="width: 400px; height: auto;"
+                            <img src="{{ route('comitte.doc', $value['id']) }}" style="width: 400px; height: auto;"
                                 alt="team1" />
                 @endif
                 </div>

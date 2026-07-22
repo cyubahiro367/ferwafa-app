@@ -54,8 +54,11 @@ class EventController extends Controller
             ->with('message', 'Event has been created!');
     }
 
-    public function getEventImage($fileName)
+    public function getEventImage($id)
     {
+        $record = EventUrl::findOrFail($id);
+        $fileName = basename($record->image_url);
+
         if (Storage::exists('eventImages/' . $fileName)) {
             return Storage::response('eventImages/' . $fileName);
         }
@@ -64,7 +67,7 @@ class EventController extends Controller
 
     public function allEvents()
     {
-        $events = DB::select('SELECT a.*,b.image_url,c.statusName FROM 
+        $events = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.statusName FROM 
                                 Event AS a
                                 JOIN EventUrl AS b
                                 ON b.event_id = a.id
@@ -85,6 +88,7 @@ class EventController extends Controller
                 "status" => $value->statusName,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleEvent);
@@ -104,6 +108,7 @@ class EventController extends Controller
         foreach ($eventUrls as $value) {
             $fileUrl = explode('/', $value->image_url)[1];
             $eventUrl = [
+                'id' => $value->id,
                 'url' => $fileUrl
             ];
             array_push($urls, $eventUrl);

@@ -60,7 +60,7 @@
                                         <td class="text-truncate">
                                             <ul class="list-unstyled order-list m-b-0 m-b-0">
                                                 <li class="team-member team-member-sm">
-                                                    <img class="rounded-circle" src="{{ route('news.images.show', $item['image_url'])}}?v=1" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
+                                                    <img class="rounded-circle" src="{{ route('news.images.show', $item['image_id'])}}" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
                                                 </li>
                                             </ul>
                                         </td>

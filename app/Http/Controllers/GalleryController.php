@@ -111,8 +111,11 @@ class GalleryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function displayGalleryImage($fileName)
+    public function displayGalleryImage($id)
     {
+        $record = Gallery::findOrFail($id);
+        $fileName = basename($record->url);
+
         if (Storage::exists('gallery/' . $fileName)) {
             return Storage::response('gallery/' . $fileName);
         }

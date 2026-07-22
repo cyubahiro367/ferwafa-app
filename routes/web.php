@@ -45,7 +45,7 @@ Route::get('/home', function () {
     return view('home');
 });
 Route::get('/', [NewsController::class, 'getNews']);
-Route::get('/news-file/{fileName}', [NewsController::class, 'getNewsImage'])->name('news.images.show');
+Route::get('/news-file/{id}', [NewsController::class, 'getNewsImage'])->name('news.images.show');
 Route::get('/all-news', [NewsController::class, 'allNews'])->name('all.news');
 Route::get('/single-news/{id}', [NewsController::class, 'getSingleNews'])->whereNumber('id')->name('single.news');
 Route::delete('/news/{id}', [NewsController::class, 'deleteNews'])->whereNumber('id')->name('news.delete');
@@ -74,11 +74,11 @@ Route::get('/committe/{id}', [IndependentBodiesController::class, 'index'])->nam
 Route::post("/messages", [IndependentBodiesController::class, 'sendMessage'])->name("independent.message");
 
 Route::get('/report', [ReportController::class, 'get'])->name('report');
-Route::get('/document/{fileName}', [ReportController::class, 'getReportDoc'])->name('report.doc');
+Route::get('/document/{id}', [ReportController::class, 'getReportDoc'])->name('report.doc');
 
 
 Route::get('/gallery', [GalleryController::class, 'getImages'])->name('gallery.images');
-Route::get('/gallery/{fileName}', [GalleryController::class, 'displayGalleryImage'])->name('gallery.doc');
+Route::get('/gallery/{id}', [GalleryController::class, 'displayGalleryImage'])->name('gallery.doc');
 Route::get('/gallery-view', [GalleryController::class, 'galleryList'])->name('admin.gallery.list');
 Route::get('/add-photo', [GalleryController::class, 'addGallery'])->name('post.photo.view');
 Route::post('/create-photo', [GalleryController::class, 'createGallery'])->name('post.photo');
@@ -95,7 +95,7 @@ Route::get('/create-news', [AdminController::class, 'createNewsView'])->name('ne
 Route::get('/event-view', [AdminController::class, 'getEventsForAdmin'])->name('events.view');
 Route::get('/create-event', [AdminController::class, 'createEventsView'])->name('events.create');
 Route::post('/post-event', [EventController::class, 'createEvent'])->name('post.event');
-Route::get('/event-file/{fileName}', [EventController::class, 'getEventImage'])->name('events.images.show');
+Route::get('/event-file/{id}', [EventController::class, 'getEventImage'])->name('events.images.show');
 Route::get('/all-events', [EventController::class, 'allEvents'])->name('all.events');
 Route::get('/single-event/{id}', [EventController::class, 'getSingleEvent'])->whereNumber('id')->name('single.event');
 
@@ -105,7 +105,7 @@ Route::post('/sending-key', [SendingKeyController::class, 'sendingKey'])->name('
 Route::get('/report-view', [ReportController::class, 'getReport'])->name('reports.view');
 Route::get('/add-doc', [ReportController::class, 'addDocument'])->name('add.doc');
 
-Route::get('/commite-doc/{fileName}', [CommitteController::class, 'getComitteImageDoc'])->name('comitte.doc');
+Route::get('/commite-doc/{id}', [CommitteController::class, 'getComitteImageDoc'])->name('comitte.doc');
 Route::post('/post-news', [NewsController::class, 'postNews'])->name('post.news');
 
 
@@ -128,7 +128,7 @@ Route::get('/parteners', [PartnerController::class, 'listPartner'])->name('partn
 Route::get('/add-partener', [PartnerController::class, 'addPartner'])->name('add.partner');
 Route::post('/create-partener', [PartnerController::class, 'createPartner'])->name('create.partner');
 Route::delete('/delete-partner/{id}', [PartnerController::class, 'deletePartner'])->whereNumber('id')->name('delete.partner');
-Route::get('/partner-doc/{fileName}', [PartnerController::class, 'getPartnerImageDoc'])->name('partner.doc');
+Route::get('/partner-doc/{id}', [PartnerController::class, 'getPartnerImageDoc'])->name('partner.doc');
 
 Route::post('/create', [ReportController::class, 'create'])->name('create.report');
 Route::delete('/report-delete/{id}', [ReportController::class, 'deleteReport'])->whereNumber('id')->name('delete.report');
@@ -190,7 +190,7 @@ Route::post('/create-team/{categoryID}', [TeamController::class, 'createTeam'])-
 Route::delete('/delete-team/{divisionID}/{categoryID}/{id}', [TeamController::class, 'deleteTeam'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('delete.team');
 Route::put('/update-team/{categoryID}/{id}', [TeamController::class, 'updateTeam'])->whereNumber(['categoryID', 'id'])->name('update.team');
 Route::get('/edit-team/{divisionID}/{categoryID}/{id}', [TeamController::class, 'editTeam'])->whereNumber(['divisionID', 'categoryID', 'id'])->name('team.page.edit');
-Route::get('/team-doc/{fileName}', [TeamController::class, 'getTeamImageDoc'])->name('team.doc');
+Route::get('/team-doc/{id}', [TeamController::class, 'getTeamImageDoc'])->name('team.doc');
 
 
 

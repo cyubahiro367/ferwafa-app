@@ -48,7 +48,7 @@ Route::prefix('report')->group(function () {
     Route::post('/create', [ReportController::class, 'create']);
     Route::get('/list', [ReportController::class, 'get']);
     Route::get('/get/{id}', [ReportController::class, 'getSingle']);
-    Route::get('/report/{fileName}', [ReportController::class, 'getReportDoc']);
+    Route::get('/report/{id}', [ReportController::class, 'getReportDoc']);
     Route::post('/update/{id}', [ReportController::class, 'updateReport']);
     Route::delete('/delete/{id}', [ReportController::class, 'deleteReport']);
 });

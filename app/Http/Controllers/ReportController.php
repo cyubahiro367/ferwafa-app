@@ -128,8 +128,11 @@ class ReportController extends Controller
     }
 
 
-    public function getReportDoc($fileName)
+    public function getReportDoc($id)
     {
+        $record = Document::findOrFail($id);
+        $fileName = basename($record->url);
+
         if (Storage::exists('documents/' . $fileName)) {
             return Storage::response('documents/' . $fileName);
         }

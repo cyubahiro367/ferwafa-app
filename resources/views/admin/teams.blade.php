@@ -73,7 +73,7 @@
                                             <ul class="list-unstyled order-list m-b-0">
                                                 <li class="team-member team-member-sm">
                                                     <img class="rounded-circle"
-                                                         src="{{ route('team.doc', $team['url']) }}?v=1"
+                                                         src="{{ route('team.doc', $team['id']) }}"
                                                          alt="{{ $team['name'] }}"
                                                          data-toggle="tooltip"
                                                          title="{{ $team['name'] }}">

@@ -51,7 +51,7 @@
                         <div class="col-lg-4 col-xl-4">
                             <div class="single-home-news">
                                 <div class="news-img">
-                                    <img src="{{ route('news.images.show', $news['image_url']) }}?v=1">
+                                    <img src="{{ route('news.images.show', $news['image_id']) }}">
                                 </div>
                                 <div class="news-information">
                                     <h5>

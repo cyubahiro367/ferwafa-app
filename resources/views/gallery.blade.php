@@ -8,7 +8,7 @@
                 @foreach ($galleries as $gallery)
                     <div class="gallery">
                         <img alt="gallery" class="single-image-gallery"
-                            src="{{ route('gallery.doc', $gallery['url']) }}?v=1" /><i aria-hidden="true"
+                            src="{{ route('gallery.doc', $gallery['id']) }}" /><i aria-hidden="true"
                             class="view-image-gallery"></i>
                     </div>
                 @endforeach
