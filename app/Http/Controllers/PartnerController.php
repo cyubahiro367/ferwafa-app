@@ -53,10 +53,10 @@ class PartnerController extends Controller
 
     public function getPartnerImageDoc($fileName)
     {
-        if (Storage::exists('partner/' . $fileName)) { {
-                return response()->file(storage_path('/app/partner/' . $fileName));
-            }
+        if (Storage::exists('partner/' . $fileName)) {
+            return Storage::response('partner/' . $fileName);
         }
+        abort(404);
     }
 
     public function listPartner()

@@ -56,10 +56,10 @@ class EventController extends Controller
 
     public function getEventImage($fileName)
     {
-        if (Storage::exists('eventImages/' . $fileName)) { {
-                return response()->file(storage_path('/app/eventImages/' . $fileName));
-            }
+        if (Storage::exists('eventImages/' . $fileName)) {
+            return Storage::response('eventImages/' . $fileName);
         }
+        abort(404);
     }
 
     public function allEvents()

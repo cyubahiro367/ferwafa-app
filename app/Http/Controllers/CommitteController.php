@@ -70,10 +70,10 @@ class CommitteController extends Controller
 
     public function getComitteImageDoc($fileName)
     {
-        if (Storage::exists('committe/' . $fileName)) { {
-                return response()->file(storage_path('/app/committe/' . $fileName));
-            }
+        if (Storage::exists('committe/' . $fileName)) {
+            return Storage::response('committe/' . $fileName);
         }
+        abort(404);
     }
 
     public function listCommitte()

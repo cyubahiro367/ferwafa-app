@@ -113,10 +113,10 @@ class GalleryController extends Controller
      */
     public function displayGalleryImage($fileName)
     {
-        if (Storage::exists('gallery/' . $fileName)) { {
-                return response()->file(storage_path('/app/gallery/' . $fileName));
-            }
+        if (Storage::exists('gallery/' . $fileName)) {
+            return Storage::response('gallery/' . $fileName);
         }
+        abort(404);
     }
 
     /**
