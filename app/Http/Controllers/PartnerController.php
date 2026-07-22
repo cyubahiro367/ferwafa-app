@@ -51,8 +51,11 @@ class PartnerController extends Controller
             ->with('message', 'Member is added successfully');
     }
 
-    public function getPartnerImageDoc($fileName)
+    public function getPartnerImageDoc($id)
     {
+        $record = Partner::findOrFail($id);
+        $fileName = basename($record->image_url);
+
         if (Storage::exists('partner/' . $fileName)) {
             return Storage::response('partner/' . $fileName);
         }

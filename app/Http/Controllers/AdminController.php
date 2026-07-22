@@ -67,7 +67,7 @@ class AdminController extends Controller
         $news = DB::table('News as a')
                     ->join('NewsUrl as b', 'b.news_id', '=', 'a.id')
                     ->join('Status as c', 'a.statusID', '=', 'c.id')
-                    ->select('a.id', 'a.title', 'a.caption', 'a.description', 'a.is_top', 'a.created_at', 'a.updated_at', 'b.image_url', 'c.name')
+                    ->select('a.id', 'a.title', 'a.caption', 'a.description', 'a.is_top', 'a.created_at', 'a.updated_at', 'b.id as image_id', 'b.image_url', 'c.name')
                     ->orderBy('a.id', 'DESC')
                     ->limit(10)
                     ->get()
@@ -86,6 +86,7 @@ class AdminController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('Y-m-d'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('Y-m-d'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -104,7 +105,7 @@ class AdminController extends Controller
         }
 
         $events = DB::select(
-            'SELECT a.*,b.image_url,c.name AS statusName
+            'SELECT a.*,b.id AS image_id,b.image_url,c.name AS statusName
                                  FROM 
                                 Event AS a
                                 JOIN EventUrl AS b
@@ -125,6 +126,7 @@ class AdminController extends Controller
                 "status" => $value->statusName,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleEvent);

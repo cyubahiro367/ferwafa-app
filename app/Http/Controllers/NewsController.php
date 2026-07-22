@@ -76,8 +76,11 @@ class NewsController extends Controller
             ->with('message', 'News has been created!');
     }
 
-    public function getNewsImage($fileName)
+    public function getNewsImage($id)
     {
+        $record = NewsUrl::findOrFail($id);
+        $fileName = basename($record->image_url);
+
         if (Storage::exists('newsImages/' . $fileName)) {
             return Storage::response('newsImages/' . $fileName);
         }
@@ -86,7 +89,7 @@ class NewsController extends Controller
 
     public function allNews()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -109,6 +112,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -122,7 +126,7 @@ class NewsController extends Controller
 
     public function seniorMen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -147,6 +151,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -160,7 +165,7 @@ class NewsController extends Controller
 
     public function u23()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -185,6 +190,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -198,7 +204,7 @@ class NewsController extends Controller
 
     public function u17()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -223,6 +229,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -236,7 +243,7 @@ class NewsController extends Controller
 
     public function otherMen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -261,6 +268,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -274,7 +282,7 @@ class NewsController extends Controller
 
     public function seniorWomen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -299,6 +307,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -312,7 +321,7 @@ class NewsController extends Controller
 
     public function u20Women()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -337,6 +346,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -350,7 +360,7 @@ class NewsController extends Controller
 
     public function otherWomen()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -375,6 +385,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -388,7 +399,7 @@ class NewsController extends Controller
 
     public function grassroots()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -413,6 +424,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -426,7 +438,7 @@ class NewsController extends Controller
 
     public function schools()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -451,6 +463,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -464,7 +477,7 @@ class NewsController extends Controller
 
     public function youth()
     {
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -489,6 +502,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -502,7 +516,7 @@ class NewsController extends Controller
 
     public function getNews()
     {
-        $topNews = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $topNews = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -525,12 +539,13 @@ class NewsController extends Controller
                 "status" => $topNew->name,
                 "created_at" => Carbon::parse($topNew->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($topNew->updated_at)->format('d-m-Y'),
+                "image_id" => $topNew->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($topResults, $singleTopNews);
         }
 
-        $news = DB::select('SELECT a.*,b.image_url,c.name FROM
+        $news = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.name FROM
                                 News AS a
                                 JOIN NewsUrl AS b
                                 ON b.news_id = a.id
@@ -553,6 +568,7 @@ class NewsController extends Controller
                 "status" => $value->name,
                 "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
                 "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
+                "image_id" => $value->image_id,
                 "image_url" => $fileUrl
             ];
             array_push($result, $singleNews);
@@ -589,6 +605,7 @@ class NewsController extends Controller
         foreach ($newsUrls as $value) {
             $fileUrl = explode('/', $value->image_url)[1];
             $newsUrl = [
+                'id' => $value->id,
                 'url' => $fileUrl,
                 'image_caption' => $value->image_caption
             ];
@@ -612,6 +629,7 @@ class NewsController extends Controller
         foreach ($newsUrls as $value) {
             $fileUrl = explode('/', $value->image_url)[1];
             $newsUrl = [
+                'id' => $value->id,
                 'url' => $fileUrl,
                 'image_caption' => $value->image_caption
             ];

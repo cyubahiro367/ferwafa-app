@@ -68,8 +68,11 @@ class CommitteController extends Controller
             ->with('message', 'Member is added successfully');
     }
 
-    public function getComitteImageDoc($fileName)
+    public function getComitteImageDoc($id)
     {
+        $record = Committe::findOrFail($id);
+        $fileName = basename($record->image_url);
+
         if (Storage::exists('committe/' . $fileName)) {
             return Storage::response('committe/' . $fileName);
         }

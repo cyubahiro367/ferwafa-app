@@ -15,7 +15,7 @@ class="container-fluid eventlist blog upcoming-event latest-blog no-padding"
             <div class="entry-cover">
               <a href="blogpost-page.html"
                 ><img
-                  src="{{ route('news.images.show', $news['image_url']) }}"
+                  src="{{ route('news.images.show', $news['image_id']) }}"
                   alt="blog"
                   width="297"
                   height="298"
