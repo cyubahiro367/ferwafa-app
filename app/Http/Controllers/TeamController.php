@@ -104,10 +104,10 @@ class TeamController extends Controller
 
     public function getTeamImageDoc($fileName)
     {
-        if (Storage::exists('team/' . $fileName)) { {
-                return response()->file(storage_path('/app/team/' . $fileName));
-            }
+        if (Storage::exists('team/' . $fileName)) {
+            return Storage::response('team/' . $fileName);
         }
+        abort(404);
     }
 
     public function listTeam($divisionID, $categoryID)

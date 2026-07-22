@@ -78,10 +78,10 @@ class NewsController extends Controller
 
     public function getNewsImage($fileName)
     {
-        if (Storage::exists('newsImages/' . $fileName)) { {
-                return response()->file(storage_path('/app/newsImages/' . $fileName));
-            }
+        if (Storage::exists('newsImages/' . $fileName)) {
+            return Storage::response('newsImages/' . $fileName);
         }
+        abort(404);
     }
 
     public function allNews()

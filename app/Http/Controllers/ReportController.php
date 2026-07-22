@@ -130,10 +130,10 @@ class ReportController extends Controller
 
     public function getReportDoc($fileName)
     {
-        if (Storage::exists('documents/' . $fileName)) { {
-                return response()->file(storage_path('/app/documents/' . $fileName));
-            }
+        if (Storage::exists('documents/' . $fileName)) {
+            return Storage::response('documents/' . $fileName);
         }
+        abort(404);
     }
 
     public function editReport($id)
