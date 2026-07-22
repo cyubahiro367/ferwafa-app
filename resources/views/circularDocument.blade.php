@@ -12,7 +12,7 @@
                             <a><img alt="" class="click-report" src="/static/img/icons/click.png" /></a>
                         </div>
                         <div class="report-title">
-                            <a href="{{ route('report.doc', $circularDocument['url']) }}" target="_blank">
+                            <a href="{{ route('report.doc', $circularDocument['url']) }}?v=1" target="_blank">
                                 <p>{{ $circularDocument['title'] }}</p>
                             </a>
                         </div>

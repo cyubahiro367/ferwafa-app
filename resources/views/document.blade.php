@@ -8,11 +8,11 @@
                 @foreach ($documents as $document)
                     <div class="report">
                         <div class="report-image">
-                            <a href="{{ route('report.doc', $document['url']) }}" target="_blank"><img alt="" src="/static/img/icons/document.png" /></a>
-                            <a href="{{ route('report.doc', $document['url']) }}" target="_blank"><img alt="" class="click-report" src="/static/img/icons/click.png" /></a>
+                            <a href="{{ route('report.doc', $document['url']) }}?v=1" target="_blank"><img alt="" src="/static/img/icons/document.png" /></a>
+                            <a href="{{ route('report.doc', $document['url']) }}?v=1" target="_blank"><img alt="" class="click-report" src="/static/img/icons/click.png" /></a>
                         </div>
                         <div class="report-title">
-                            <a href="{{ route('report.doc', $document['url']) }}" target="_blank">
+                            <a href="{{ route('report.doc', $document['url']) }}?v=1" target="_blank">
                                 <p>{{ $document['title'] }}</p>
                             </a>
                         </div>

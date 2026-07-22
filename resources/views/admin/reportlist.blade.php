@@ -54,7 +54,7 @@
                                         <td>
 
                                             <div>
-                                                <a href="{{ route('report.doc', $report['url']) }}" target="_blank" class="btn btn-outline-success">Open</a>
+                                                <a href="{{ route('report.doc', $report['url']) }}?v=1" target="_blank" class="btn btn-outline-success">Open</a>
                                             </div>
                                         </td>
                                         <td>
