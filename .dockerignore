@@ -1,0 +1,43 @@
+.git
+.github
+.gitignore
+
+# Local dependencies — installed fresh in the image
+node_modules
+vendor
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Laravel runtime / cache artifacts
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/testing/*
+bootstrap/cache/*.php
+
+# Frontend build output — rebuilt in the image
+public/build
+public/hot
+
+# Tests and tooling not needed in production image
+tests
+.phpunit.cache
+.phpunit.result.cache
+phpunit.xml
+Homestead.json
+Homestead.yaml
+auth.json
+docker-compose.yml
+docker-compose.*.yml
+*.md
+.idea
+.vscode
+.fleet
+.vercel
+
+# Large local document uploads (not part of the app image)
+public/static/documents/*.pdf
