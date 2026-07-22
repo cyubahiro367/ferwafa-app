@@ -119,10 +119,10 @@ class PlayerSuspendedController extends Controller
 
     public function getPlayerSuspendedImageDoc($fileName)
     {
-        if (Storage::exists('playerSuspended/' . $fileName)) { {
-                return response()->file(storage_path('/app/playerSuspended/' . $fileName));
-            }
+        if (Storage::exists('playerSuspended/' . $fileName)) {
+            return Storage::response('playerSuspended/' . $fileName);
         }
+        abort(404);
     }
 
     public function listPlayerSuspended(Request $request, $divisionID, $categoryID)

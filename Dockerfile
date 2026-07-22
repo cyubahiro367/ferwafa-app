@@ -1,6 +1,9 @@
 FROM php:8.2-fpm-alpine
 
-# Install system dependencies
+# Avoid OOM on small build VMs when installing aws/aws-sdk-php
+ENV COMPOSER_MEMORY_LIMIT=-1
+
+# Install system dependencies (curl + libxml cover AWS SDK needs)
 RUN apk add --no-cache \
     nginx supervisor curl git zip unzip \
     libpng-dev oniguruma-dev libxml2-dev \

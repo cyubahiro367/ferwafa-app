@@ -111,10 +111,10 @@ class TopScoreController extends Controller
 
     public function getTopScoreImageDoc($fileName)
     {
-        if (Storage::exists('topScore/' . $fileName)) { {
-                return response()->file(storage_path('/app/topScore/' . $fileName));
-            }
+        if (Storage::exists('topScore/' . $fileName)) {
+            return Storage::response('topScore/' . $fileName);
         }
+        abort(404);
     }
 
     public function listTopScore(Request $request, $divisionID, $categoryID)
