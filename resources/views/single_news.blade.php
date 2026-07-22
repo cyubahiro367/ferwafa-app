@@ -10,7 +10,7 @@
             <article class="type-post">
               <div class="entry-cover">
                 <img
-                  src="{{ route('news.images.show', $url[0]['url']) }}"
+                  src="{{ route('news.images.show', $url[0]['url']) }}?v=1"
                   alt="blog-post"
                   width="810"
                   height="376"

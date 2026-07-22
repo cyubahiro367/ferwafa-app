@@ -744,7 +744,7 @@
         @foreach ($topResults as $key => $topResult)
             @if ($topResult['is_top'] == 1)
                 <div class="fw-hero-slide {{ $si === 0 ? 'active' : '' }}">
-                    <div class="fw-hero-bg" style="background-image:url('{{ route('news.images.show', $topResult['image_url']) }}')"></div>
+                    <div class="fw-hero-bg" style="background-image:url('{{ route('news.images.show', $topResult['image_url']) }}?v=1')"></div>
                     <div class="fw-wrap fw-hero-content">
                         <div class="fw-hero-inner">
                             <div class="fw-hero-tag"><i class="fas fa-futbol"></i> Featured</div>
@@ -804,7 +804,7 @@
                 <div class="fw-news-featured">
                     <a href="{{ route('single.news', $result[0]['id']) }}" class="fw-news-card">
                         <div class="fw-news-card-img">
-                            <img src="{{ route('news.images.show', $result[0]['image_url']) }}" alt="{{ $result[0]['title'] }}" loading="lazy" />
+                            <img src="{{ route('news.images.show', $result[0]['image_url']) }}?v=1" alt="{{ $result[0]['title'] }}" loading="lazy" />
                             <span class="fw-news-card-cat">News</span>
                         </div>
                         <div class="fw-news-card-body">
@@ -820,7 +820,7 @@
                 @foreach ($result as $index => $news)
                     @if ($index > 0 && $index <= 4)
                         <a href="{{ route('single.news', $news['id']) }}" class="fw-news-list-item">
-                            <div class="fw-news-list-img"><img src="{{ route('news.images.show', $news['image_url']) }}" alt="{{ $news['title'] }}" loading="lazy" /></div>
+                            <div class="fw-news-list-img"><img src="{{ route('news.images.show', $news['image_url']) }}?v=1" alt="{{ $news['title'] }}" loading="lazy" /></div>
                             <div class="fw-news-list-body">
                                 <div class="fw-news-list-meta"><i class="far fa-calendar"></i> {{ date('jS M Y', strtotime($news['created_at'])) }}</div>
                                 <h4 class="fw-news-list-title">{{ $news['title'] }}</h4>

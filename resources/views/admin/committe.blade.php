@@ -56,7 +56,7 @@
                                                         <img class="rounded-circle" src="{{ asset('../../asset/images/default-pic.png') }}" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
                                                         {{-- <li data-thumb="{{ asset('../asset/images/default-pic.png') }}"> --}}
                                                     @else
-                                                    <img class="rounded-circle" src="{{ route('comitte.doc', $committe['url']) }}" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
+                                                    <img class="rounded-circle" src="{{ route('comitte.doc', $committe['url']) }}?v=1" alt="user" data-toggle="tooltip" title="" data-original-title="Wildan Ahdian" />
                                                     @endif
                                                 </li>
                                             </ul>

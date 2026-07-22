@@ -12,7 +12,7 @@
                             <a><img alt="" class="click-report" src="/static/img/icons/click.png" /></a>
                         </div>
                         <div class="report-title">
-                            <a href="{{ route('report.doc', $report['url']) }}" target="_blank">
+                            <a href="{{ route('report.doc', $report['url']) }}?v=1" target="_blank">
                                 <p>{{ $report['title'] }}</p>
                             </a>
                         </div>
