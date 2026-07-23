@@ -830,11 +830,6 @@
                 @endforeach
             </div>
         </div>
-        <div style="text-align:center;margin-top:44px;">
-            <a href="{{ route('all.news') }}" class="fw-view-all" style="font-size:14px;padding:13px 30px;border:2px solid var(--blue);border-radius:var(--radius);display:inline-flex;align-items:center;gap:8px;">
-                Read More News <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
     </div>
 </div>
 
