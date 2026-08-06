@@ -90,22 +90,45 @@
         @if ($committe->count())
             <div class="fw-member-grid">
                 @foreach ($committe as $value)
-                    <div class="fw-member-card">
+                    @php
+                        $memberImg = $value->url
+                            ? route('comitte.doc', $value->id)
+                            : asset('images/file.png');
+                    @endphp
+                    <button
+                        type="button"
+                        class="fw-member-card"
+                        data-name="{{ $value->name }}"
+                        data-role="{{ $value->position }}"
+                        data-img="{{ $memberImg }}"
+                    >
                         <div class="fw-member-photo">
-                            @if ($value->url)
-                                <img src="{{ route('comitte.doc', $value->id) }}" alt="{{ $value->name }}" loading="lazy" />
-                            @else
-                                <img src="{{ asset('images/file.png') }}" alt="{{ $value->name }}" loading="lazy" />
-                            @endif
+                            <img src="{{ $memberImg }}" alt="{{ $value->name }}" loading="lazy" />
                         </div>
                         <div class="fw-member-body">
                             <div class="fw-member-name">{{ $value->name }}</div>
                             <div class="fw-member-role">{{ $value->position }}</div>
                         </div>
-                    </div>
+                    </button>
                 @endforeach
             </div>
             @include('partials.fw-pagination', ['paginator' => $committe])
+
+            <div class="fw-member-modal" id="fwMemberModal" aria-hidden="true">
+                <div class="fw-member-modal-backdrop" data-close-modal></div>
+                <div class="fw-member-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="fwMemberModalName">
+                    <button type="button" class="fw-member-modal-close" data-close-modal aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="fw-member-modal-photo">
+                        <img id="fwMemberModalImg" src="" alt="" />
+                    </div>
+                    <div class="fw-member-modal-body">
+                        <div class="fw-member-modal-name" id="fwMemberModalName"></div>
+                        <div class="fw-member-modal-role" id="fwMemberModalRole"></div>
+                    </div>
+                </div>
+            </div>
         @else
             <div class="fw-empty">
                 <i class="far fa-user"></i>
@@ -126,5 +149,51 @@
             document.getElementById(tab.dataset.panel).classList.add('active');
         });
     });
+
+    (function () {
+        var modal = document.getElementById('fwMemberModal');
+        if (!modal) return;
+
+        var img = document.getElementById('fwMemberModalImg');
+        var nameEl = document.getElementById('fwMemberModalName');
+        var roleEl = document.getElementById('fwMemberModalRole');
+
+        function openModal(card) {
+            var src = card.getAttribute('data-img') || '';
+            var name = card.getAttribute('data-name') || '';
+            var role = card.getAttribute('data-role') || '';
+            img.src = src;
+            img.alt = name;
+            nameEl.textContent = name;
+            roleEl.textContent = role;
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('fw-modal-open');
+        }
+
+        function closeModal() {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('fw-modal-open');
+            img.removeAttribute('src');
+            img.alt = '';
+        }
+
+        document.querySelectorAll('.fw-member-card').forEach(function (card) {
+            card.addEventListener('click', function () {
+                openModal(card);
+            });
+        });
+
+        modal.querySelectorAll('[data-close-modal]').forEach(function (el) {
+            el.addEventListener('click', closeModal);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+                closeModal();
+            }
+        });
+    })();
 </script>
 @endpush

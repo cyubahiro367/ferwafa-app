@@ -31,11 +31,11 @@
             ->first(['Game.dayID']);
     }
 
+    $groups = DB::table('Group')->select('id', 'name')->get();
+
     $womenFixturesUrl = ($womenCatId && $div1Id)
         ? route('fixtures.show', [$seasonId, $div1Id, $womenCatId, $womenDay->dayID ?? 1])
         : '#';
-    $womenDiv2Url = ($womenCatId && $div2Id) ? route('division', [$div2Id, $womenCatId]) : '#';
-    $menDiv2Url = ($menCatId && $div2Id) ? route('division', [$div2Id, $menCatId]) : '#';
     $menFixturesUrl = ($menCatId && $div1Id)
         ? route('fixtures.show', [$seasonId, $div1Id, $menCatId, $menDay->dayID ?? 1])
         : '#';
@@ -70,7 +70,18 @@
                                     <li><a href="{{ $womenFixturesUrl }}">Fixtures &amp; Results</a></li>
                                 </ul>
                             </li>
-                            <li><a href="{{ $womenDiv2Url }}">Second Division</a></li>
+                            <li class="fw-sub-drop">
+                                <a href="#">Second Division</a>
+                                <ul class="fw-sub-drop-menu">
+                                    @foreach ($groups as $group)
+                                        <li>
+                                            <a href="{{ ($womenCatId && $div2Id) ? route('fixtures.show', [$seasonId, $div2Id, $womenCatId, $womenDay->dayID ?? 1, $group->id]) : '#' }}">
+                                                {{ $group->name }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </li>
                             <li class="fw-sub-drop">
                                 <a href="{{ route('seniorWomen.news') }}">National Team</a>
                                 <ul class="fw-sub-drop-menu">
@@ -89,7 +100,18 @@
                                 <ul class="fw-sub-drop-menu">
                                     <li><a href="{{ $menFixturesUrl }}">BK Pro League</a></li>
                                     <li><a href="{{ $menStandingsUrl }}">Standings</a></li>
-                                    <li><a href="{{ $menDiv2Url }}">Second Division</a></li>
+                                    <li class="fw-sub-drop">
+                                        <a href="#">Second Division</a>
+                                        <ul class="fw-sub-drop-menu">
+                                            @foreach ($groups as $group)
+                                                <li>
+                                                    <a href="{{ ($menCatId && $div2Id) ? route('fixtures.show', [$seasonId, $div2Id, $menCatId, $menDay->dayID ?? 1, $group->id]) : '#' }}">
+                                                        {{ $group->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -200,7 +222,18 @@
             <div class="fw-mob-row"><a href="#">Women Football</a><button class="fw-mob-toggle" type="button" data-target="mob-women"><i class="fas fa-chevron-down"></i></button></div>
             <ul class="fw-mob-sub" id="mob-women">
                 <li><a href="{{ $womenFixturesUrl }}">First Division</a></li>
-                <li><a href="{{ $womenDiv2Url }}">Second Division</a></li>
+                <li>
+                    <div class="fw-mob-sub-row"><a href="#">Second Division</a><button class="fw-mob-sub-toggle" type="button" data-target="mob-wdiv2"><i class="fas fa-chevron-down"></i></button></div>
+                    <ul class="fw-mob-subsub" id="mob-wdiv2">
+                        @foreach ($groups as $group)
+                            <li>
+                                <a href="{{ ($womenCatId && $div2Id) ? route('fixtures.show', [$seasonId, $div2Id, $womenCatId, $womenDay->dayID ?? 1, $group->id]) : '#' }}">
+                                    {{ $group->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
                 <li>
                     <div class="fw-mob-sub-row"><a href="{{ route('seniorWomen.news') }}">National Team</a><button class="fw-mob-sub-toggle" type="button" data-target="mob-wnat"><i class="fas fa-chevron-down"></i></button></div>
                     <ul class="fw-mob-subsub" id="mob-wnat">
@@ -216,7 +249,18 @@
             <ul class="fw-mob-sub" id="mob-comp">
                 <li><a href="{{ $menFixturesUrl }}">BK Pro League</a></li>
                 <li><a href="{{ $menStandingsUrl }}">Standings</a></li>
-                <li><a href="{{ $menDiv2Url }}">Second Division</a></li>
+                <li>
+                    <div class="fw-mob-sub-row"><a href="#">Second Division</a><button class="fw-mob-sub-toggle" type="button" data-target="mob-mdiv2"><i class="fas fa-chevron-down"></i></button></div>
+                    <ul class="fw-mob-subsub" id="mob-mdiv2">
+                        @foreach ($groups as $group)
+                            <li>
+                                <a href="{{ ($menCatId && $div2Id) ? route('fixtures.show', [$seasonId, $div2Id, $menCatId, $menDay->dayID ?? 1, $group->id]) : '#' }}">
+                                    {{ $group->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
             </ul>
         </li>
         <li>

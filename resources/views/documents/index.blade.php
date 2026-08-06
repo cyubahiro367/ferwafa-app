@@ -28,7 +28,7 @@
                                 </div>
                             </div>
                         </div>
-                        <span class="fw-doc-dl">Download <i class="fas fa-download"></i></span>
+                        <span class="fw-doc-dl">View <i class="fas fa-eye"></i></span>
                     </a>
                 @endforeach
             </div>
