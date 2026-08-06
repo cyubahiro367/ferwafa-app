@@ -2,209 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DocumentController extends Controller
 {
-    public function showDocumentPage()
+    private function paginateDocumentsByType(string $typeName)
     {
-        $documents = DB::select(
-            'SELECT a.* FROM
-                    Document AS a 
-                    JOIN DocumentType AS b
-                    ON a.type_id = b.id
-                    WHERE b.name = ?',
-            ['document']
-        );
+        $paginator = DB::table('Document as a')
+            ->join('DocumentType as b', 'a.type_id', '=', 'b.id')
+            ->where('b.name', $typeName)
+            ->select('a.*')
+            ->orderByDesc('a.created_at')
+            ->paginate(12);
 
-        $finalDocument = [];
-
-        foreach ($documents as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $document = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
+        $paginator->getCollection()->transform(function ($value) {
+            $parts = explode('/', $value->url);
+            return (object) [
+                'id' => $value->id,
+                'title' => $value->title,
+                'created_at' => $value->created_at,
+                'updated_at' => $value->updated_at,
+                'url' => $parts[1] ?? $value->url,
             ];
-            array_push($finalDocument, $document);
-        }
+        });
 
-        return view('document', ['documents' => $finalDocument]);
+        return $paginator;
     }
 
+    private function documentIndex(string $typeName, string $pageTitle, string $navActive = 'resources', string $label = 'Resources')
+    {
+        return view('documents.index', [
+            'documents' => $this->paginateDocumentsByType($typeName),
+            'pageTitle' => $pageTitle,
+            'pageLabel' => $label,
+            'navActive' => $navActive,
+        ]);
+    }
+
+    public function showDocumentPage()
+    {
+        return $this->documentIndex('document', 'Documents');
+    }
 
     public function showGameRules()
     {
-        $gameRules = DB::select(
-            'SELECT a.* FROM
-                    Document AS a 
-                    JOIN DocumentType AS b
-                    ON a.type_id = b.id
-                    WHERE b.name = ?',
-            ['game-rules']
-        );
-
-        $finalGameRules = [];
-
-        foreach ($gameRules as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $gameRule = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
-            ];
-            array_push($finalGameRules, $gameRule);
-        }
-
-        return view('gameRules', ['gameRules' => $finalGameRules]);
+        return $this->documentIndex('game-rules', 'Laws of the Game');
     }
-
 
     public function showAdditionalGameRules()
     {
-        $additionalGameRules = DB::select(
-            'SELECT a.* FROM
-                    Document AS a 
-                    JOIN DocumentType AS b
-                    ON a.type_id = b.id
-                    WHERE b.name = ?',
-            ['additional-rules']
-        );
-
-        $finalAdditionalGameRules = [];
-
-        foreach ($additionalGameRules as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $additionalGameRule = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
-            ];
-            array_push($finalAdditionalGameRules, $additionalGameRule);
-        }
-
-        return view('additionalGameRule', ['additionalGameRules' => $finalAdditionalGameRules]);
+        return $this->documentIndex('additional-rules', 'Rules & Regulations');
     }
-
 
     public function showCircularPage()
     {
-        $circularDocuments = DB::select(
-            'SELECT a.* FROM
-                    Document AS a 
-                    JOIN DocumentType AS b
-                    ON a.type_id = b.id
-                    WHERE b.name = ?',
-            ['circular']
-        );
-
-        $finalCircularDocuments = [];
-
-        foreach ($circularDocuments as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $circularDocument = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
-            ];
-            array_push($finalCircularDocuments, $circularDocument);
-        }
-
-        return view('circularDocument', ['circularDocuments' => $finalCircularDocuments]);
+        return $this->documentIndex('circular', 'Circular');
     }
-
 
     public function showTendersPage()
     {
-        $tenders = DB::select(
-            'SELECT a.* FROM
-                    Document AS a 
-                    JOIN DocumentType AS b
-                    ON a.type_id = b.id
-                    WHERE b.name = ?',
-            ['tender']
-        );
-
-        $finalTender = [];
-
-        foreach ($tenders as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $tender = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
-            ];
-            array_push($finalTender, $tender);
-        }
-
-        return view('tender', ['tenders' => $finalTender]);
+        return $this->documentIndex('tender', 'Tenders', 'career', 'Career');
     }
-
 
     public function showJobsPage()
     {
-        $jobs = DB::select(
-            'SELECT a.* FROM
-                    Document AS a 
-                    JOIN DocumentType AS b
-                    ON a.type_id = b.id
-                    WHERE b.name = ?',
-            ['jobs']
-        );
-
-        $finalJob = [];
-
-        foreach ($jobs as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $job = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
-            ];
-            array_push($finalJob, $job);
-        }
-
-        return view('job', ['jobs' => $finalJob]);
+        return $this->documentIndex('jobs', 'Jobs', 'career', 'Career');
     }
 
     public function showOtherCareerPage()
     {
-        $otherCareers = DB::select(
-            'SELECT a.* FROM
-                    Document AS a 
-                    JOIN DocumentType AS b
-                    ON a.type_id = b.id
-                    WHERE b.name = ?',
-            ['other-career']
-        );
-
-        $finalotherCareers = [];
-
-        foreach ($otherCareers as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $otherCareer = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
-            ];
-            array_push($finalotherCareers, $otherCareer);
-        }
-
-        return view('otherCareer', ['otherCareers' => $finalotherCareers]);
+        return $this->documentIndex('other-career', 'Other Career', 'career', 'Career');
     }
 }

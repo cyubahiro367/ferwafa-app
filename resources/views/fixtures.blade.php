@@ -1,136 +1,119 @@
-@include('mainMenuBar', ['name' => 'Fixtures'])
+@extends('layouts.public')
 
-{{-- <div class="container-fluid eventlist blog blogpost upcoming-event latest-blog no-padding">
-    <div class="section-padding"></div>
-    <div class="container-fluid eventlist blog blogpost upcoming-event latest-blog no-padding">
-        <div >
-            <div class="row " style="display: flex; justify-content: center">
-                <div class="row m-0">
-                    <div  style="background-color: red" class="col-10 col-md-10 col-lg-10 p-0">
-                        @include('competition-menus')
-                        <div class="row">
-                            @if (!is_null($day))
-                                <table class="table table-bordered" height="40%">
-                                    <thead>
-                                        <tr style="background-color: #133E8D;">
-                                            <th colspan="3" style="text-align: center; color: white" scope="col">
-                                                {{ $day->name }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($games as $game)
-                                            <tr style="height: 10px">
-                                                <td style="width: 30%; text-align: center; vertical-align: middle;">
-                                                    {{ $game->homeTeam }}
-                                                </td>
-                                                <td style="width: 20%; text-align: center; vertical-align: middle;">
-                                                    @if ($game->isPlayed)
-                                                        {{ $game->homeTeamGoals }} -
-                                                        {{ $game->awayTeamGoals }}
-                                                    @else
-                                                        <small>{{ date('d/m/Y', strtotime($game->date)) }}
-                                                            {{ date('H:i', strtotime($game->date)) }}</small>
-                                                        <br>
-                                                        VS <br>
-                                                        <small>{{ $game->stadium }}</small>
-                                                    @endif
-                                                </td>
-                                                <td style="width: 30%; text-align: center; vertical-align: middle;">
-                                                    {{ $game->awayTeam }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endif
-                        </div>
+@section('title', 'Fixtures – FERWAFA')
+@section('active', 'competitions')
+
+@section('content')
+@include('partials.fw-page-hero', [
+    'label' => 'Competitions',
+    'title' => 'Fixtures & Results',
+    'crumb' => [
+        ['label' => 'Competitions'],
+        ['label' => $day->name ?? 'Fixtures'],
+    ],
+])
+
+<section class="fw-section" style="background:var(--off-white);">
+    <div class="fw-wrap">
+        <form action="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id ?? 1, request()->route('groupID')]) }}" method="GET" style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-bottom:28px;">
+            <div class="fw-form-group" style="margin:0;min-width:180px;">
+                <label class="fw-form-label" for="seasonSelect">Season</label>
+                <select id="seasonSelect" name="seasonID" class="fw-form-select" required>
+                    @foreach ($seasons as $season)
+                        <option value="{{ $season['id'] }}" {{ (int)$seasonID === (int)$season['id'] ? 'selected' : '' }}>
+                            {{ $season['from'] }} - {{ $season['to'] }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="fw-form-group" style="margin:0;min-width:140px;">
+                <label class="fw-form-label" for="daySelect">Matchday</label>
+                <select id="daySelect" name="dayID" class="fw-form-select" required>
+                    @foreach ($days as $value)
+                        <option value="{{ $value->id }}" {{ ($day->id ?? null) == $value->id ? 'selected' : '' }}>
+                            {{ $value->abbreviation ?? $value->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" class="fw-btn-gold">Show Matches</button>
+        </form>
+
+        <div class="fw-day-nav" style="margin-bottom:28px;">
+            @if ($day)
+                <a class="fw-day-pill active" href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id, request()->route('groupID')]) }}">Results &amp; Fixtures</a>
+                <a class="fw-day-pill" href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standings</a>
+            @endif
+        </div>
+
+        @if (!is_null($day))
+            <div class="fw-table-wrap">
+                <table class="fw-table">
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="text-align:center;">{{ $day->name }}</th>
+                        </tr>
+                        <tr>
+                            <th>Home</th>
+                            <th style="text-align:center;">Score / Kick-off</th>
+                            <th>Away</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($games as $game)
+                            <tr>
+                                <td>{{ $game->homeTeam }}</td>
+                                <td style="text-align:center;">
+                                    @if ($game->isPlayed)
+                                        <span class="fw-match-score">{{ $game->homeTeamGoals }} – {{ $game->awayTeamGoals }}</span>
+                                    @else
+                                        <div>{{ date('d/m/Y H:i', strtotime($game->date)) }}</div>
+                                        <small style="color:var(--grey);">{{ $game->stadium }}</small>
+                                    @endif
+                                </td>
+                                <td>{{ $game->awayTeam }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" style="text-align:center;color:var(--grey);">No matches for this matchday.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if (!empty($playerSuspendeds) && count($playerSuspendeds))
+                <div style="margin-top:40px;">
+                    <div class="fw-section-label">Discipline</div>
+                    <h3 class="fw-section-title" style="font-size:24px;margin-bottom:20px;">Suspended Players</h3>
+                    <div class="fw-table-wrap">
+                        <table class="fw-table">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Team</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($playerSuspendeds as $player)
+                                    <tr>
+                                        <td>{{ $player->name }}</td>
+                                        <td>{{ $player->teamName }}</td>
+                                        <td>{{ $player->reason }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            @endif
+        @else
+            <div class="fw-empty">
+                <i class="fas fa-futbol"></i>
+                <p>No fixtures available.</p>
             </div>
-        </div>
-    </div>
-</div> --}}
-
-<div class="section-padding"></div>
-<section class="section">
-    <div class="container-fluid eventlist blog blogpost upcoming-event latest-blog no-padding">
-        <div class="container mt-5">
-            <div class="row" >
-                <div class="col-12 col-md-12 offset-md-1 col-lg-12 offset-lg-1">
-                    <div class="card card-primary">
-                        {{-- <div class="row m-0"> --}}
-                        <div class="col-12 col-md-12 col-lg-12 p-0">
-                            @include('competition-menus')
-                            <div class="row m-0">
-                                @if (!is_null($day))
-
-                                    {{-- LEFT TABLE --}}
-                                    <div class="col-12 col-md-8 p-0">
-                                        <table class="table table-bordered" height="40%">
-                                            <thead>
-                                                <tr style="background-color: #133E8D;">
-                                                    <th colspan="3" class="text-center text-white" style="text-align: center; color: white">
-                                                        {{ $day->name }}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($games as $game)
-                                                    <tr>
-                                                        <td class="text-center align-middle">{{ $game->homeTeam }}</td>
-                                                        <td class="text-center align-middle">
-                                                            @if ($game->isPlayed)
-                                                                {{ $game->homeTeamGoals }} - {{ $game->awayTeamGoals }}
-                                                            @else
-                                                                <small>{{ date('d/m/Y H:i', strtotime($game->date)) }}</small>
-                                                                <br>VS<br>
-                                                                <small>{{ $game->stadium }}</small>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-center align-middle">{{ $game->awayTeam }}</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    {{-- RIGHT TABLE --}}
-                                    <div class="col-12 col-md-4 p-0">
-                                        <table class="table table-bordered" height="40%">
-                                            <thead>
-                                                <tr style="background-color: #133E8D;">
-                                                    <th colspan="3" class="text-center text-white" style="text-align: center; color: white">
-                                                       Suspended players</th>
-                                                </tr>
-                                            </thead>
-                                            <thead>
-                                                <th>Names</th>
-                                                <th>Team</th>
-                                                <th>Reason</th>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($playerSuspendeds as $playerSuspended)
-                                                    <tr>
-                                                        <td class="text-center align-middle">{{ $playerSuspended->name }}</td>
-                                                        <td class="text-center align-middle">{{ $playerSuspended->teamName }}</td>
-                                                        <td class="text-center align-middle">{{ $playerSuspended->reason }}</td>                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                @endif
-                            </div>
-
-                        </div>
-                        {{-- </div> --}}
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endif
     </div>
 </section>
-{{-- <div class="section-padding"></div> --}}
-</div>
-
-@include('footer')
+@endsection

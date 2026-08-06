@@ -67,55 +67,49 @@ class EventController extends Controller
 
     public function allEvents()
     {
-        $events = DB::select('SELECT a.*,b.id AS image_id,b.image_url,c.statusName FROM 
-                                Event AS a
-                                JOIN EventUrl AS b
-                                ON b.event_id = a.id
-                                JOIN Status AS c
-                                ON a.statusID = c.id
-                                WHERE  c.id = 1
-                                ORDER BY created_at DESC');
+        $paginator = DB::table('Event as a')
+            ->join('EventUrl as b', 'b.event_id', '=', 'a.id')
+            ->join('Status as c', 'a.statusID', '=', 'c.id')
+            ->where('c.id', 1)
+            ->select('a.*', 'b.id as image_id', 'b.image_url', 'c.name as status_name')
+            ->orderByDesc('a.created_at')
+            ->paginate(12);
 
-        $result = [];
-
-        foreach ($events as $value) {
-            $fileUrl = explode('/', $value->image_url)[1];
-            $singleEvent = [
-                "id" => $value->id,
-                "name" => $value->name,
-                "date" => $value->date,
-                "description" => $value->description,
-                "status" => $value->statusName,
-                "created_at" => Carbon::parse($value->created_at)->format('d-m-Y'),
-                "updated_at" => Carbon::parse($value->updated_at)->format('d-m-Y'),
-                "image_id" => $value->image_id,
-                "image_url" => $fileUrl
+        $paginator->getCollection()->transform(function ($value) {
+            $parts = explode('/', $value->image_url);
+            return (object) [
+                'id' => $value->id,
+                'name' => $value->name,
+                'date' => $value->event_date ?? ($value->date ?? null),
+                'description' => $value->description,
+                'status' => $value->status_name,
+                'created_at' => $value->created_at,
+                'updated_at' => $value->updated_at,
+                'image_id' => $value->image_id,
+                'image_url' => $parts[1] ?? $value->image_url,
             ];
-            array_push($result, $singleEvent);
-        }
+        });
 
-        return view(
-            'all_event',
-            ["result" => $result]
-        );
+        return view('events.index', [
+            'result' => $paginator,
+        ]);
     }
 
     public function getSingleEvent($id)
     {
-        $result = Event::where('id', $id)->first();
+        $result = Event::where('id', $id)->firstOrFail();
         $eventUrls = EventUrl::where('event_id', $id)->get();
         $urls = [];
         foreach ($eventUrls as $value) {
-            $fileUrl = explode('/', $value->image_url)[1];
-            $eventUrl = [
+            $parts = explode('/', $value->image_url);
+            $urls[] = [
                 'id' => $value->id,
-                'url' => $fileUrl
+                'url' => $parts[1] ?? $value->image_url,
             ];
-            array_push($urls, $eventUrl);
         }
-        return view('single_event', [
+        return view('events.show', [
             'result' => $result,
-            'url' => $urls
+            'url' => $urls,
         ]);
     }
 }

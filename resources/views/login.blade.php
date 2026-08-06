@@ -1,91 +1,45 @@
-<!DOCTYPE html>
+@extends('layouts.public')
 
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./assets/css/app.min.css">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/components.css">
-    <!-- Custom style CSS -->
-    <link rel="stylesheet" href="./assets/css/custom.css">
-    <link href="./static/img/federation/ferwafa.png" rel="shortcut icon" />
-    <title>Ferwafa</title>
-</head>
+@section('title', 'Login – FERWAFA')
+@section('active', '')
 
-<body>
-    <div id="app">
-        <section class="section">
-            <div class="container mt-5">
-                <div class="row">
-                    <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h4>Login</h4>
-                            </div>
-                            <div class="card-body">
-                                <form method="POST" action="{{ route('signin') }}">
-                                    @csrf
+@section('content')
+@include('partials.fw-page-hero', [
+    'label' => 'Account',
+    'title' => 'Login',
+    'crumb' => [
+        ['label' => 'Login'],
+    ],
+])
 
-                                    @if(Session::get('success'))
-                                    <div class="alert alert-success">
-                                        {{ Session::get('success')}}
-                                    </div>
-                                    @endif
-                                    @if(Session::get('fail'))
-                                    <div class="alert alert-danger">
-                                        {{ Session::get('fail')}}
-                                    </div>
-                                    @endif
+<section class="fw-section" style="background:var(--off-white);">
+    <div class="fw-wrap">
+        <div class="fw-auth-panel">
+            <h2>Welcome Back</h2>
+            <p class="fw-auth-sub">Sign in to access your FERWAFA account.</p>
 
-                                    <div class="form-group">
-                                        <label for="email">Email</label>
-                                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-                                        @error('email')
-                                        <span style="color: red;" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="password" class="control-label">Password</label>
-                                        <input id="password" type="password" class="form-control" name="password" tabindex="2">
-                                        @error('password')
-                                        <span style="color: red;" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <button name="login" type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-                                            Login
-                                        </button>
-                                    </div>
+            @if (Session::get('success'))
+                <div class="fw-alert fw-alert-success">{{ Session::get('success') }}</div>
+            @endif
+            @if (Session::get('fail'))
+                <div class="fw-alert fw-alert-error">{{ Session::get('fail') }}</div>
+            @endif
 
-                                    <div class="d-block">
-                                        <div class="float-left">
-                                            <router-link class="text-small" to="/reset-password"><span>Reset Password?</span>
-                                            </router-link>
-                                        </div>
-                                        <div class="float-right">
-                                            <router-link class="text-small" to="/forget-password"><span>Forgot Password?</span>
-                                            </router-link>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="mt-5 text-muted text-center">
-                        </div>
-                    </div>
+            <form method="POST" action="{{ route('login') }}" class="fw-form" style="max-width:none;">
+                @csrf
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="email">Email</label>
+                    <input class="fw-form-input" id="email" type="email" name="email" value="{{ old('email') }}" required />
+                    @error('email')<div class="fw-form-error">{{ $message }}</div>@enderror
                 </div>
-            </div>
-        </section>
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="password">Password</label>
+                    <input class="fw-form-input" id="password" type="password" name="password" required />
+                    @error('password')<div class="fw-form-error">{{ $message }}</div>@enderror
+                </div>
+                <button name="login" type="submit" class="fw-btn-gold" style="width:100%;justify-content:center;">Login</button>
+            </form>
+        </div>
     </div>
-
-    <script type="module" src="/src/main.js"></script>
-    <script src="./assets/js/app.min.js"></script>
-    <script src="./assets/js/custom.js"></script>
-    <script src="./assets/js/scripts.js"></script>
-    <script src="./assets/js/scripts.js"></script>
-    <script src="./assets/js/custom.js"></script>
-</body>
+</section>
+@endsection

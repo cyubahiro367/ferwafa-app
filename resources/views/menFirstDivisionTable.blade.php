@@ -1,104 +1,98 @@
-@include('mainMenuBar', ['name' => 'Standing'])
+@extends('layouts.public')
 
-<div class="container-fluid eventlist blog blogpost upcoming-event latest-blog no-padding">
-    <div class="container">
-        <div class="row " style="display: flex; justify-content: center">
-            <div class="col-md-10 col-sm-10 col-xs-6 blog-box">
-                <article class="type-post">
-                    
-                    <div class="container mt-5">
-                        <div class="row">
-                            <div style="margin-bottom: 10px" class="col-md-6 col-sm-12 offset-md-1 col-lg-6 offset-lg-1">
-                                <div class="card card-primary">
-                                            <div style="background-color: #133E8D;" class="col-12 col-md-12 card-header text-center">
-                                                <ul class="menus">
-                                                    <li><a style="color: white" href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $days->dayID, request()->route('groupID')]) }}">Results
-                                                            &
-                                                            Fixtures /</a>
-                                                    </li>
-                                                    <li><a style="color: white"
-                                                            href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standing</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                                <table  class="table table-responsive table-bordered main-table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 5%" scope="col">#</th>
-                                                            <th style="width: 50%" scope="col">Team</th>
-                                                            <th style="width: 10%" scope="col">P</th>
-                                                            <th style="width: 10%" scope="col">GF</th>
-                                                            <th style="width: 10%" scope="col">GL</th>
-                                                            <th style="width: 10%" scope="col">GD</th>
-                                                            <th style="width: 10%" scope="col">Pts</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($teamStatistics as $key => $teamStatistic)
-                                                            @if ($key + 1 === count($teamStatistics) || $key + 1 === count($teamStatistics) - 1)
-                                                                <tr class="last-teams main">
-                                                                @else
-                                                                <tr>
-                                                            @endif
-        
-                                                            @if ($key + 1 == 1)
-                                                                <tr class="first-team">
-                                                            @endif
-                                                            <th scope="row">{{ $key + 1 }} </th>
-                                                            <td>{{ $teamStatistic->name }}</td>
-                                                            <td>{{ $teamStatistic->matchPlayed }}</td>
-                                                            <td>{{ $teamStatistic->goalWin }}</td>
-                                                            <td>{{ $teamStatistic->goalLoss }}</td>
-                                                            <td>{{ $teamStatistic->goalDifference }}</td>
-                                                            <td>{{ $teamStatistic->score }}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-12 offset-md-1 col-lg-3 offset-lg-1">
-                                <div class="card card-primary">
-                                        <div class="col-12 col-md-12 col-lg-12 p-0">
-                                            <div class="col-12 col-md-12 card-header text-center">
-                                                <ul class="menus">
-                                                    <li><a>{{ $categoryName }} Top Scores</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="row m-0">
-                                                <table class="table table-responsive table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 5%" scope="col">#</th>
-                                                            <th style="width: 50%" scope="col">Name</th>
-                                                            <th style="width: 10%" scope="col">Team</th>
-                                                            <th style="width: 10%; background-color: #133E8D; color: white"
-                                                                scope="col">Goals</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($topScores as $key => $topScore)
-                                                            <tr>
-                                                                <th scope="row">{{ $key + 1 }}</th>
-                                                                <td>{{ $topScore['name'] }}</td>
-                                                                <td>{{ $topScore['teamName'] }}</td>
-                                                                <td style="background-color: #133E8D; color: white">
-                                                                    {{ $topScore['goals'] }}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            </article>
+@section('title', 'Standings – FERWAFA')
+@section('active', 'competitions')
+
+@section('content')
+@include('partials.fw-page-hero', [
+    'label' => 'Competitions',
+    'title' => 'League Table',
+    'crumb' => [
+        ['label' => 'Competitions'],
+        ['label' => 'Standings'],
+    ],
+])
+
+<section class="fw-section" style="background:var(--off-white);">
+    <div class="fw-wrap">
+        <div class="fw-day-nav">
+            <a class="fw-day-pill" href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $days->dayID ?? 1, request()->route('groupID')]) }}">Results &amp; Fixtures</a>
+            <a class="fw-day-pill active" href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standings</a>
         </div>
 
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:28px;align-items:start;" class="fw-standings-grid">
+            <div>
+                <div class="fw-section-label">Table</div>
+                <h2 class="fw-section-title" style="font-size:28px;margin-bottom:20px;">{{ $categoryName ?? 'Standings' }}</h2>
+                <div class="fw-table-wrap">
+                    <table class="fw-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Team</th>
+                                <th>P</th>
+                                <th>GF</th>
+                                <th>GA</th>
+                                <th>GD</th>
+                                <th>Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($teamStatistics as $key => $teamStatistic)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $teamStatistic->name }}</td>
+                                    <td>{{ $teamStatistic->matchPlayed }}</td>
+                                    <td>{{ $teamStatistic->goalWin }}</td>
+                                    <td>{{ $teamStatistic->goalLoss }}</td>
+                                    <td>{{ $teamStatistic->goalDifference }}</td>
+                                    <td class="fw-match-score">{{ $teamStatistic->score }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <div class="fw-section-label">Scorers</div>
+                <h2 class="fw-section-title" style="font-size:28px;margin-bottom:20px;">Top Scorers</h2>
+                <div class="fw-table-wrap">
+                    <table class="fw-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Team</th>
+                                <th>Goals</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($topScores as $key => $topScore)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ is_array($topScore) ? $topScore['name'] : $topScore->name }}</td>
+                                    <td>{{ is_array($topScore) ? $topScore['teamName'] : $topScore->teamName }}</td>
+                                    <td class="fw-match-score">{{ is_array($topScore) ? $topScore['goals'] : $topScore->goals }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" style="text-align:center;color:var(--grey);">No scorers yet.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-        
-@include('footer')
+</section>
+
+@push('styles')
+<style>
+@media (max-width: 900px) {
+  .fw-standings-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+@endpush
+@endsection

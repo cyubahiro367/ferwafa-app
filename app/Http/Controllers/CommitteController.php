@@ -110,25 +110,24 @@ class CommitteController extends Controller
 
     public function listAllCommitte()
     {
-        $committe = Committe::where("committeeCategoryID", 11)->get();
+        $paginator = Committe::where('committeeCategoryID', 11)
+            ->orderBy('id')
+            ->paginate(12);
 
-        $finalCommitte = [];
-
-        foreach ($committe as $value) {
-            $fileUrl = explode('/', $value->image_url)[1];
-            $committeMember = [
-                "id" => $value->id,
-                "name" => $value->name,
-                "position" => $value->position,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
+        $paginator->getCollection()->transform(function ($value) {
+            $parts = $value->image_url ? explode('/', $value->image_url) : [];
+            return (object) [
+                'id' => $value->id,
+                'name' => $value->name,
+                'position' => $value->position,
+                'created_at' => $value->created_at,
+                'updated_at' => $value->updated_at,
+                'url' => $parts[1] ?? null,
             ];
-            array_push($finalCommitte, $committeMember);
-        }
+        });
 
         return view('about', [
-            'committe' => $finalCommitte
+            'committe' => $paginator,
         ]);
     }
 

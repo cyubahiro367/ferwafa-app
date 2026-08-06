@@ -88,31 +88,30 @@ class ReportController extends Controller
 
     public function get()
     {
+        $paginator = DB::table('Document as a')
+            ->join('DocumentType as b', 'a.type_id', '=', 'b.id')
+            ->where('b.name', 'report')
+            ->select('a.*')
+            ->orderByDesc('a.created_at')
+            ->paginate(12);
 
-        $reports = DB::select(
-            'SELECT a.* FROM
-                        Document AS a 
-                        JOIN DocumentType AS b
-                        ON a.type_id = b.id
-                        WHERE b.name = ?',
-            ['report']
-        );
-
-        $finalReport = [];
-
-        foreach ($reports as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $report = [
-                "id" => $value->id,
-                "title" => $value->title,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
+        $paginator->getCollection()->transform(function ($value) {
+            $parts = explode('/', $value->url);
+            return (object) [
+                'id' => $value->id,
+                'title' => $value->title,
+                'created_at' => $value->created_at,
+                'updated_at' => $value->updated_at,
+                'url' => $parts[1] ?? $value->url,
             ];
-            array_push($finalReport, $report);
-        }
+        });
 
-        return view('report', ['reports' => $finalReport]);
+        return view('documents.index', [
+            'documents' => $paginator,
+            'pageTitle' => 'Reports',
+            'pageLabel' => 'Resources',
+            'navActive' => 'resources',
+        ]);
     }
 
     public function getSingle($id)

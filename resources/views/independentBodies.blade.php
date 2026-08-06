@@ -1,170 +1,105 @@
-@include('mainMenuBar', ['name' => 'about'])
+@extends('layouts.public')
 
+@section('title', ($title ?? 'Independent Bodies') . ' – FERWAFA')
+@section('active', 'bodies')
 
-<div>
-    <!-- Team Section -->
-    <div class="container-fluid no-padding team-section">
-        <div class="section-padding"></div>
-        <div class="section-header">
-            <h3>Meet our great {{ $title }} Members</h3>
-            <span>{{ $title }}</span>
-        </div>
-        <ul id="team-carousel">
-            @foreach ($committee as $value)
-                @if (is_null($value['url']))
-                    <li data-thumb="{{ asset('../asset/images/default-pic.png') }}">
-                        <div class="col-md-6 no-padding larg-thumb">
-                            <img src="{{ asset('../asset/images/default-pic.png') }}" style="width: 400px; height: auto;"
-                                alt="team1" />
-                @else
-                    <li data-thumb="{{ route('comitte.doc', $value['id']) }}">
-                        <div class="col-md-6 no-padding larg-thumb">
-                            <img src="{{ route('comitte.doc', $value['id']) }}" style="width: 400px; height: auto;"
-                                alt="team1" />
-                @endif
-                </div>
-                <div class="container">
-                    <div class="col-md-6 no-padding">
-                        <div class="team-content">
-                            <h3>{{ $value['name'] }}</h3>
-                            <a href="#" title="Public Speaker">{{ $value['position'] }}</a>
-                            <p>
-                                
-                            </p>
-                            <ul>
-                                <li class="fb">
-                                    <a title="Facebook" href="#"><i class="fa fa-facebook"></i></a>
-                                </li>
-                                <li class="twt">
-                                    <a title="Twitter" href="#"><i class="fa fa-twitter"></i></a>
-                                </li>
-                                <li class="gp">
-                                    <a title="GooglePlus" href="#"><i class="fa fa-google-plus"></i></a>
-                                </li>
-                                <li class="lnk">
-                                    <a title="LinkedIn" href="#"><i class="fa fa-linkedin"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-    <!-- Team Section /- -->
-    <div class="container">
-        <div class="row contact-form-section">
-            <div class="col-md-12 col-sm-12">
-                <div class="section-header">
-                    <h3>Brief | Case</h3>
-                    <span>Brief | Case</span>
-                </div>
-                <form method="POST" action="{{ route('independent.message') }}" enctype="multipart/form-data"
-                    id="contact-form" class="contactus-form">
-                    @csrf
-                    <input type="hidden" name="committeeCategoryID" class="form-control" id="name"
-                        value="{{ $committeeCategoryID }}" required="" />
-                    @error('name')
-                        <div style="color: red;">
-                            {{ $message }}
-                        </div>
-                    @enderror
+@section('content')
+@include('partials.fw-page-hero', [
+    'label' => 'Independent Bodies',
+    'title' => $title,
+    'crumb' => [
+        ['label' => 'Independent Bodies'],
+        ['label' => $title],
+    ],
+])
 
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <div class="form-group">
-                            <input type="text" name="name" class="form-control" id="name"
-                                placeholder="Your Name*" required="" />
-                            @error('name')
-                                <div style="color: red;">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <div class="form-group">
-                            <input type="text" name="phone" class="form-control" id="input_phone"
-                                placeholder="Phone" />
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <div class="form-group">
-                            <input type="email" name="email" class="form-control" id="email"
-                                placeholder="Your E-mail" required="" />
-                            @error('email')
-                                <div style="color: red;">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <div class="form-group">
-                            <input type="text" name="subject" class="form-control" id="subject"
-                                placeholder="Subject" />
-                            @error('subject')
-                                <div style="color: red;">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <textarea rows="10" name="message" class="form-control" id="message" placeholder="message"></textarea>
-                            <p style="color: red" id="wordCount">0/300 words</p>
-                            @error('message')
-                                <div style="color: red;">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <label class="col-form-label text-md-right col-12 col-md-12 col-lg-12">add supporting
-                            document</label>
-                        <div class="form-group">
-                            <input type="file" name="reportFile" class="form-control">
-                            @error('reportFile')
-                                <div style="color: red;">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-4">
-                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
-                        <div class="col-sm-12 col-md-7">
-                            <button class="sendMessage">Send Message</button>
-                        </div>
-                    </div>
-                </form>
+<section class="fw-section">
+    <div class="fw-wrap">
+        <div class="fw-section-head">
+            <div>
+                <div class="fw-section-label">Members</div>
+                <h2 class="fw-section-title">{{ $title }}</h2>
             </div>
         </div>
+
+        @if ($committee->count())
+            <div class="fw-member-grid">
+                @foreach ($committee as $value)
+                    <div class="fw-member-card">
+                        <div class="fw-member-photo">
+                            @if ($value->url)
+                                <img src="{{ route('comitte.doc', $value->id) }}" alt="{{ $value->name }}" loading="lazy" />
+                            @else
+                                <img src="{{ asset('images/file.png') }}" alt="{{ $value->name }}" loading="lazy" />
+                            @endif
+                        </div>
+                        <div class="fw-member-body">
+                            <div class="fw-member-name">{{ $value->name }}</div>
+                            <div class="fw-member-role">{{ $value->position }}</div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            @include('partials.fw-pagination', ['paginator' => $committee])
+        @else
+            <div class="fw-empty">
+                <i class="far fa-user"></i>
+                <p>No members listed for this body yet.</p>
+            </div>
+        @endif
     </div>
-    <!-- Footer Main -->
-</div>
+</section>
 
-<script>
-    const textarea = document.getElementById('message');
-    const wordCountDisplay = document.getElementById('wordCount');
-    const maxWords = 300;
+<section class="fw-section" style="background:var(--off-white);">
+    <div class="fw-wrap">
+        <div style="max-width:720px;margin:0 auto;">
+            <div class="fw-section-label">Submit</div>
+            <h2 class="fw-section-title" style="margin-bottom:24px;">Brief / Case</h2>
 
-    textarea.addEventListener('input', () => {
-        const words = textarea.value.trim().split(/\s+/);
-        const wordCount = words.filter(word => word).length;
+            @if (session('error'))
+                <div class="fw-alert fw-alert-error">{{ session('error') }}</div>
+            @endif
+            @if (session('mesage') || session('message'))
+                <div class="fw-alert fw-alert-success">{{ session('mesage') ?? session('message') }}</div>
+            @endif
 
-        if (wordCount > maxWords) {
-            // Allow editing but prevent new words from being added
-            const trimmedText = words.slice(0, maxWords).join(' ');
-            textarea.value = trimmedText;
-            wordCountDisplay.textContent = `${maxWords}/${maxWords} words - Word limit reached`;
-        } else {
-            wordCountDisplay.textContent = `${wordCount}/${maxWords} words`;
-        }
-    });
-</script>
-@include('footer')
+            <form method="POST" action="{{ route('independent.message') }}" enctype="multipart/form-data" class="fw-form" style="max-width:none;">
+                @csrf
+                <input type="hidden" name="committeeCategoryID" value="{{ $committeeCategoryID }}" />
+
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="name">Your Name</label>
+                    <input class="fw-form-input" type="text" name="name" id="name" value="{{ old('name') }}" required />
+                    @error('name')<div class="fw-form-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="phone">Phone</label>
+                    <input class="fw-form-input" type="text" name="phone" id="phone" value="{{ old('phone') }}" required />
+                    @error('phone')<div class="fw-form-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="email">Email</label>
+                    <input class="fw-form-input" type="email" name="email" id="email" value="{{ old('email') }}" required />
+                    @error('email')<div class="fw-form-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="subject">Subject</label>
+                    <input class="fw-form-input" type="text" name="subject" id="subject" value="{{ old('subject') }}" required />
+                    @error('subject')<div class="fw-form-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="message">Message</label>
+                    <textarea class="fw-form-textarea" name="message" id="message" required>{{ old('message') }}</textarea>
+                    @error('message')<div class="fw-form-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="reportFile">Attachment (PDF)</label>
+                    <input class="fw-form-input" type="file" name="reportFile" id="reportFile" accept=".pdf" required />
+                    @error('reportFile')<div class="fw-form-error">{{ $message }}</div>@enderror
+                </div>
+                <button type="submit" class="fw-btn-gold">Submit Case <i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+</section>
+@endsection
