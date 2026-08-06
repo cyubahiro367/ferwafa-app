@@ -14,32 +14,30 @@ class IndependentBodiesController extends Controller
     {
         $committeeCategory = CommitteeCategory::where('id', $id)->first();
 
-        if(is_null($committeeCategory))
-        {
+        if (is_null($committeeCategory)) {
             return redirect()->back()->with('error', 'Committee category is not found');
         }
 
-        $finalCommitte = [];
+        $paginator = Committe::where('committeeCategoryID', $id)
+            ->orderBy('id')
+            ->paginate(12);
 
-        $committe = Committe::where("committeeCategoryID", $id)->get();
-
-        foreach ($committe as $value) {
-            $fileUrl = !is_null($value->image_url) ? explode('/', $value->image_url)[1] : null;
-            $committeMember = [
-                "id" => $value->id,
-                "name" => $value->name,
-                "position" => $value->position,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
+        $paginator->getCollection()->transform(function ($value) {
+            $parts = $value->image_url ? explode('/', $value->image_url) : [];
+            return (object) [
+                'id' => $value->id,
+                'name' => $value->name,
+                'position' => $value->position,
+                'created_at' => $value->created_at,
+                'updated_at' => $value->updated_at,
+                'url' => $parts[1] ?? null,
             ];
-            array_push($finalCommitte, $committeMember);
-        }
+        });
 
         return view('independentBodies', [
-            "title" => $committeeCategory->name,
-            "committeeCategoryID" => $committeeCategory->id,
-            "committee" => $finalCommitte
+            'title' => $committeeCategory->name,
+            'committeeCategoryID' => $committeeCategory->id,
+            'committee' => $paginator,
         ]);
     }
 

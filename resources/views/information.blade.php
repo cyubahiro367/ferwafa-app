@@ -1,175 +1,84 @@
-@include('mainMenuBar', ['name' => 'Infromation'])
+@extends('layouts.public')
 
-<div class="container-fulid no-padding contactus">
-    <div class="section-padding"></div>
-    <div class="container">
-      <div class="row">
-        <div class="contactus-info-block">
-          <div class="col-md-4 col-sm-4 col-xs-4">
-            <div class="contactinfo-box">
-              <span class="icon icon-House"></span>
-              <div class="infobox">
-                <h3>Our Location</h3>
-                <span>Remera next to Amahoro stadium.</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-4 col-xs-4">
-            <div class="contactinfo-box">
-              <span class="icon icon-Phone2"></span>
-              <div class="infobox">
-                <h3>Call Us On</h3>
-                {{-- <a href="tel:+250 788 608 988" title="+250 788 608 988"
-                  >+250 788 608 988</a
-                > --}}
-                <a href="tel:PO. Box:2000 Kigali-Rwanda" title="PO. Box:2000 Kigali-Rwanda"
-                  >PO. Box:2000 Kigali-Rwanda</a
-                >
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-4 col-xs-4">
-            <div class="contactinfo-box">
-              <span class="icon icon-Mail"></span>
-              <div class="infobox">
-                <h3>Send a Message</h3>
-                <a href="#" title="contact@ferwafa.rw,"
-                  >ferwafa.info@ferwafa.rw,</a
-                >
-                <a href="#" title="ferwafa@yahoo.fr"
-                  >ferwafa@yahoo.fr</a
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="map">
-      <div class="section-padding"></div>
-    </div>
-    <div class="container">
-      <div class="row contact-form-section">
-        <div class="col-md-5 col-sm-12">
-          <div class="section-header">
-            <h3>Leave A Message</h3>
-            <span>Feel Free to Contact Us</span>
-          </div>
-          @if (session()->has('error'))
-            <div class="alert alert-danger">
-                {{ session()->get('error') }}
-            </div>
-          @endif
+@section('title', 'Contact – FERWAFA')
+@section('active', 'contact')
 
-          @if (session()->has('message'))
-                        <div class="alert alert-success">
-                            {{ session()->get('message') }}
+@section('content')
+@include('partials.fw-page-hero', [
+    'label' => 'Get in Touch',
+    'title' => 'Information',
+    'crumb' => [
+        ['label' => 'Contact'],
+        ['label' => 'Information'],
+    ],
+])
+
+<section class="fw-section">
+    <div class="fw-wrap">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;" class="fw-contact-grid">
+            <div>
+                <div class="fw-section-label">Reach Us</div>
+                <h2 class="fw-section-title" style="margin-bottom:24px;">Contact Details</h2>
+                <div class="fw-footer-contact" style="gap:20px;">
+                    <div class="fw-footer-contact-item" style="color:var(--text);">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Remera, next to Amahoro Stadium<br>PO. Box 2000, Kigali, Rwanda</span>
+                    </div>
+                    <div class="fw-footer-contact-item" style="color:var(--text);">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <a href="mailto:ferwafa.info@ferwafa.rw" style="color:var(--blue);">ferwafa.info@ferwafa.rw</a><br>
+                            <a href="mailto:sgoffice@ferwafa.com" style="color:var(--blue);">sgoffice@ferwafa.com</a>
                         </div>
-                        @endif
-          <form method="POST" action="{{ route('post.send.info') }}" id="contact-form" class="contactus-form">
-            @csrf
-            <div class="col-md-6 col-sm-6 col-xs-12">
-              <div class="form-group">
-                <input
-                  type="text"
-                  name="name"
-                  class="form-control"
-                  id="name"
-                  placeholder="Your Name*"
-                  required=""
-                />
-                @error('name')
-                    <div style="color: red;">
-                        {{ $message }}
                     </div>
-                @enderror
-              </div>
+                </div>
             </div>
-            <div class="col-md-6 col-sm-6 col-xs-12">
-              <div class="form-group">
-                <input
-                  type="text"
-                  name="contact-phone"
-                  class="form-control"
-                  id="input_phone"
-                  placeholder="Phone"
-                />
-              </div>
-            </div>
-            <div class="col-md-6 col-sm-6 col-xs-12">
-              <div class="form-group">
-                <input
-                  type="email"
-                  name="email"
-                  class="form-control"
-                  id="email"
-                  placeholder="Your E-mail"
-                  required=""
-                />
-                @error('email')
-                    <div style="color: red;">
-                        {{ $message }}
-                    </div>
-                @enderror
-              </div>
-            </div>
-            <div class="col-md-6 col-sm-6 col-xs-12">
-              <div class="form-group">
-                <input
-                  type="text"
-                  name="subject"
-                  class="form-control"
-                  id="subject"
-                  placeholder="Subject"
-                />
-                @error('subject')
-                    <div style="color: red;">
-                        {{ $message }}
-                    </div>
-                @enderror
-              </div>
-            </div>
-            <div class="col-md-12 col-sm-12 col-xs-12">
-              <div class="form-group">
-                <textarea
-                  rows="10"
-                  name="content"
-                  class="form-control"
-                  id="content"
-                  placeholder="message"
-                ></textarea>
-                @error('content')
-                    <div style="color: red;">
-                        {{ $message }}
-                    </div>
-                @enderror
-              </div>
-            </div>
-            <div class="col-md-12 col-sm-12 col-xs-12">
-              <div class="form-group">
-                <button id="btn_submit">Send Message</button>
-                {{-- <input
-                  type="submit"
-                  value="Send Message"
-                  id="btn_submit"
-                  title="Send"
-                  name="post"
-                /> --}}
-              </div>
-            </div>
-            <div id="alert-msg" class="alert-msg"></div>
-          </form>
-        </div>
-        <div class="col-md-7 col-sm-12">
-            <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.5040318930764!2d30.114316874739334!3d-1.951599998030699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca703a72ebd1f%3A0xe2a239a98d1f7d83!2sRwanda%20Football%20Federation!5e0!3m2!1sen!2srw!4v1690366633904!5m2!1sen!2srw"
-            width="800" height="500" style="border:0; height: 500px"
-            allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-      </div>
-    </div>
-    <div class="section-padding"></div>
-  </div>
 
-@include('footer')
+            <div>
+                <div class="fw-section-label">Message</div>
+                <h2 class="fw-section-title" style="margin-bottom:24px;">Leave a Message</h2>
+
+                @if (session('error'))
+                    <div class="fw-alert fw-alert-error">{{ session('error') }}</div>
+                @endif
+                @if (session('message'))
+                    <div class="fw-alert fw-alert-success">{{ session('message') }}</div>
+                @endif
+
+                <form method="POST" action="{{ route('post.send.info') }}" class="fw-form">
+                    @csrf
+                    <div class="fw-form-group">
+                        <label class="fw-form-label" for="name">Your Name</label>
+                        <input class="fw-form-input" type="text" name="name" id="name" value="{{ old('name') }}" required />
+                        @error('name')<div class="fw-form-error">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="fw-form-group">
+                        <label class="fw-form-label" for="email">Email</label>
+                        <input class="fw-form-input" type="email" name="email" id="email" value="{{ old('email') }}" required />
+                        @error('email')<div class="fw-form-error">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="fw-form-group">
+                        <label class="fw-form-label" for="subject">Subject</label>
+                        <input class="fw-form-input" type="text" name="subject" id="subject" value="{{ old('subject') }}" required />
+                        @error('subject')<div class="fw-form-error">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="fw-form-group">
+                        <label class="fw-form-label" for="content">Message</label>
+                        <textarea class="fw-form-textarea" name="content" id="content" required>{{ old('content') }}</textarea>
+                        @error('content')<div class="fw-form-error">{{ $message }}</div>@enderror
+                    </div>
+                    <button type="submit" class="fw-btn-gold">Send Message <i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@push('styles')
+<style>
+@media (max-width: 768px) {
+  .fw-contact-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+}
+</style>
+@endpush
+@endsection

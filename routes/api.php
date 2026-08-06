@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\AuthenticationController;
+// use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CommitteController;
 use App\Http\Controllers\DayController;
 use App\Http\Controllers\KeyController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ResetPasswordController;
+// use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\SendingKeyController;
 use App\Http\Controllers\UsersController;
 use App\Models\TeamStatistic;
@@ -26,11 +26,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthenticationController::class, 'createAccount']);
-    Route::post('/login', [AuthenticationController::class, 'signin']);
-    Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware('auth:sanctum');
-    Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
-    Route::post('/forgot-password', [ResetPasswordController::class, 'forgot']);
+    // Missing AuthenticationController / ResetPasswordController — disabled so route registration can boot on Laravel 12.
+    // Route::post('/register', [AuthenticationController::class, 'createAccount']);
+    // Route::post('/login', [AuthenticationController::class, 'signin']);
+    // Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware('auth:sanctum');
+    // Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+    // Route::post('/forgot-password', [ResetPasswordController::class, 'forgot']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -1,20 +1,38 @@
-@include('mainMenuBar', ['name' => 'Fixtures'])
-<div class="section-padding"></div>
-<section class="section">
-    <div class="container-fluid eventlist blog blogpost upcoming-event latest-blog no-padding">
-        <div class="container mt-5">
-            <div class="row" style=" display: flex; justify-contents: center; align-item: center; gap">
+@extends('layouts.public')
+
+@section('title', 'Division Groups – FERWAFA')
+@section('active', 'competitions')
+
+@section('content')
+@include('partials.fw-page-hero', [
+    'label' => 'Competitions',
+    'title' => 'Select Group',
+    'crumb' => [
+        ['label' => 'Competitions'],
+        ['label' => 'Groups'],
+    ],
+])
+
+<section class="fw-section" style="background:var(--off-white);">
+    <div class="fw-wrap">
+        <div class="fw-section-label">Groups</div>
+        <h2 class="fw-section-title" style="margin-bottom:28px;">Choose a Group</h2>
+
+        @if (count($groups))
+            <div class="fw-group-cards">
                 @foreach ($groups as $group)
-                <div style=" background-color: #133e8d; color: white; margin-left: 10px" class="col-6 col-md-6 offset-md-1 col-lg-6 offset-lg-1">
-                  <div>
-                      <a style="color:white" href="{{ route('fixtures.show', [$seasonID, request()->route('divisionID'), request()->route('categoryID'), $dayID, $group->id]) }}"><h1>{{$group->name}}</h1></a>
-                  </div>
-              </div> 
+                    <a class="fw-group-card" href="{{ route('fixtures.show', [$seasonID, request()->route('divisionID'), request()->route('categoryID'), $dayID, $group->id]) }}">
+                        <h3>{{ $group->name }}</h3>
+                        <p>View fixtures &amp; results</p>
+                    </a>
                 @endforeach
             </div>
-        </div>
-    </div>
+        @else
+            <div class="fw-empty">
+                <i class="fas fa-layer-group"></i>
+                <p>No groups available for this division.</p>
+            </div>
+        @endif
     </div>
 </section>
-<div class="section-padding"></div>
-@include('footer')
+@endsection

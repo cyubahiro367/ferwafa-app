@@ -85,26 +85,23 @@ class GalleryController extends Controller
      */
     public function getImages()
     {
-        $gallerries = DB::table('Gallery')->paginate();
+        $paginator = DB::table('Gallery')->orderByDesc('created_at')->paginate(12);
 
-        $finalGallery = [];
-
-        foreach ($gallerries as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $gallery = [
-                "id" => $value->id,
-                "name" => $value->name,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "height" => $value->height,
-                "width" => $value->width,
-                "url" => $fileUrl
+        $paginator->getCollection()->transform(function ($value) {
+            $parts = explode('/', $value->url);
+            return (object) [
+                'id' => $value->id,
+                'name' => $value->name,
+                'created_at' => $value->created_at,
+                'updated_at' => $value->updated_at,
+                'height' => $value->height,
+                'width' => $value->width,
+                'url' => $parts[1] ?? $value->url,
             ];
-            array_push($finalGallery, $gallery);
-        }
+        });
 
         return view('gallery', [
-            'galleries' => $finalGallery
+            'galleries' => $paginator,
         ]);
     }
 
