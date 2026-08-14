@@ -11,13 +11,7 @@ class PlayerSuspended extends Model
 
     protected $table = 'PlayerSuspended';
 
-    protected $fillable = [
-        'seasonID',
-        'dayID',
-        'teamID',
-        'name',
-        'reason',
-    ];
+    protected $fillable = ["seasonID", "dayID", "teamID", "name", "reason", "userID"];
 
     public function season()
     {
@@ -32,5 +26,10 @@ class PlayerSuspended extends Model
     public function team()
     {
         return $this->belongsTo(Team::class, 'teamID');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
     }
 }

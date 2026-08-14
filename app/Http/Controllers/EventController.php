@@ -39,7 +39,8 @@ class EventController extends Controller
                 "name" => $request->name,
                 "description" => $request->description,
                 "event_date" => 12334564,
-                "statusID" => $request->statusID
+                "statusID" => $request->statusID,
+                "userID" => Auth::id(),
             ]);
 
             $path = $request->image->store('eventImages');

@@ -33,7 +33,8 @@ class TeamCategoryController extends Controller
         ]);
 
         TeamCategory::create([
-            "name" => $request->name
+            "name" => $request->name,
+            "userID" => Auth::id(),
         ]);
 
         return redirect('/team-category')
@@ -47,20 +48,20 @@ class TeamCategoryController extends Controller
             return redirect('/');
         }
 
-        $teamCategorys = TeamCategory::all();
+        $teamCategorys = TeamCategory::with('creator')
+            ->orderByDesc('id')
+            ->paginate(10);
 
-        $finalTeamCategorys = [];
-
-        foreach ($teamCategorys as $value) {
-            $teamCategory = [
-                "id" => $value->id,
-                "name" => $value->name
+        $teamCategorys->getCollection()->transform(function ($value) {
+            return [
+                'id' => $value->id,
+                'name' => $value->name,
+                'creator_name' => optional($value->creator)->name,
             ];
-            array_push($finalTeamCategorys, $teamCategory);
-        }
+        });
 
         return view('admin.teamCategory', [
-            'teamCategorys' => $finalTeamCategorys
+            'teamCategorys' => $teamCategorys,
         ]);
     }
 

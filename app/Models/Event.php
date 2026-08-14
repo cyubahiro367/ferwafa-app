@@ -11,5 +11,10 @@ class Event extends Model
 
     protected $table = 'Event';
 
-    protected $fillable = ['name', 'description', 'statusID', 'event_date'];
+    protected $fillable = ["name", "description", "statusID", "event_date", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

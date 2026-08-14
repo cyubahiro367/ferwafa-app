@@ -1,161 +1,144 @@
-<!DOCTYPE html>
+@extends('layouts.admin')
 
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./assets/css/app.min.css">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/components.css">
-    <!-- Custom style CSS -->
-    <link rel="stylesheet" href="./assets/css/custom.css">
-    <link href="./static/img/federation/ferwafa.png" rel="shortcut icon" />
-    <title>Ferwafa</title>
-</head>
+@section('title', 'Dashboard')
 
-<body>
-    @include('admin.sidebar')
-    <div id="app">
-        <div class="main-wrapper main-wrapper-1">
-            <!-- Main Content -->
-            <div class="main-content">
-                <section class="section">
-                    <div class="row ">
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                            <div class="card">
-                                <div class="card-statistic-4">
-                                    <div class="align-items-center justify-content-between">
-                                        <div class="row ">
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
-                                                <div class="card-content">
-                                                    <h5 class="font-15">News</h5>
-                                                    <h2 class="mb-3 font-18">{{$numberOfNews}}</h2>
-                                                    <p class="mb-0"><span class="col-green"></span> </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                                <div class="banner-img">
-                                                    <img src="../assets/assets/img/banner/1.png" alt="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+@section('content')
+    <div class="fw-admin-page-header">
+        <div>
+            <h1>Welcome back, {{ $userName }}</h1>
+            <p>Here’s what’s happening across FERWAFA content and competitions.</p>
+        </div>
+    </div>
+
+    <div class="fw-admin-quick-actions">
+        @can('is-admin')
+            <a class="fw-admin-btn fw-admin-btn-primary" href="{{ route('news.create') }}"><i class="fas fa-plus"></i>Create news</a>
+            <a class="fw-admin-btn fw-admin-btn-secondary" href="{{ route('creator.report') }}"><i class="fas fa-user-check"></i>Creator report</a>
+        @endcan
+        @can('is-dcm')
+            <a class="fw-admin-btn fw-admin-btn-primary" href="{{ route('news.create') }}"><i class="fas fa-plus"></i>Create news</a>
+        @endcan
+        @can('is-competition-manager')
+            <a class="fw-admin-btn fw-admin-btn-secondary" href="{{ route('season') }}"><i class="fas fa-trophy"></i>Manage seasons</a>
+        @endcan
+    </div>
+
+    <div class="fw-admin-stats">
+        @can('is-admin')
+            <a class="fw-admin-stat" href="{{ route('news.view') }}" @if(($stats['news'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">News</div><div class="value">{{ $stats['news'] }}</div>
+            </a>
+            <a class="fw-admin-stat" href="{{ route('events.view') }}" @if(($stats['events'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Events</div><div class="value">{{ $stats['events'] }}</div>
+            </a>
+            <a class="fw-admin-stat" href="{{ route('reports.view') }}" @if(($stats['documents'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Documents</div><div class="value">{{ $stats['documents'] }}</div>
+            </a>
+            <a class="fw-admin-stat" href="{{ route('admin.gallery.list') }}" @if(($stats['gallery'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Gallery</div><div class="value">{{ $stats['gallery'] }}</div>
+            </a>
+            <a class="fw-admin-stat" href="{{ route('partner') }}" @if(($stats['partners'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Partners</div><div class="value">{{ $stats['partners'] }}</div>
+            </a>
+            <a class="fw-admin-stat" href="{{ route('committe') }}" @if(($stats['committee'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Committee</div><div class="value">{{ $stats['committee'] }}</div>
+            </a>
+            <a class="fw-admin-stat" href="{{ route('users.view') }}" @if(($stats['users'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Users</div><div class="value">{{ $stats['users'] }}</div>
+            </a>
+            <a class="fw-admin-stat" href="{{ route('season') }}" @if(($stats['seasons'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Seasons</div><div class="value">{{ $stats['seasons'] }}</div>
+            </a>
+            <div class="fw-admin-stat" @if(($stats['teams'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Teams</div><div class="value">{{ $stats['teams'] }}</div>
+            </div>
+            <div class="fw-admin-stat" @if(($stats['games'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Fixtures</div><div class="value">{{ $stats['games'] }}</div>
+            </div>
+            <div class="fw-admin-stat" @if(($stats['topScores'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Top scores</div><div class="value">{{ $stats['topScores'] }}</div>
+            </div>
+            <div class="fw-admin-stat" @if(($stats['suspensions'] ?? 0) == 0) data-zero="true" @endif>
+                <div class="label">Suspensions</div><div class="value">{{ $stats['suspensions'] }}</div>
+            </div>
+        @else
+            @can('is-dcm')
+                <a class="fw-admin-stat" href="{{ route('news.view') }}" @if(($stats['news'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">News</div><div class="value">{{ $stats['news'] }}</div>
+                </a>
+                <a class="fw-admin-stat" href="{{ route('reports.view') }}" @if(($stats['documents'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Documents</div><div class="value">{{ $stats['documents'] }}</div>
+                </a>
+                <a class="fw-admin-stat" href="{{ route('admin.gallery.list') }}" @if(($stats['gallery'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Gallery</div><div class="value">{{ $stats['gallery'] }}</div>
+                </a>
+                <a class="fw-admin-stat" href="{{ route('partner') }}" @if(($stats['partners'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Partners</div><div class="value">{{ $stats['partners'] }}</div>
+                </a>
+                <a class="fw-admin-stat" href="{{ route('committe') }}" @if(($stats['committee'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Committee</div><div class="value">{{ $stats['committee'] }}</div>
+                </a>
+            @endcan
+            @can('is-competition-manager')
+                <a class="fw-admin-stat" href="{{ route('season') }}" @if(($stats['seasons'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Seasons</div><div class="value">{{ $stats['seasons'] }}</div>
+                </a>
+                <div class="fw-admin-stat" @if(($stats['teams'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Teams</div><div class="value">{{ $stats['teams'] }}</div>
+                </div>
+                <div class="fw-admin-stat" @if(($stats['games'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Fixtures</div><div class="value">{{ $stats['games'] }}</div>
+                </div>
+                <div class="fw-admin-stat" @if(($stats['topScores'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Top scores</div><div class="value">{{ $stats['topScores'] }}</div>
+                </div>
+                <div class="fw-admin-stat" @if(($stats['suspensions'] ?? 0) == 0) data-zero="true" @endif>
+                    <div class="label">Suspensions</div><div class="value">{{ $stats['suspensions'] }}</div>
+                </div>
+            @endcan
+        @endcan
+    </div>
+
+    <div class="fw-admin-grid-2">
+        <div class="fw-admin-panel">
+            <div class="fw-admin-panel-body">
+                <h2 class="fw-admin-section-title">Recent news</h2>
+                @forelse($recentNews as $item)
+                    <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--fw-admin-border);">
+                        <div>
+                            <strong>{{ $item->title }}</strong>
+                            <div class="fw-admin-muted" style="font-size:0.85rem;">{{ $item->creator_name ?? '—' }}</div>
                         </div>
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                            <div class="card">
-                                <div class="card-statistic-4">
-                                    <div class="align-items-center justify-content-between">
-                                        <div class="row ">
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
-                                                <div class="card-content">
-                                                    <h5 class="font-15"> Gallery </h5>
-                                                    <h2 class="mb-3 font-18">{{$numberOfPhotos}}</h2>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                                <div class="banner-img">
-                                                    <img src="../assets/assets/img/banner/2.png" alt="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                            <div class="card">
-                                <div class="card-statistic-4">
-                                    <div class="align-items-center justify-content-between">
-                                        <div class="row ">
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
-                                                <div class="card-content">
-                                                    <h5 class="font-15">Partners</h5>
-                                                    <h2 class="mb-3 font-18">{{$numberOfPartners}}</h2>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                                <div class="banner-img">
-                                                    <img src="../assets/assets/img/banner/3.png" alt="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                            <div class="card">
-                                <div class="card-statistic-4">
-                                    <div class="align-items-center justify-content-between">
-                                        <div class="row ">
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
-                                                <div class="card-content">
-                                                    <h5 class="font-15">Documents</h5>
-                                                    <h2 class="mb-3 font-18">{{$numberOfDocs}}</h2>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                                <div class="banner-img">
-                                                    <img src="../assets/assets/img/banner/4.png" alt="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="fw-admin-muted" style="white-space:nowrap;">{{ \Carbon\Carbon::parse($item->created_at)->format('Y-m-d') }}</div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4>Assign Task Table</h4>
-                                    <div class="card-header-form">
-                                        <form>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" placeholder="Search">
-                                                <div class="input-group-btn">
-                                                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <tr>
-                                                <th class="text-center">
-                                                    <div class="custom-checkbox custom-checkbox-table custom-control">
-                                                        <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" class="custom-control-input" id="checkbox-all">
-                                                        <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
-                                                    </div>
-                                                </th>
-                                                <th>Task Name</th>
-                                                <th>Members</th>
-                                                <th>Task Status</th>
-                                                <th>Assigh Date</th>
-                                                <th>Due Date</th>
-                                                <th>Priority</th>
-                                                <th>Action</th>
-                                            </tr>
-
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                @empty
+                    <div class="fw-admin-empty">
+                        <i class="fas fa-newspaper"></i>
+                        <p>No news yet</p>
+                        <span>Published articles will show up here.</span>
                     </div>
-                </section>
+                @endforelse
+            </div>
+        </div>
+        <div class="fw-admin-panel">
+            <div class="fw-admin-panel-body">
+                <h2 class="fw-admin-section-title">Recent fixtures</h2>
+                @forelse($recentGames as $item)
+                    <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--fw-admin-border);">
+                        <div>
+                            <strong>{{ $item->home_team }} vs {{ $item->away_team }}</strong>
+                            <div class="fw-admin-muted" style="font-size:0.85rem;">{{ $item->creator_name ?? '—' }}</div>
+                        </div>
+                        <div class="fw-admin-muted" style="white-space:nowrap;">{{ $item->date ?? \Carbon\Carbon::parse($item->created_at)->format('Y-m-d') }}</div>
+                    </div>
+                @empty
+                    <div class="fw-admin-empty">
+                        <i class="fas fa-futbol"></i>
+                        <p>No fixtures logged yet</p>
+                        <span>New matches will appear here once a season is scheduled.</span>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
-    <script type="module" src="/src/main.js"></script>
-    <script src="./assets/js/app.min.js"></script>
-    <script src="./assets/js/custom.js"></script>
-    <script src="./assets/js/scripts.js"></script>
-    <script src="./assets/js/scripts.js"></script>
-    <script src="./assets/js/custom.js"></script>
-
-</body>
+@endsection

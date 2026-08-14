@@ -44,7 +44,8 @@ class GalleryController extends Controller
 
         Gallery::create([
             "name" => $request->name,
-            "url" => $path
+            "url" => $path,
+            "userID" => Auth::id(),
         ]);
 
         return redirect('/gallery-view')
@@ -58,26 +59,28 @@ class GalleryController extends Controller
             return redirect('/');
         }
 
-        $gallerries = DB::table('Gallery')->paginate();
+        $gallerries = DB::table('Gallery as g')
+            ->leftJoin('users as u', 'u.id', '=', 'g.userID')
+            ->select('g.*', 'u.name as creator_name')
+            ->orderByDesc('g.id')
+            ->paginate(10);
 
-        $finalGallery = [];
-
-        foreach ($gallerries as $value) {
-            $fileUrl = explode('/', $value->url)[1];
-            $gallery = [
-                "id" => $value->id,
-                "name" => $value->name,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "height" => $value->height,
-                "width" => $value->width,
-                "url" => $fileUrl
+        $gallerries->getCollection()->transform(function ($value) {
+            $parts = explode('/', $value->url);
+            return [
+                'id' => $value->id,
+                'name' => $value->name,
+                'created_at' => $value->created_at,
+                'updataed_at' => $value->updated_at,
+                'height' => $value->height,
+                'width' => $value->width,
+                'url' => $parts[1] ?? $value->url,
+                'creator_name' => $value->creator_name,
             ];
-            array_push($finalGallery, $gallery);
-        }
+        });
 
         return view('admin.gallery', [
-            'galleries' => $finalGallery
+            'galleries' => $gallerries,
         ]);
     }
     /**

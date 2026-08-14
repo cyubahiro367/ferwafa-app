@@ -11,5 +11,10 @@ class Day extends Model
 
     protected $table = 'Day';
 
-    protected $fillable = ['name','abbreviation','seasonID'];
+    protected $fillable = ["name", "abbreviation", "seasonID", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

@@ -11,5 +11,10 @@ class Partner extends Model
     
     protected $table = 'Partner';
 
-    protected $fillable = ['link','image_url'];
+    protected $fillable = ["link", "image_url", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

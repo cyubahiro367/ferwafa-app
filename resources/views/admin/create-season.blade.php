@@ -1,99 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.admin')
 
+@section('title', 'Create Season')
 
-<!-- forms-editor.html  21 Nov 2019 03:55:08 GMT -->
-
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Form</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Custom style CSS -->
-    <link rel="stylesheet" href="./assets/css/custom.css">
-    <link href="./static/img/federation/ferwafa.png" rel="shortcut icon" />
-    <!-- General CSS Files -->
-    <link rel="stylesheet" href="./assets/css/app.min.css">
-    <link rel="stylesheet" href="./assets/bundles/summernote/summernote-bs4.css">
-    <link rel="stylesheet" href="./assets/bundles/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="./assets/bundles/codemirror/theme/duotone-dark.css">
-    <link rel="stylesheet" href="./assets/bundles/jquery-selectric/selectric.css">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/components.css">
-</head>
-
-<body>
-    @include('admin.sidebar')
-    <div class="main-content">
-        <section class="section">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Create Season</h4>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="card-body">
-                                            <form method="POST" action="{{ route('create.season') }}" enctype="multipart/form-data">
-                                                @csrf
-                                                <div class="form-group row mb-4">
-                                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Start Date</label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <input type="date" name="from" class="form-control">
-                                                        @error('from')
-                                                        <div style="color: red;">
-                                                            {{ $message }}
-                                                        </div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row mb-4">
-                                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">End Date</label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <input type="date" name="to" class="form-control">
-                                                        @error('to')
-                                                        <div style="color: red;">
-                                                            {{ $message }}
-                                                        </div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row mb-4">
-                                                    <label class="col-form-label text-md-center col-12 col-md-3 col-lg-3"></label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <button class="btn btn-primary">Add</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+@section('content')
+    <a class="fw-admin-back" href="{{ route('season') }}">← Back to Seasons</a>
+    <div class="fw-admin-page-header">
+        <div>
+            <h1>Create Season</h1>
+        </div>
     </div>
 
+    <div class="fw-admin-panel">
+        <div class="fw-admin-panel-body fw-admin-form">
+            <form method="POST" action="{{ route('create.season') }}" enctype="multipart/form-data" class="fw-admin-submit-guard">
+                @csrf
 
+                <div class="fw-admin-form-group">
+                    <label for="from">Start Date</label>
+                    <input type="date" name="from" id="from" class="fw-admin-form-control">
+                    @error('from')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
 
-    <script src="./assets/js/app.min.js"></script>
-    <!-- JS Libraies -->
-    <script src="./assets/bundles/summernote/summernote-bs4.js"></script>
-    <script src="./assets/bundles/codemirror/lib/codemirror.js"></script>
-    <script src="./assets/bundles/codemirror/mode/javascript/javascript.js"></script>
-    <script src="./assets/bundles/jquery-selectric/jquery.selectric.min.js"></script>
-    <script src="./assets/bundles/ckeditor/ckeditor.js"></script>
-    <!-- Page Specific JS File -->
-    <script src="./assets/js/page/ckeditor.js"></script>
-    <!-- Template JS File -->
-    <script src="./assets/js/scripts.js"></script>
-    <!-- Custom JS File -->
-    <script src="./assets/js/custom.js"></script>
-</body>
+                <div class="fw-admin-form-group">
+                    <label for="to">End Date</label>
+                    <input type="date" name="to" id="to" class="fw-admin-form-control">
+                    @error('to')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <button type="submit" class="fw-admin-btn fw-admin-btn-primary">Add</button>
+            </form>
+        </div>
+    </div>
+@endsection

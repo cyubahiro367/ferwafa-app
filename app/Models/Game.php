@@ -11,5 +11,10 @@ class Game extends Model
 
     protected $table = 'Game';
 
-    protected $fillable = ['homeTeamID', 'awayTeamID', 'dayID', 'stadeName', 'homeTeamGoals', 'awayTeamGoals', 'date', 'isPlayed', 'groupID', "seasonID"];
+    protected $fillable = ["homeTeamID", "awayTeamID", "dayID", "stadeName", "homeTeamGoals", "awayTeamGoals", "date", "isPlayed", "groupID", "seasonID", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

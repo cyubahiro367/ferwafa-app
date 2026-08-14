@@ -111,6 +111,7 @@ class PlayerSuspendedController extends Controller
             'teamID' => $request->teamID,
             'name' => $request->name,
             'reason' => $request->reason,
+            'userID' => Auth::id(),
         ]);
 
         return redirect("/player-suspended/$divisionID/$categoryID")
@@ -152,36 +153,39 @@ class PlayerSuspendedController extends Controller
         $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
         $days = Day::where([['seasonID', $season->id]])->get()->toArray();
 
-        $playerSuspendeds = PlayerSuspended::where('seasonID', $season->id)->when(!is_null($day), function($query) use ($day) {
-            return $query->where('dayID', $day->id);
+        $playerSuspendeds = PlayerSuspended::with('creator')
+            ->where('seasonID', $season->id)
+            ->when(!is_null($day), function ($query) use ($day) {
+                return $query->where('dayID', $day->id);
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
 
-        })->get();
+        $teamsById = collect($teams)->keyBy('id');
+        $daysById = collect($days)->keyBy('id');
 
-        $finalPlayerSuspendeds = [];
-
-        foreach ($playerSuspendeds as $value) {
-            foreach($teams as $team){
-                if($team["id"] == $value->teamID){
-
-                    foreach($days as $dayItem){
-                        if($dayItem["id"] == $value->dayID){
-                            $finalPlayerSuspendeds[] = [
-                                'id' => $value->id,
-                                'name' => $value->name,
-                                'teamName' => $team['name'],
-                                'reason' => $value->reason,
-                                'period' => $dayItem['name'],
-                            ];
-                        }
-                    }  
-                }
+        $playerSuspendeds->getCollection()->transform(function ($value) use ($teamsById, $daysById) {
+            $team = $teamsById->get($value->teamID);
+            $dayItem = $daysById->get($value->dayID);
+            if (!$team || !$dayItem) {
+                return null;
             }
 
-        }
+            return [
+                'id' => $value->id,
+                'name' => $value->name,
+                'teamName' => $team['name'],
+                'reason' => $value->reason,
+                'period' => $dayItem['name'],
+                'creator_name' => optional($value->creator)->name,
+            ];
+        });
+
+        $playerSuspendeds->setCollection($playerSuspendeds->getCollection()->filter()->values());
 
         $seasons = Season::all()->toArray();
-              
-        $seasons = array_map(function($item){
+
+        $seasons = array_map(function ($item) {
             $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
             $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
 
@@ -189,9 +193,13 @@ class PlayerSuspendedController extends Controller
         }, $seasons);
 
         return view('admin.playerSuspended', [
-            'playerSuspendeds' => $finalPlayerSuspendeds,
+            'playerSuspendeds' => $playerSuspendeds,
             'seasonID' => $season->id,
-            'seasons' => $seasons
+            'seasons' => $seasons,
+            'days' => $days,
+            'dayID' => optional($day)->id,
+            'divisionID' => $divisionID,
+            'categoryID' => $categoryID,
         ]);
     }
 

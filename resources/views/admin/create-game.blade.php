@@ -1,183 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.admin')
 
+@section('title', 'Create game')
 
-<!-- forms-editor.html  21 Nov 2019 03:55:08 GMT -->
+@section('content')
+    <div class="fw-admin-page-header">
+        <div>
+            <h1>Create game</h1>
+            <p>Schedule a fixture for this division and category.</p>
+        </div>
+    </div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Form</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Custom style CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
-    <link href="{{ asset('static/img/federation/ferwafa.png') }}" rel="shortcut icon" />
-    <!-- General CSS Files -->
-    <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/bundles/summernote/summernote-bs4.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/bundles/codemirror/lib/codemirror.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/bundles/codemirror/theme/duotone-dark.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/bundles/jquery-selectric/selectric.css') }}">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
-</head>
+    <div class="fw-admin-panel">
+        <div class="fw-admin-panel-body fw-admin-form">
+            @if (session()->has('error'))
+                <div class="fw-admin-flash fw-admin-flash-error">{{ session()->get('error') }}</div>
+            @endif
 
-<body>
-    @include('admin.sidebar')
-    <div class="main-content">
-        <section class="section">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Create game</h4>
-                        </div>
-                        @if (session()->has('error'))
-                            <div class="badge badge-danger">
-                                {{ session()->get('error') }}
-                            </div>
-                        @endif
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="card-body">
-                                            <form method="POST"
-                                                action="{{ route('create.game', [request()->route('divisionID'), request()->route('categoryID')]) }}"
-                                                enctype="multipart/form-data">
-                                                @csrf
+            <form method="POST"
+                action="{{ route('create.game', [request()->route('divisionID'), request()->route('categoryID')]) }}"
+                enctype="multipart/form-data"
+                class="fw-admin-submit-guard">
+                @csrf
 
-                                                @if (request()->route('divisionID') == 2)
-                                                    <div class="form-group row mb-4">
-                                                        <label
-                                                            class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Select
-                                                            Group</label>
-                                                        <div class="col-sm-12 col-md-7">
-                                                            <select name="groupID" class="form-control selectric">
-                                                                @foreach ($groups as $group)
-                                                                    <option value="{{ $group->id }}">
-                                                                        {{ $group->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                                <div class="form-group row mb-4">
-                                                    <label
-                                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Day</label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <select name="dayID" class="form-control selectric">
-                                                            @foreach ($days as $day)
-                                                                <option value="{{ $day->id }}">
-                                                                    {{ $day->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row mb-4">
-                                                    <label
-                                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Home
-                                                        Team</label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <select name="homeTeamID" class="form-control selectric">
-                                                            @foreach ($teams as $team)
-                                                                <option value="{{ $team['id'] }}">
-                                                                    {{ $team['name'] }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row mb-4">
-                                                    <label
-                                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Away
-                                                        Team</label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <select name="awayTeamID" class="form-control selectric">
-                                                            @foreach ($teams as $team)
-                                                                <option value="{{ $team['id'] }}">
-                                                                    {{ $team['name'] }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row mb-4">
-                                                    <label
-                                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Date</label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <input type="datetime-local" name="date"
-                                                            class="form-control">
-                                                        @error('date')
-                                                            <div style="color: red;">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row mb-4">
-                                                    <label
-                                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Season</label>
-                                                    <div class="col-sm-12 col-md-7">
-                                                        <select name="seasonID" class="form-control selectric">
-                                                            @foreach ($seasons as $season)
-                                                                <option value="{{ $season['id'] }}">
-                                                                    {{ $season['from'] }} - {{ $season['to'] }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-4">
-                                        <label
-                                            class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Stade</label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <input type="text" name="stade" class="form-control">
-                                            @error('stade')
-                                                <div style="color: red;">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-4">
-                                        <label
-                                            class="col-form-label text-md-center col-12 col-md-3 col-lg-3)}}"></label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <button class="btn btn-primary">Add</button>
-                                        </div>
-                                    </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                @if (request()->route('divisionID') == 2)
+                    <div class="fw-admin-form-group">
+                        <label for="groupID">Select Group</label>
+                        <select name="groupID" id="groupID" class="fw-admin-form-control">
+                            @foreach ($groups as $group)
+                                <option value="{{ $group->id }}">{{ $group->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
+                @endif
+
+                <div class="fw-admin-form-group">
+                    <label for="dayID">Day</label>
+                    <select name="dayID" id="dayID" class="fw-admin-form-control">
+                        @foreach ($days as $day)
+                            <option value="{{ $day->id }}">{{ $day->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-            </div>
-    </div>
-    </div>
-    </section>
-    </div>
 
+                <div class="fw-admin-form-group">
+                    <label for="homeTeamID">Home Team</label>
+                    <select name="homeTeamID" id="homeTeamID" class="fw-admin-form-control">
+                        @foreach ($teams as $team)
+                            <option value="{{ $team['id'] }}">{{ $team['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
+                <div class="fw-admin-form-group">
+                    <label for="awayTeamID">Away Team</label>
+                    <select name="awayTeamID" id="awayTeamID" class="fw-admin-form-control">
+                        @foreach ($teams as $team)
+                            <option value="{{ $team['id'] }}">{{ $team['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <script src="{{ asset('assets/js/app.min.js') }}"></script>
-    <!-- JS Libraies -->
-    <script src="{{ asset('assets/bundles/summernote/summernote-bs4.js') }}"></script>
-    <script src="{{ asset('assets/bundles/codemirror/lib/codemirror.js') }}"></script>
-    <script src="{{ asset('assets/bundles/codemirror/mode/javascript/javascript.js') }}"></script>
-    <script src="{{ asset('assets/bundles/jquery-selectric/jquery.selectric.min.js') }}"></script>
-    <script src="{{ asset('assets/bundles/ckeditor/ckeditor.js') }}"></script>
-    <!-- Page Specific JS File -->
-    <script src="{{ asset('assets/js/page/ckeditor.js') }}"></script>
-    <!-- Template JS File -->
-    <script src="{{ asset('assets/js/scripts.js') }}"></script>
-    <!-- Custom JS File -->
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
-</body>
+                <div class="fw-admin-form-group">
+                    <label for="date">Date</label>
+                    <input type="datetime-local" name="date" id="date" class="fw-admin-form-control">
+                    @error('date')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="fw-admin-form-group">
+                    <label for="seasonID">Season</label>
+                    <select name="seasonID" id="seasonID" class="fw-admin-form-control">
+                        @foreach ($seasons as $season)
+                            <option value="{{ $season['id'] }}">{{ $season['from'] }} - {{ $season['to'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="fw-admin-form-group">
+                    <label for="stade">Stade</label>
+                    <input type="text" name="stade" id="stade" class="fw-admin-form-control">
+                    @error('stade')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <button type="submit" class="fw-admin-btn fw-admin-btn-primary">Add</button>
+            </form>
+        </div>
+    </div>
+@endsection

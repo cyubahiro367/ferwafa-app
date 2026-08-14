@@ -59,11 +59,13 @@ class GameController extends Controller
                 'Game.awayTeamGoals',
                 'Game.isPlayed',
                 'Day.id AS dayID',
-                'Day.name AS dayName'
+                'Day.name AS dayName',
+                'users.name as creator_name'
             )
             ->join('Team as homeTeam', 'Game.homeTeamID', '=', 'homeTeam.id')
             ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
             ->join('Day', 'Game.dayID', '=', 'Day.id')
+            ->leftJoin('users', 'users.id', '=', 'Game.userID')
             ->where('homeTeam.categoryID', $categoryID)
             ->where('awayTeam.categoryID', $categoryID)
             ->where('homeTeam.divisionID', $divisionID)
@@ -71,16 +73,16 @@ class GameController extends Controller
             ->where('Game.seasonID', $season->id)
             ->orderBy('Day.id', 'DESC')
             ->orderBy('Game.id', 'DESC')
-            ->get();
-                
-        $finalGames = collect($games)->map(fn($item) => (array) $item)
-              ->groupBy("dayID")
-              ->values()
-              ->toArray(); 
+            ->paginate(10);
+
+        $groupedGames = collect($games->items())->map(fn ($item) => (array) $item)
+            ->groupBy('dayID')
+            ->values()
+            ->toArray();
 
         $seasons = Season::all()->toArray();
-              
-        $seasons = array_map(function($item){
+
+        $seasons = array_map(function ($item) {
             $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
             $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
 
@@ -88,9 +90,12 @@ class GameController extends Controller
         }, $seasons);
 
         return view('admin.games', [
-            'games' => $finalGames,
+            'games' => $groupedGames,
+            'gamesPaginator' => $games,
             'seasonID' => $season->id,
-            'seasons' => $seasons
+            'seasons' => $seasons,
+            'divisionID' => $divisionID,
+            'categoryID' => $categoryID,
         ]);
     }
 
@@ -227,6 +232,7 @@ class GameController extends Controller
                     "dayID" => $request->dayID,
                     "groupID" => $request->groupID,
                     "seasonID" => $request->seasonID,
+                    "userID" => Auth::id(),
                 ]);
 
                 TeamStatistic::create([
@@ -234,7 +240,8 @@ class GameController extends Controller
                     'teamID' => $request->homeTeamID,
                     'goalWin' => 0,
                     'goalLoss' => 0,
-                    'score' => 0
+                    'score' => 0,
+                    'userID' => Auth::id(),
                 ]);
 
                 TeamStatistic::create([
@@ -242,7 +249,8 @@ class GameController extends Controller
                     'teamID' => $request->awayTeamID,
                     'goalWin' => 0,
                     'goalLoss' => 0,
-                    'score' => 0
+                    'score' => 0,
+                    'userID' => Auth::id(),
                 ]);
             });
 

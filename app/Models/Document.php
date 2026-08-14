@@ -11,5 +11,10 @@ class Document extends Model
 
     protected $table = 'Document';
 
-    protected $fillable = ['title', 'url', 'type_id'];
+    protected $fillable = ["title", "url", "type_id", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

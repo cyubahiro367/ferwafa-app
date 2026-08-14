@@ -1,115 +1,78 @@
-<!DOCTYPE html>
+@extends('layouts.admin')
 
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./assets/css/app.min.css">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/components.css">
-    <!-- Custom style CSS -->
-    <link rel="stylesheet" href="./assets/css/custom.css">
-    <link href="./static/img/federation/ferwafa.png" rel="shortcut icon" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Ferwafa</title>
-</head>
+@section('title', 'Seasons')
 
-
-<body>
-    @include('admin.sidebar')
-    <div class="main-content">
-        <section class="section">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Available Seasons</h4>
-                            <div class="card-header-form">
-                                <form>
-                                    <div class="input-group">
-                                        <a href="{{ route('add.season') }}" class="btn btn-primary">
-                                            <i class="far fa-user"> &nbsp;</i>Add Season
-                                        </a>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="text" class="form-control" placeholder="Search" />
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        @if (session()->has('error'))
-                        <div class="badge badge-danger">
-                            {{ session()->get('error') }}
-                        </div>
-                        @endif
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Season</th>
-                                        <th colspan="2">Action</th>
-                                    </tr>
-                                    @foreach ($seasons as $key => $season)
-                                    <tr>
-                                        <td class="text-truncate">{{$key+1}}</td>
-                                        <td> {{ date('Y', strtotime($season['from'])) }}-{{ date('Y', strtotime($season['to'])) }}</td>
-                                        <td>
-                                            {{-- <a href="{{ route('season.page.edit', $season['id']) }}" class="btn btn-outline-primary">Edit</a> --}}
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-danger delete-game" data-toggle="modal" data-target="#confirmDeleteModal" data-game-id="{{ $season['id'] }}">Delete</button>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+@section('content')
+    <div class="fw-admin-page-header">
+        <div>
+            <h1>Seasons</h1>
+            <p>Manage competition seasons.</p>
+        </div>
+        <a href="{{ route('add.season') }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add season</a>
     </div>
 
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="fw-admin-panel">
+        <div class="fw-admin-table-wrap">
+            <table class="fw-admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Season</th>
+                        <th>Created by</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($seasons as $item)
+                        <tr>
+                            <td>{{ $item['id'] }}</td>
+                            <td>{{ $item['from'] }} – {{ $item['to'] }}</td>
+                            <td class="fw-admin-muted">{{ $item['creator_name'] ?? '—' }}</td>
+                            <td>
+                                <button type="button" class="fw-admin-btn fw-admin-btn-danger fw-admin-btn-sm delete-item" data-toggle="modal" data-target="#confirmDeleteModal" data-id="{{ $item['id'] }}">Delete</button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4">
+                                <div class="fw-admin-empty">
+                                    <h3>No seasons yet.</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        @include('partials.admin-pagination', ['paginator' => $seasons])
+    </div>
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete this Season?
-                </div>
+                <div class="modal-header"><h5 class="modal-title">Confirm delete</h5></div>
+                <div class="modal-body">Are you sure you want to delete this item?</div>
                 <div class="modal-footer">
-                    <form id="deleteGameForm" method="POST" action="{{ route('delete.season', 0) }}">
+                    <button type="button" class="fw-admin-btn fw-admin-btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" action="{{ route('delete.season', 0) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="fw-admin-btn fw-admin-btn-danger">Delete</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+@endsection
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="/src/main.js"></script>
-    <script src="./assets/js/app.min.js"></script>
-    <script src="./assets/js/custom.js"></script>
-    <script src="./assets/js/scripts.js"></script>
-    <script src="./assets/js/scripts.js"></script>
-    <script src="./assets/js/custom.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.delete-game').click(function() {
-                var gameId = $(this).data('game-id');
-                console.log(gameId);
-                var form = $('#deleteGameForm');
-                var action = form.attr('action');
-                // Update the form action with the correct game ID
-                form.attr('action', action.replace('0', gameId));
-            });
-        });
-    </script>
-
-</body>
+@push('scripts')
+<script>
+    $(document).on('click', '.delete-item', function () {
+        var id = $(this).data('id');
+        $('#deleteForm').attr('action', $('#deleteForm').attr('action').replace(/0$/, id).replace(/\/0(\/|$)/, '/' + id + '$1'));
+        if ($('#deleteForm').attr('action').indexOf(String(id)) === -1) {
+            $('#deleteForm').attr('action', $('#deleteForm').attr('action').replace('0', id));
+        }
+    });
+</script>
+@endpush
