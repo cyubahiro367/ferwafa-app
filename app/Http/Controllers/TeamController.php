@@ -94,7 +94,8 @@ class TeamController extends Controller
                 "name" => $request->name,
                 "categoryID" => $teamCategory->id,
                 "logo" => $path,
-                "divisionID" => $division->id
+                "divisionID" => $division->id,
+                "userID" => Auth::id(),
             ]);
         });
 
@@ -127,29 +128,30 @@ class TeamController extends Controller
                 ->with('error', 'Division not found');
         }
 
-        $teams = DB::table("Team AS a")
-            ->join("TeamCategory AS b", "a.categoryID", "=", "b.id")
-            ->select(["a.id", "a.name", "a.logo", "b.name AS category"])
+        $teams = DB::table('Team AS a')
+            ->join('TeamCategory AS b', 'a.categoryID', '=', 'b.id')
+            ->leftJoin('users as u', 'u.id', '=', 'a.userID')
+            ->select(['a.id', 'a.name', 'a.logo', 'b.name AS category', 'u.name as creator_name'])
             ->where('categoryID', $categoryID)
             ->where('divisionID', $divisionID)
             ->orderBy('name', 'asc')
-            ->get();
+            ->paginate(10);
 
-        $finalTeams = [];
-
-        foreach ($teams as $value) {
-            $fileUrl = explode('/', $value->logo)[1];
-            $team = [
-                "id" => $value->id,
-                "name" => $value->name,
-                "category" => $value->category,
-                "url" => $fileUrl
+        $teams->getCollection()->transform(function ($value) {
+            $parts = explode('/', $value->logo);
+            return [
+                'id' => $value->id,
+                'name' => $value->name,
+                'category' => $value->category,
+                'url' => $parts[1] ?? $value->logo,
+                'creator_name' => $value->creator_name,
             ];
-            array_push($finalTeams, $team);
-        }
+        });
 
         return view('admin.teams', [
-            'teams' => $finalTeams
+            'teams' => $teams,
+            'divisionID' => $divisionID,
+            'categoryID' => $categoryID,
         ]);
     }
 

@@ -11,13 +11,10 @@ class Committe extends Model
 
     protected $table = 'Committe';
 
-    protected $fillable = [
-        'name',
-        'position',
-        'age',
-        'nationality',
-        'description',
-        'image_url',
-        'committeeCategoryID'
-    ];
+    protected $fillable = ["name", "position", "age", "nationality", "description", "image_url", "committeeCategoryID", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

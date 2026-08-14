@@ -11,5 +11,10 @@ class Season extends Model
 
     protected $table = 'Season';
 
-    protected $fillable = ['from', 'to'];
+    protected $fillable = ["from", "to", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

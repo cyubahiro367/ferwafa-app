@@ -61,7 +61,8 @@ class DayController extends Controller
         Day::create([
             "name" => $request->name,
             "abbreviation" => $request->abbreviation,
-            "seasonID" => $request->seasonID
+            "seasonID" => $request->seasonID,
+            "userID" => Auth::id(),
         ]);
 
         return redirect('/days')
@@ -75,10 +76,12 @@ class DayController extends Controller
             return redirect('/');
         }
 
-        $days = Day::all();
+        $days = Day::with('creator')
+            ->orderByDesc('id')
+            ->paginate(10);
 
         return view('admin.days', [
-            'days' => $days
+            'days' => $days,
         ]);
     }
 

@@ -11,5 +11,10 @@ class TopScore extends Model
 
     protected $table = 'TopScore';
 
-    protected $fillable = ['name', 'goals', 'teamName', 'divisionID', 'categoryID', 'seasonID'];
+    protected $fillable = ["name", "goals", "teamName", "divisionID", "categoryID", "seasonID", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

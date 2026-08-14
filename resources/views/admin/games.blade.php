@@ -1,238 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Ferwafa - Fixtures</title>
+@extends('layouts.admin')
 
-    <link rel="shortcut icon" href="{{ asset('static/img/federation/ferwafa.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+@section('title', 'Fixtures')
 
-    {{-- Core CSS --}}
-    <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
-</head>
+@section('content')
+@php $divisionID = $divisionID ?? request()->route('divisionID'); $categoryID = $categoryID ?? request()->route('categoryID'); @endphp
+    <div class="fw-admin-page-header">
+        <div>
+            <h1>Fixtures</h1>
+            <p>Schedule and update match fixtures.</p>
+        </div>
+        <div class="fw-admin-actions">
+            <a href="{{ route('add.game', [$divisionID, $categoryID]) }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add match</a>
+            <form action="{{ route('fixtures', [$divisionID, $categoryID]) }}" method="GET" class="fw-admin-actions">
+                <select name="seasonID" class="form-control" style="width:auto;min-width:140px;">
+                    @foreach ($seasons as $season)
+                        <option value="{{ $season['id'] }}" @selected((int)$seasonID === (int)$season['id'])>
+                            {{ $season['from'] }} - {{ $season['to'] }}
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit" class="fw-admin-btn fw-admin-btn-secondary">Filter</button>
+            </form>
+        </div>
+    </div>
 
-<body>
-@include('admin.sidebar')
+    @if (session('error'))
+        <div class="fw-admin-flash fw-admin-flash-error">{{ session('error') }}</div>
+    @endif
 
-@php $divisionID = request()->route('divisionID'); @endphp
+    @forelse ($games as $data)
+        <div class="fw-admin-panel" style="margin-bottom:18px;">
+            <div class="fw-admin-panel-body">
+                <h2 class="fw-admin-section-title">{{ $data[0]['dayName'] ?? 'Match day' }}</h2>
+            </div>
+            <div class="fw-admin-table-wrap">
+                <table class="fw-admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Home</th>
+                            <th>Away</th>
+                            <th>Stadium</th>
+                            <th>Date</th>
+                            <th>Score</th>
+                            <th>Created by</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data as $key => $game)
+                            <tr @if (!empty($game['isPlayed'])) style="font-weight:600" @endif>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $game['homeTeam'] }}</td>
+                                <td>{{ $game['awayTeam'] }}</td>
+                                <td>{{ $game['stadium'] }}</td>
+                                <td>{{ $game['date'] }}</td>
+                                <td>
+                                    @if (!empty($game['isPlayed']))
+                                        {{ $game['homeTeamGoals'] }} - {{ $game['awayTeamGoals'] }}
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                                <td class="fw-admin-muted">{{ $game['creator_name'] ?? '—' }}</td>
+                                <td>
+                                    <div class="fw-admin-actions">
+                                        <a href="{{ route('game.page.edit', [$divisionID, $categoryID, $game['id']]) }}" class="fw-admin-btn fw-admin-btn-secondary fw-admin-btn-sm">Add scores</a>
+                                        <button type="button" class="fw-admin-btn fw-admin-btn-danger fw-admin-btn-sm delete-item"
+                                            data-toggle="modal" data-target="#confirmDeleteModal"
+                                            data-id="{{ $game['id'] }}" data-category-id="{{ $categoryID }}">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @empty
+        <div class="fw-admin-panel">
+            <div class="fw-admin-empty">
+                <h3>No fixtures yet</h3>
+                <a href="{{ route('add.game', [$divisionID, $categoryID]) }}" class="fw-admin-btn fw-admin-btn-primary">Add match</a>
+            </div>
+        </div>
+    @endforelse
 
-<div class="main-content">
-    <section class="section">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
+    @isset($gamesPaginator)
+        @include('partials.admin-pagination', ['paginator' => $gamesPaginator])
+    @endisset
 
-                    {{-- Card Header --}}
-                    <div class="card-header">
-                        <h4>Fixtures</h4>
-                        <div class="card-header-form">
-                            <div class="input-group">
-                                <a href="{{ route('add.game', [request()->route('divisionID'), request()->route('categoryID')]) }}"
-                                   class="btn btn-primary">
-                                    <i class="far fa-user"></i>&nbsp; Add Match
-                                </a>
-                                &nbsp;&nbsp;
-                                {{-- Standalone form (no nesting) --}}
-                                <form action="{{ route('fixtures', [request()->route('divisionID'), request()->route('categoryID')]) }}"
-                                      method="GET" class="d-flex align-items-center">
-                                    <select class="btn btn-primary" name="seasonID">
-                                        @foreach ($seasons as $season)
-                                            <option value="{{ $season['id'] }}"
-                                                {{ $seasonID === $season['id'] ? 'selected' : '' }}>
-                                                {{ $season['from'] }} - {{ $season['to'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <button type="submit" class="btn btn-primary ml-1">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if (session('error'))
-                        <div class="alert alert-danger m-3">{{ session('error') }}</div>
-                    @endif
-
-                    <div class="card-body p-0">
-                        <div class="row">
-
-                            {{-- ===== Group A / Single Division column ===== --}}
-                            <div class="{{ $divisionID == 2 ? 'table-responsive col-sm-12 col-md-6 col-xl-6' : 'table-responsive col-12' }}">
-                                @if ($divisionID == 2)
-                                    <h2 class="px-3 pt-3">Group A</h2>
-                                @endif
-
-                                @foreach ($games as $data)
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th colspan="9" style="text-align:center; background-color:#133E8D; color:#fff;">
-                                                {{ $data[0]['dayName'] }}
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Home Team</th>
-                                            <th>Away Team</th>
-                                            <th>Stade</th>
-                                            <th>Date</th>
-                                            <th>Home Goals</th>
-                                            <th>Away Goals</th>
-                                            <th colspan="2">Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach ($data as $key => $game)
-                                            @if ($game['groupID'] == 1 || is_null($game['groupID']))
-                                                <tr @if ($game['isPlayed']) style="font-weight:bold" @endif>
-                                                    <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $game['homeTeam'] }}</td>
-                                                    <td>{{ $game['awayTeam'] }}</td>
-                                                    <td>{{ $game['stadium'] }}</td>
-                                                    <td>{{ $game['date'] }}</td>
-                                                    <td>{{ $game['isPlayed'] ? $game['homeTeamGoals'] : '-' }}</td>
-                                                    <td>{{ $game['isPlayed'] ? $game['awayTeamGoals'] : '-' }}</td>
-                                                    <td>
-                                                        <a href="{{ route('game.page.edit', [request()->route('divisionID'), request()->route('categoryID'), $game['id']]) }}"
-                                                           class="btn btn-outline-primary btn-sm">Add Scores</a>
-                                                    </td>
-                                                    <td>
-                                                        <button type="button"
-                                                                class="btn btn-outline-danger btn-sm delete-game"
-                                                                data-toggle="modal"
-                                                                data-target="#confirmDeleteModal"
-                                                                data-game-id="{{ $game['id'] }}"
-                                                                data-category-id="{{ request()->route('categoryID') }}">
-                                                            Delete
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                @endforeach
-                            </div>
-
-                            {{-- ===== Group B (division 2 only) ===== --}}
-                            @if ($divisionID == 2)
-                                <div class="table-responsive col-sm-12 col-md-6 col-xl-6">
-                                    <h2 class="px-3 pt-3">Group B</h2>
-
-                                    @foreach ($games as $data)
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th colspan="9" style="text-align:center; background-color:#133E8D; color:#fff;">
-                                                    {{ $data[0]['dayName'] }}
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Home Team</th>
-                                                <th>Away Team</th>
-                                                <th>Stade</th>
-                                                <th>Date</th>
-                                                <th>Home Goals</th>
-                                                <th>Away Goals</th>
-                                                <th colspan="2">Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @foreach ($data as $key => $game)
-                                                @if ($game['groupID'] == 2)
-                                                    <tr @if ($game['isPlayed']) style="font-weight:bold" @endif>
-                                                        <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $game['homeTeam'] }}</td>
-                                                        <td>{{ $game['awayTeam'] }}</td>
-                                                        <td>{{ $game['stadium'] }}</td>
-                                                        <td>{{ $game['date'] }}</td>
-                                                        <td>{{ $game['isPlayed'] ? $game['homeTeamGoals'] : '-' }}</td>
-                                                        <td>{{ $game['isPlayed'] ? $game['awayTeamGoals'] : '-' }}</td>
-                                                        <td>
-                                                            <a href="{{ route('game.page.edit', [request()->route('divisionID'), request()->route('categoryID'), $game['id']]) }}"
-                                                               class="btn btn-outline-primary btn-sm">Add Scores</a>
-                                                        </td>
-                                                        <td>
-                                                            <button type="button"
-                                                                    class="btn btn-outline-danger btn-sm delete-game"
-                                                                    data-toggle="modal"
-                                                                    data-target="#confirmDeleteModal"
-                                                                    data-game-id="{{ $game['id'] }}"
-                                                                    data-category-id="{{ request()->route('categoryID') }}">
-                                                                Delete
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                            @endforeach
-                                            </tbody>
-                                        </table>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                        </div>
-                    </div>
-
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Confirm delete</h5></div>
+                <div class="modal-body">Are you sure you want to delete this fixture?</div>
+                <div class="modal-footer">
+                    <button type="button" class="fw-admin-btn fw-admin-btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" action="{{ route('delete.game', [$categoryID, 0]) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="fw-admin-btn fw-admin-btn-danger">Delete</button>
+                    </form>
                 </div>
             </div>
         </div>
-    </section>
-</div>
-
-{{-- Delete Confirmation Modal --}}
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
-     aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this game?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <form id="deleteGameForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </div>
-        </div>
     </div>
-</div>
+@endsection
 
-{{-- Core JS (load once, in correct order) --}}
-<script src="{{ asset('assets/js/app.min.js') }}"></script>
-<script src="{{ asset('assets/bundles/jquery-selectric/jquery.selectric.min.js') }}"></script>
-<script src="{{ asset('assets/js/scripts.js') }}"></script>
-<script src="{{ asset('assets/js/custom.js') }}"></script>
-
+@push('scripts')
 <script>
-    $(document).ready(function () {
-        $('.delete-game').on('click', function () {
-            var gameId     = $(this).data('game-id');
-            var categoryId = $(this).data('category-id');
-
-            var actionUrl = "{{ route('delete.game', [':category', ':game']) }}"
-                .replace(':category', categoryId)
-                .replace(':game', gameId);
-
-            $('#deleteGameForm').attr('action', actionUrl);
-        });
+    $(document).on('click', '.delete-item', function () {
+        var id = $(this).data('id');
+        $('#deleteForm').attr('action', $('#deleteForm').attr('action').replace(/\/0$/, '/' + id));
     });
 </script>
-</body>
-</html>
+@endpush

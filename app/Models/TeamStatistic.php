@@ -11,5 +11,10 @@ class TeamStatistic extends Model
 
     protected $table = 'TeamStatistic';
 
-    protected $fillable = ['gameID', 'teamID', 'goalWin', 'goalLoss', 'score'];
+    protected $fillable = ["gameID", "teamID", "goalWin", "goalLoss", "score", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

@@ -103,6 +103,7 @@ class TopScoreController extends Controller
             'categoryID' => $categoryID,
             'divisionID' => $request->divisionID,
             "seasonID" => $request->seasonID,
+            "userID" => Auth::id(),
         ]);
 
         return redirect("/top-score/$divisionID/$categoryID")
@@ -144,28 +145,32 @@ class TopScoreController extends Controller
 
         $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
 
-        $topScores = TopScore::where([['seasonID', $season->id], ['divisionID', $divisionID], ['categoryID', $categoryID]])->orderBy('goals', 'DESC')->get();
+        $topScores = TopScore::with('creator')
+            ->where([['seasonID', $season->id], ['divisionID', $divisionID], ['categoryID', $categoryID]])
+            ->orderBy('goals', 'DESC')
+            ->paginate(10);
 
-        $finalTopScores = [];
+        $teamNames = collect($teams)->pluck('name')->all();
 
-        foreach ($topScores as $value) {
-            foreach($teams as $team){
-                if($team["name"] === $value->teamName){
-                    $topScore = [
-                        "id" => $value->id,
-                        "name" => $value->name,
-                        "goals" => $value->goals,
-                        "teamName" => $value->teamName
-                    ];
-                    array_push($finalTopScores, $topScore);
-                }
+        $topScores->getCollection()->transform(function ($value) use ($teamNames) {
+            if (!in_array($value->teamName, $teamNames, true)) {
+                return null;
             }
 
-        }
+            return [
+                'id' => $value->id,
+                'name' => $value->name,
+                'goals' => $value->goals,
+                'teamName' => $value->teamName,
+                'creator_name' => optional($value->creator)->name,
+            ];
+        });
+
+        $topScores->setCollection($topScores->getCollection()->filter()->values());
 
         $seasons = Season::all()->toArray();
-              
-        $seasons = array_map(function($item){
+
+        $seasons = array_map(function ($item) {
             $item['from'] = Carbon::createFromTimestamp($item['from'])->format('Y');
             $item['to'] = Carbon::createFromTimestamp($item['to'])->format('Y');
 
@@ -173,9 +178,11 @@ class TopScoreController extends Controller
         }, $seasons);
 
         return view('admin.topScore', [
-            'topScores' => $finalTopScores,
+            'topScores' => $topScores,
             'seasonID' => $season->id,
-            'seasons' => $seasons
+            'seasons' => $seasons,
+            'divisionID' => $divisionID,
+            'categoryID' => $categoryID,
         ]);
     }
 

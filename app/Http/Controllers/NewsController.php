@@ -61,7 +61,8 @@ class NewsController extends Controller
                 "description" => $request->description,
                 "statusID" => $request->statusID,
                 "newsTypeID" => $request->newsTypeID,
-                "is_top" => $request->is_top
+                "is_top" => $request->is_top,
+                "userID" => Auth::id(),
             ]);
 
             $path = $request->image->store('newsImages');

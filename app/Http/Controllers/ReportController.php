@@ -48,7 +48,8 @@ class ReportController extends Controller
         Document::create([
             'title' => $request->title,
             'url' => $path,
-            'type_id' => $request->typeID
+            'type_id' => $request->typeID,
+            'userID' => Auth::id(),
         ]);
 
         return redirect('/report-view')
@@ -62,27 +63,26 @@ class ReportController extends Controller
             return redirect('/');
         }
 
-        $reports = DB::select('SELECT a.id, a.title, a.url,b.name 
-                                FROM Document AS a
-                                    JOIN DocumentType AS b
-                                    ON b.id = a.type_id
-                                    ORDER BY a.created_at DESC');
+        $reports = DB::table('Document as a')
+            ->join('DocumentType as b', 'b.id', '=', 'a.type_id')
+            ->leftJoin('users as u', 'u.id', '=', 'a.userID')
+            ->select('a.id', 'a.title', 'a.url', 'b.name', 'u.name as creator_name')
+            ->orderByDesc('a.created_at')
+            ->paginate(10);
 
-
-        $final = [];
-
-        foreach ($reports as $report) {
-            $array = preg_split("#/#", $report->url);
-            array_push($final, [
-                "id" => $report->id,
-                "title" => $report->title,
-                "type" => $report->name,
-                "url" => $array[1]
-            ]);
-        }
+        $reports->getCollection()->transform(function ($report) {
+            $parts = preg_split('#/#', $report->url);
+            return [
+                'id' => $report->id,
+                'title' => $report->title,
+                'type' => $report->name,
+                'url' => $parts[1] ?? $report->url,
+                'creator_name' => $report->creator_name,
+            ];
+        });
 
         return view('admin.reportlist', [
-            "reports" => $final
+            'reports' => $reports,
         ]);
     }
 

@@ -11,5 +11,10 @@ class Team extends Model
 
     protected $table = 'Team';
 
-    protected $fillable = ['name', 'logo', 'categoryID', 'divisionID'];
+    protected $fillable = ["name", "logo", "categoryID", "divisionID", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

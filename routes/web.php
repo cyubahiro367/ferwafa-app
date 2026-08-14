@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CreatorReportController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommitteController;
 use App\Http\Controllers\CompetitionController;
@@ -89,6 +90,7 @@ Route::delete('/delete-gallery/{id}', [GalleryController::class, 'destroy'])->wh
 
 
 Route::get('/admin', [AdminController::class, 'adminView'])->name('dashboard.view');
+Route::get('/creator-report', [CreatorReportController::class, 'index'])->name('creator.report');
 Route::get('/news-view', [AdminController::class, 'getNewsForAdmin'])->name('news.view');
 Route::get('/create-news', [AdminController::class, 'createNewsView'])->name('news.create');
 

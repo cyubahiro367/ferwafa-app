@@ -11,7 +11,10 @@ class Gallery extends Model
 
     protected $table = 'Gallery';
 
-    protected $fillable = [
-        'name', 'url', 'height', 'width'
-    ];
+    protected $fillable = ["name", "url", "height", "width", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

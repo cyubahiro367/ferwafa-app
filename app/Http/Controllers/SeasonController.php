@@ -43,7 +43,8 @@ class SeasonController extends Controller
 
         Season::create([
             "from" => strtotime($request->from),
-            "to" => strtotime($request->to)
+            "to" => strtotime($request->to),
+            "userID" => Auth::id(),
         ]);
 
         return redirect('/seasons')
@@ -57,22 +58,21 @@ class SeasonController extends Controller
             return redirect('/');
         }
 
-        $seasons = Season::all();
+        $seasons = Season::with('creator')
+            ->orderByDesc('id')
+            ->paginate(10);
 
-        $finalSeasons = [];
-
-        foreach ($seasons as $value) {
-
-            $season = [
-                "id" => $value->id,
-                "from" => Carbon::parse($value->from)->format('d-m-Y'),
-                "to" => Carbon::parse($value->to)->format('d-m-Y')
+        $seasons->getCollection()->transform(function ($value) {
+            return [
+                'id' => $value->id,
+                'from' => Carbon::createFromTimestamp((int) $value->from)->format('Y'),
+                'to' => Carbon::createFromTimestamp((int) $value->to)->format('Y'),
+                'creator_name' => optional($value->creator)->name,
             ];
-            array_push($finalSeasons, $season);
-        }
+        });
 
         return view('admin.seasons', [
-            'seasons' => $finalSeasons
+            'seasons' => $seasons,
         ]);
     }
 

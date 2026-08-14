@@ -61,7 +61,8 @@ class CommitteController extends Controller
             "name" => $request->name,
             "position" => $request->position,
             "image_url" => $path,
-            'committeeCategoryID' => $request->committeeCategoryID
+            'committeeCategoryID' => $request->committeeCategoryID,
+            'userID' => Auth::id(),
         ]);
 
         return redirect('/committe')
@@ -86,25 +87,25 @@ class CommitteController extends Controller
             return redirect('/');
         }
 
-        $committe = Committe::all();
+        $committe = Committe::with('creator')
+            ->orderByDesc('id')
+            ->paginate(10);
 
-        $finalCommitte = [];
-
-        foreach ($committe as $value) {
-            $fileUrl = !is_null($value->image_url) ? explode('/', $value->image_url)[1] : null;
-            $committeMember = [
-                "id" => $value->id,
-                "name" => $value->name,
-                "position" => $value->position,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
+        $committe->getCollection()->transform(function ($value) {
+            $fileUrl = !is_null($value->image_url) ? (explode('/', $value->image_url)[1] ?? null) : null;
+            return [
+                'id' => $value->id,
+                'name' => $value->name,
+                'position' => $value->position,
+                'created_at' => $value->created_at,
+                'updataed_at' => $value->updated_at,
+                'url' => $fileUrl,
+                'creator_name' => optional($value->creator)->name,
             ];
-            array_push($finalCommitte, $committeMember);
-        }
+        });
 
         return view('admin.committe', [
-            'committes' => $finalCommitte
+            'committes' => $committe,
         ]);
     }
 

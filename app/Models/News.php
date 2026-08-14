@@ -11,5 +11,10 @@ class News extends Model
 
     protected $table = 'News';
 
-    protected $fillable = ['title','caption','description','is_top','image','statusID','newsTypeID'];
+    protected $fillable = ["title", "caption", "description", "is_top", "image", "statusID", "newsTypeID", "userID"];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, "userID");
+    }
 }

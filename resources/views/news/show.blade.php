@@ -29,7 +29,7 @@
                 <p class="fw-article-caption">{{ $result->caption }}</p>
             @endif
             <div class="fw-article-body">
-                {!! nl2br(e($result->description)) !!}
+                {!! $result->description !!}
             </div>
             <div style="margin-top:36px;">
                 <a href="{{ route('all.news') }}" class="fw-btn-outline"><i class="fas fa-arrow-left"></i> Back to News</a>

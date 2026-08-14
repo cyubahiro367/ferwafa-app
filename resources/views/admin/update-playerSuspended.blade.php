@@ -1,254 +1,129 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <title>Update Suspended Player - Ferwafa</title>
-    
-    <!-- Favicon -->
-    <link href="{{ asset('static/img/federation/ferwafa.png') }}" rel="shortcut icon" />
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
-    
-    <!-- Additional CSS for better form styling -->
-    <style>
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .character-counter {
-            font-size: 12px;
-            color: #6c757d;
-            text-align: right;
-            margin-top: 5px;
-        }
-        .character-counter.warning {
-            color: #ffc107;
-        }
-        .character-counter.danger {
-            color: #dc3545;
-        }
-        .suggestion-box {
-            position: absolute;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            max-height: 200px;
-            overflow-y: auto;
-            width: calc(100% - 30px);
-            z-index: 1000;
-            display: none;
-        }
-        .suggestion-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        .suggestion-item:hover {
-            background-color: #f8f9fa;
-        }
-        .suggestion-item.selected {
-            background-color: #e9ecef;
-        }
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-    </style>
-</head>
+@extends('layouts.admin')
 
-<body>
-    @include('admin.sidebar')
-    
-    <div class="main-content">
-        <section class="section">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Update Suspended Player</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-container">
-                                <!-- Display error/success messages -->
-                                @if(session('error'))
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        {{ session('error') }}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                @endif
-                                
-                                @if(session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                @endif
-                                
-                                <!-- Display validation errors -->
-                                @if($errors->any())
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <ul class="mb-0">
-                                            @foreach($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                @endif
-                                
-                                <form method="POST"
-                                    action="{{ route('update.player-suspended', [request()->route('divisionID'), request()->route('categoryID'), $playerSuspended->id]) }}"
-                                    enctype="multipart/form-data"
-                                    id="updatePlayerForm">
-                                    @csrf
-                                    @method('PUT')
-                                    
-                                    <!-- Season Selection -->
-                                    <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
-                                            Season <span class="text-danger">*</span>
-                                        </label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <select name="seasonID" id="seasonID" class="form-control" required>
-                                                @foreach ($seasons as $season)
-                                                    <option value="{{ $season['id'] }}" 
-                                                        {{ $playerSuspended->seasonID == $season['id'] ? 'selected' : '' }}>
-                                                        {{ $season['from'] }} - {{ $season['to'] }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('seasonID')
-                                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Day Selection (depends on season) -->
-                                    <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
-                                            Day <span class="text-danger">*</span>
-                                        </label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <select name="dayID" id="dayID" class="form-control" required>
-                                                <option value="">Loading days...</option>
-                                            </select>
-                                            @error('dayID')
-                                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Player Name -->
-                                    <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
-                                            Player Name <span class="text-danger">*</span>
-                                        </label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <input type="text" name="name" class="form-control" 
-                                                value="{{ old('name', $playerSuspended->name) }}" 
-                                                placeholder="Enter player's full name"
-                                                required>
-                                            @error('name')
-                                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Team Selection -->
-                                    <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
-                                            Team <span class="text-danger">*</span>
-                                        </label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <select name="teamID" class="form-control" required>
-                                                <option value="">Select Team</option>
-                                                @foreach ($teams as $team)
-                                                    <option value="{{ $team['id'] }}"
-                                                        {{ old('teamID', $playerSuspended->teamID) == $team['id'] ? 'selected' : '' }}>
-                                                        {{ $team['name'] }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('teamID')
-                                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Suspension Reason with Autocomplete -->
-                                    <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
-                                            Suspension Reason <span class="text-danger">*</span>
-                                        </label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <div class="position-relative">
-                                                <input type="text" name="reason" id="reason" 
-                                                    class="form-control" 
-                                                    value="{{ old('reason', $playerSuspended->reason) }}"
-                                                    placeholder="Enter suspension reason (max 30 characters)"
-                                                    maxlength="30"
-                                                    required>
-                                                <div id="reasonSuggestions" class="suggestion-box"></div>
-                                            </div>
-                                            <div id="charCount" class="character-counter">0/30 characters</div>
-                                            @error('reason')
-                                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                            @enderror
-                                            <small class="form-text text-muted">
-                                                Start typing to see matching existing reasons
-                                            </small>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Form Actions -->
-                                    <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
-                                        <div class="col-sm-12 col-md-7">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save"></i> Update Player
-                                            </button>
-                                            <a href="{{ route('player-suspended', [request()->route('divisionID'), request()->route('categoryID')]) }}"
-                                                class="btn btn-outline-secondary ml-2">
-                                                <i class="fas fa-times"></i> Cancel
-                                            </a>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+@section('title', 'Update Suspended Player')
+
+@section('content')
+    <div class="fw-admin-page-header">
+        <div>
+            <h1>Update Suspended Player</h1>
+        </div>
     </div>
 
-    <!-- Scripts -->
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Template Scripts -->
-    <script src="{{ asset('assets/js/app.min.js') }}"></script>
-    <script src="{{ asset('assets/js/scripts.js') }}"></script>
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <div class="fw-admin-panel">
+        <div class="fw-admin-panel-body fw-admin-form">
+            @if(session('error'))
+                <div class="fw-admin-flash fw-admin-flash-error">{{ session('error') }}</div>
+            @endif
 
-    <!-- Custom Scripts -->
-    <script>
+            @if(session('success'))
+                <div class="fw-admin-flash fw-admin-flash-success">{{ session('success') }}</div>
+            @endif
+
+            @if($errors->any())
+                <div class="fw-admin-flash fw-admin-flash-error">
+                    <ul class="mb-0 pl-3">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST"
+                action="{{ route('update.player-suspended', [request()->route('divisionID'), request()->route('categoryID'), $playerSuspended->id]) }}"
+                enctype="multipart/form-data"
+                id="updatePlayerForm"
+                class="fw-admin-submit-guard">
+                @csrf
+                @method('PUT')
+
+                <div class="fw-admin-form-group">
+                    <label for="seasonID">Season <span class="text-danger">*</span></label>
+                    <select name="seasonID" id="seasonID" class="fw-admin-form-control" required>
+                        @foreach ($seasons as $season)
+                            <option value="{{ $season['id'] }}"
+                                {{ $playerSuspended->seasonID == $season['id'] ? 'selected' : '' }}>
+                                {{ $season['from'] }} - {{ $season['to'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('seasonID')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="fw-admin-form-group">
+                    <label for="dayID">Day <span class="text-danger">*</span></label>
+                    <select name="dayID" id="dayID" class="fw-admin-form-control" required>
+                        <option value="">Loading days...</option>
+                    </select>
+                    @error('dayID')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="fw-admin-form-group">
+                    <label for="name">Player Name <span class="text-danger">*</span></label>
+                    <input type="text" name="name" id="name" class="fw-admin-form-control"
+                        value="{{ old('name', $playerSuspended->name) }}"
+                        placeholder="Enter player's full name"
+                        required>
+                    @error('name')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="fw-admin-form-group">
+                    <label for="teamID">Team <span class="text-danger">*</span></label>
+                    <select name="teamID" id="teamID" class="fw-admin-form-control" required>
+                        <option value="">Select Team</option>
+                        @foreach ($teams as $team)
+                            <option value="{{ $team['id'] }}"
+                                {{ old('teamID', $playerSuspended->teamID) == $team['id'] ? 'selected' : '' }}>
+                                {{ $team['name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('teamID')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="fw-admin-form-group">
+                    <label for="reason">Suspension Reason <span class="text-danger">*</span></label>
+                    <div class="position-relative">
+                        <input type="text" name="reason" id="reason"
+                            class="fw-admin-form-control"
+                            value="{{ old('reason', $playerSuspended->reason) }}"
+                            placeholder="Enter suspension reason (max 30 characters)"
+                            maxlength="30"
+                            required>
+                        <div id="reasonSuggestions" class="suggestion-box"></div>
+                    </div>
+                    <div id="charCount" class="character-counter">0/30 characters</div>
+                    @error('reason')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                    <small class="form-text text-muted">
+                        Start typing to see matching existing reasons
+                    </small>
+                </div>
+
+                <button type="submit" class="fw-admin-btn fw-admin-btn-primary">
+                    <i class="fas fa-save"></i> Update Player
+                </button>
+                <a href="{{ route('player-suspended', [request()->route('divisionID'), request()->route('categoryID')]) }}"
+                    class="btn btn-outline-secondary ml-2">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
         $(document).ready(function() {
             console.log('Document ready, initializing update page...');
             
@@ -604,5 +479,4 @@
             console.log('Update page initialization complete');
         });
     </script>
-</body>
-</html>
+@endpush

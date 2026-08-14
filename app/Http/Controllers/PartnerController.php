@@ -44,7 +44,8 @@ class PartnerController extends Controller
 
         Partner::create([
             "link" => $request->link,
-            "image_url" => $path
+            "image_url" => $path,
+            "userID" => Auth::id(),
         ]);
 
         return redirect('/parteners')
@@ -69,24 +70,24 @@ class PartnerController extends Controller
             return redirect('/');
         }
 
-        $partners = Partner::all();
+        $partners = Partner::with('creator')
+            ->orderByDesc('id')
+            ->paginate(10);
 
-        $finalPartners = [];
-
-        foreach ($partners as $value) {
-            $fileUrl = explode('/', $value->image_url)[1];
-            $partner = [
-                "id" => $value->id,
-                "link" => $value->link,
-                "created_at" => $value->created_at,
-                "updataed_at" => $value->updated_at,
-                "url" => $fileUrl
+        $partners->getCollection()->transform(function ($value) {
+            $parts = explode('/', $value->image_url);
+            return [
+                'id' => $value->id,
+                'link' => $value->link,
+                'created_at' => $value->created_at,
+                'updataed_at' => $value->updated_at,
+                'url' => $parts[1] ?? $value->image_url,
+                'creator_name' => optional($value->creator)->name,
             ];
-            array_push($finalPartners, $partner);
-        }
+        });
 
         return view('admin.partner', [
-            'partners' => $finalPartners
+            'partners' => $partners,
         ]);
     }
 
