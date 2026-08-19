@@ -10,30 +10,21 @@
         </div>
     </div>
 
-    <div class="fw-admin-panel" style="margin-bottom:20px;">
-        <div class="fw-admin-panel-body fw-admin-form">
-            <form method="GET" action="{{ route('creator.report') }}">
-                <div class="form-group">
-                    <label for="userID">User</label>
-                    <select name="userID" id="userID" class="form-control" required>
-                        <option value="">Select a user…</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}" @selected((int)$userId === (int)$user->id)>
-                                {{ $user->name }} ({{ $user->email }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <button type="submit" class="fw-admin-btn fw-admin-btn-primary">Show report</button>
-            </form>
-        </div>
-    </div>
+    @include('partials.admin-list-filters', [
+        'action' => route('creator.report'),
+        'users' => $users,
+        'userId' => $userId,
+        'from' => $from,
+        'to' => $to,
+        'requireUser' => true,
+        'submitLabel' => 'Show report',
+    ])
 
     @if($selectedUser)
         <div class="fw-admin-page-header" style="margin-bottom:12px;">
             <div>
                 <h1 style="font-size:1.25rem;">Results for {{ $selectedUser->name }}</h1>
-                <p>{{ $selectedUser->email }}</p>
+                <p>{{ $selectedUser->email }} · {{ \Carbon\Carbon::parse($from)->format('j M Y') }} – {{ \Carbon\Carbon::parse($to)->format('j M Y') }}</p>
             </div>
         </div>
 
@@ -41,7 +32,7 @@
             <div class="fw-admin-panel">
                 <div class="fw-admin-empty">
                     <h3>No attributed records</h3>
-                    <p>This user has not created any tracked content yet (or older rows have no userID).</p>
+                    <p>This user has no tracked content between {{ \Carbon\Carbon::parse($from)->format('j M Y') }} and {{ \Carbon\Carbon::parse($to)->format('j M Y') }} (or older rows have no userID).</p>
                 </div>
             </div>
         @else

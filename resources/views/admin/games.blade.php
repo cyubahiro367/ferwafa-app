@@ -11,18 +11,14 @@
         </div>
         <div class="fw-admin-actions">
             <a href="{{ route('add.game', [$divisionID, $categoryID]) }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add match</a>
-            <form action="{{ route('fixtures', [$divisionID, $categoryID]) }}" method="GET" class="fw-admin-actions">
-                <select name="seasonID" class="form-control" style="width:auto;min-width:140px;">
-                    @foreach ($seasons as $season)
-                        <option value="{{ $season['id'] }}" @selected((int)$seasonID === (int)$season['id'])>
-                            {{ $season['from'] }} - {{ $season['to'] }}
-                        </option>
-                    @endforeach
-                </select>
-                <button type="submit" class="fw-admin-btn fw-admin-btn-secondary">Filter</button>
-            </form>
         </div>
     </div>
+
+    @include('partials.admin-list-filters', [
+        'action' => route('fixtures', [$divisionID, $categoryID]),
+        'seasonOptions' => $seasonOptions ?? $seasons ?? [],
+        'seasonID' => $seasonID ?? null,
+    ])
 
     @if (session('error'))
         <div class="fw-admin-flash fw-admin-flash-error">{{ session('error') }}</div>

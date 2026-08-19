@@ -16,7 +16,10 @@ use App\Models\Status;
 use App\Models\Team;
 use App\Models\TopScore;
 use App\Models\User;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -92,12 +95,14 @@ class AdminController extends Controller
         ]);
     }
 
-    public function getNewsForAdmin()
+    public function getNewsForAdmin(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-dcm')) {
             Auth::logout();
             return redirect('/');
         }
+
+        $filters = ListFilters::fromRequest($request);
 
         $paginator = DB::table('News as a')
             ->join('NewsUrl as b', 'b.news_id', '=', 'a.id')
@@ -115,9 +120,54 @@ class AdminController extends Controller
                 'b.image_url',
                 'c.name as status',
                 'u.name as creator_name'
-            )
-            ->orderByDesc('a.id')
-            ->paginate(10);
+            );
+
+        ListFilters::apply($paginator, $filters, 'a.userID', 'a.created_at');
+        $paginator->orderByDesc('a.id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $paginator->get()->map(function ($value) {
+                return [
+                    $value->title,
+                    Carbon::parse($value->created_at)->format('Y-m-d'),
+                    $value->is_top == 1 ? 'Yes' : 'No',
+                    $value->status,
+                    $value->creator_name ?? '—',
+                ];
+            })->all();
+
+            $topFilter = 'All';
+            if ($request->filled('top')) {
+                $rawTop = strtolower((string) $request->input('top'));
+                $topFilter = in_array($rawTop, ['1', 'yes', 'true'], true)
+                    ? 'Yes'
+                    : (in_array($rawTop, ['0', 'no', 'false'], true) ? 'No' : (string) $request->input('top'));
+            }
+
+            return FilteredExport::download(
+                'News',
+                $filters,
+                ['Title', 'Created', 'Top', 'Status', 'Created by'],
+                $rows,
+                $request->input('format'),
+                [
+                    'extraFilters' => [
+                        'Status' => $request->filled('status') ? (string) $request->input('status') : 'All',
+                        'Top news' => $topFilter,
+                    ],
+                    'columnWidths' => [
+                        'A' => 60,
+                        'B' => 14,
+                        'C' => 8,
+                        'D' => 14,
+                        'E' => 26,
+                    ],
+                    'wrapColumns' => ['A'],
+                ]
+            );
+        }
+
+        $paginator = $paginator->paginate(10);
 
         $paginator->getCollection()->transform(function ($value) {
             $parts = explode('/', $value->image_url);
@@ -136,17 +186,19 @@ class AdminController extends Controller
             ];
         });
 
-        return view('admin.newslist', [
+        return view('admin.newslist', array_merge(ListFilters::viewData($request), [
             'news' => $paginator,
-        ]);
+        ]));
     }
 
-    public function getEventsForAdmin()
+    public function getEventsForAdmin(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-dcm')) {
             Auth::logout();
             return redirect('/');
         }
+
+        $filters = ListFilters::fromRequest($request);
 
         $paginator = DB::table('Event as a')
             ->join('EventUrl as b', 'b.event_id', '=', 'a.id')
@@ -163,9 +215,31 @@ class AdminController extends Controller
                 'b.image_url',
                 'c.name as statusName',
                 'u.name as creator_name'
-            )
-            ->orderByDesc('a.id')
-            ->paginate(10);
+            );
+
+        ListFilters::apply($paginator, $filters, 'a.userID', 'a.created_at');
+        $paginator->orderByDesc('a.id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $paginator->get()->map(function ($value) {
+                return [
+                    $value->name,
+                    Carbon::parse($value->created_at)->format('d-m-Y'),
+                    $value->statusName,
+                    $value->creator_name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Events',
+                $filters,
+                ['Event', 'Date', 'Status', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $paginator = $paginator->paginate(10);
 
         $paginator->getCollection()->transform(function ($value) {
             $parts = explode('/', $value->image_url);
@@ -183,9 +257,9 @@ class AdminController extends Controller
             ];
         });
 
-        return view('admin.eventlist', [
+        return view('admin.eventlist', array_merge(ListFilters::viewData($request), [
             'events' => $paginator,
-        ]);
+        ]));
     }
 
     public function createEventsView()

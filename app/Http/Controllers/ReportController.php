@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -56,19 +58,42 @@ class ReportController extends Controller
             ->with('message', 'document is added successfully');
     }
 
-    public function getReport()
+    public function getReport(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-dcm')) {
             Auth::logout();
             return redirect('/');
         }
 
+        $filters = ListFilters::fromRequest($request);
+
         $reports = DB::table('Document as a')
             ->join('DocumentType as b', 'b.id', '=', 'a.type_id')
             ->leftJoin('users as u', 'u.id', '=', 'a.userID')
-            ->select('a.id', 'a.title', 'a.url', 'b.name', 'u.name as creator_name')
-            ->orderByDesc('a.created_at')
-            ->paginate(10);
+            ->select('a.id', 'a.title', 'a.url', 'b.name', 'u.name as creator_name');
+
+        ListFilters::apply($reports, $filters, 'a.userID', 'a.created_at');
+        $reports->orderByDesc('a.created_at');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $reports->get()->map(function ($report) {
+                return [
+                    $report->title,
+                    $report->name,
+                    $report->creator_name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Documents',
+                $filters,
+                ['Title', 'Type', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $reports = $reports->paginate(10);
 
         $reports->getCollection()->transform(function ($report) {
             $parts = preg_split('#/#', $report->url);
@@ -81,9 +106,9 @@ class ReportController extends Controller
             ];
         });
 
-        return view('admin.reportlist', [
+        return view('admin.reportlist', array_merge(ListFilters::viewData($request), [
             'reports' => $reports,
-        ]);
+        ]));
     }
 
     public function get()

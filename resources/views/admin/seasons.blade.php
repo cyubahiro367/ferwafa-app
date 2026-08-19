@@ -11,6 +11,8 @@
         <a href="{{ route('add.season') }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add season</a>
     </div>
 
+    @include('partials.admin-list-filters', ['action' => route('season')])
+
     <div class="fw-admin-panel">
         <div class="fw-admin-table-wrap">
             <table class="fw-admin-table">

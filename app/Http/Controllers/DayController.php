@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Day;
 use App\Models\Game;
 use App\Models\Season;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -69,20 +71,41 @@ class DayController extends Controller
             ->with('message', 'Day is added successfully');
     }
 
-    public function listDays()
+    public function listDays(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
-        $days = Day::with('creator')
-            ->orderByDesc('id')
-            ->paginate(10);
+        $filters = ListFilters::fromRequest($request);
 
-        return view('admin.days', [
+        $days = Day::with('creator');
+        ListFilters::apply($days, $filters);
+        $days->orderByDesc('id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $days->get()->map(function ($item) {
+                return [
+                    $item->name,
+                    optional($item->creator)->name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Match Days',
+                $filters,
+                ['Name', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $days = $days->paginate(10);
+
+        return view('admin.days', array_merge(ListFilters::viewData($request), [
             'days' => $days,
-        ]);
+        ]));
     }
 
     public function deleteDay($id)

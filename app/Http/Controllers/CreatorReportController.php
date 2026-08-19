@@ -16,6 +16,8 @@ use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TopScore;
 use App\Models\User;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -34,13 +36,15 @@ class CreatorReportController extends Controller
             return redirect('/');
         }
 
-        $users = User::orderBy('name')->get(['id', 'name', 'email']);
-        $userId = $request->integer('userID') ?: null;
+        $filters = ListFilters::fromRequest($request);
+        $users = ListFilters::users();
+        $userId = $filters['userId'];
         $type = $request->string('type')->toString() ?: null;
 
         $counts = [];
         $sections = [];
         $selectedUser = null;
+        $exportRows = [];
 
         if ($userId) {
             $selectedUser = User::find($userId);
@@ -62,14 +66,17 @@ class CreatorReportController extends Controller
             ];
 
             foreach ($map as $key => $meta) {
-                $query = $meta['model']::where('userID', $userId);
+                $query = ListFilters::apply(
+                    $meta['model']::where('userID', $userId),
+                    $filters
+                );
                 $counts[$key] = (clone $query)->count();
 
                 if ($type && $type !== $key) {
                     continue;
                 }
 
-                $items = $query->orderByDesc('id')->limit(15)->get()->map(function ($row) use ($meta) {
+                $mapItem = function ($row) use ($meta) {
                     if ($meta['title'] === null && $row instanceof Season) {
                         $title = date('Y', (int) $row->from) . ' – ' . date('Y', (int) $row->to);
                     } elseif ($row instanceof Game) {
@@ -84,7 +91,21 @@ class CreatorReportController extends Controller
                         'title' => $title,
                         'created_at' => optional($row->created_at)->format('Y-m-d H:i'),
                     ];
-                });
+                };
+
+                if (FilteredExport::requested($request)) {
+                    $query->orderByDesc('id')->get()->each(function ($row) use ($meta, $mapItem, &$exportRows) {
+                        $item = $mapItem($row);
+                        $exportRows[] = [
+                            $meta['label'],
+                            $item['title'],
+                            $item['created_at'] ?? '—',
+                        ];
+                    });
+                    continue;
+                }
+
+                $items = $query->orderByDesc('id')->limit(15)->get()->map($mapItem);
 
                 $sections[$key] = [
                     'label' => $meta['label'],
@@ -93,9 +114,21 @@ class CreatorReportController extends Controller
             }
         }
 
+        if (FilteredExport::requested($request) && $userId && $selectedUser) {
+            return FilteredExport::download(
+                'Creator Report',
+                $filters,
+                ['Type', 'Title', 'Created at'],
+                $exportRows,
+                $request->input('format')
+            );
+        }
+
         return view('admin.creator-report', [
             'users' => $users,
             'userId' => $userId,
+            'from' => $filters['from'],
+            'to' => $filters['to'],
             'type' => $type,
             'selectedUser' => $selectedUser,
             'counts' => $counts,

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Day;
 use App\Models\Season;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -51,16 +53,39 @@ class SeasonController extends Controller
             ->with('message', 'a Season is added successfully');
     }
 
-    public function listSeason()
+    public function listSeason(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
-        $seasons = Season::with('creator')
-            ->orderByDesc('id')
-            ->paginate(10);
+        $filters = ListFilters::fromRequest($request);
+
+        $seasons = Season::with('creator');
+        ListFilters::apply($seasons, $filters);
+        $seasons->orderByDesc('id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $seasons->get()->map(function ($value) {
+                return [
+                    Carbon::createFromTimestamp((int) $value->from)->format('Y')
+                        . ' – '
+                        . Carbon::createFromTimestamp((int) $value->to)->format('Y'),
+                    optional($value->creator)->name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Seasons',
+                $filters,
+                ['Season', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $seasons = $seasons->paginate(10);
 
         $seasons->getCollection()->transform(function ($value) {
             return [
@@ -71,9 +96,9 @@ class SeasonController extends Controller
             ];
         });
 
-        return view('admin.seasons', [
+        return view('admin.seasons', array_merge(ListFilters::viewData($request), [
             'seasons' => $seasons,
-        ]);
+        ]));
     }
 
     public function editSeason($id)

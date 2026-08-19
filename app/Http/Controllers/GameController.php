@@ -10,6 +10,8 @@ use App\Models\Season;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TeamStatistic;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,7 +29,9 @@ class GameController extends Controller
             return redirect("/games/$divisionID/$categoryID");
         }
 
-        $season = empty($request->all()) ? Season::orderBy('created_at', 'DESC')->first() : Season::where('id', $request->seasonID)->first();
+        $season = $request->filled('seasonID')
+            ? Season::where('id', $request->seasonID)->first()
+            : Season::orderBy('created_at', 'DESC')->first();
 
         if (is_null($season)) {
             return redirect("/games/$divisionID/$categoryID")->with('error', 'create season first');
@@ -46,6 +50,8 @@ class GameController extends Controller
             return redirect('/')
                 ->with('error', 'Team category not found');
         }
+
+        $filters = ListFilters::fromRequest($request);
 
         $games = DB::table('Game')
             ->select(
@@ -70,10 +76,38 @@ class GameController extends Controller
             ->where('awayTeam.categoryID', $categoryID)
             ->where('homeTeam.divisionID', $divisionID)
             ->where('awayTeam.divisionID', $divisionID)
-            ->where('Game.seasonID', $season->id)
-            ->orderBy('Day.id', 'DESC')
-            ->orderBy('Game.id', 'DESC')
-            ->paginate(10);
+            ->where('Game.seasonID', $season->id);
+
+        ListFilters::apply($games, $filters, 'Game.userID', 'Game.created_at');
+        $games->orderBy('Day.id', 'DESC')->orderBy('Game.id', 'DESC');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $games->get()->map(function ($game) {
+                $score = ! empty($game->isPlayed)
+                    ? $game->homeTeamGoals . ' - ' . $game->awayTeamGoals
+                    : '—';
+
+                return [
+                    $game->dayName,
+                    $game->homeTeam,
+                    $game->awayTeam,
+                    $game->stadium,
+                    $game->date,
+                    $score,
+                    $game->creator_name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Fixtures',
+                $filters,
+                ['Match day', 'Home', 'Away', 'Stadium', 'Date', 'Score', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $games = $games->paginate(10);
 
         $groupedGames = collect($games->items())->map(fn ($item) => (array) $item)
             ->groupBy('dayID')
@@ -89,14 +123,14 @@ class GameController extends Controller
             return $item;
         }, $seasons);
 
-        return view('admin.games', [
+        return view('admin.games', array_merge(ListFilters::viewData($request), [
             'games' => $groupedGames,
             'gamesPaginator' => $games,
             'seasonID' => $season->id,
-            'seasons' => $seasons,
+            'seasonOptions' => $seasons,
             'divisionID' => $divisionID,
             'categoryID' => $categoryID,
-        ]);
+        ]));
     }
 
     public function addGame(int $divisionID, int $categoryID)

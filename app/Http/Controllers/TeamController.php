@@ -7,6 +7,8 @@ use App\Models\Game;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TeamStatistic;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -114,7 +116,7 @@ class TeamController extends Controller
         abort(404);
     }
 
-    public function listTeam($divisionID, $categoryID)
+    public function listTeam(Request $request, $divisionID, $categoryID)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
@@ -128,14 +130,37 @@ class TeamController extends Controller
                 ->with('error', 'Division not found');
         }
 
+        $filters = ListFilters::fromRequest($request);
+
         $teams = DB::table('Team AS a')
             ->join('TeamCategory AS b', 'a.categoryID', '=', 'b.id')
             ->leftJoin('users as u', 'u.id', '=', 'a.userID')
-            ->select(['a.id', 'a.name', 'a.logo', 'b.name AS category', 'u.name as creator_name'])
+            ->select(['a.id', 'a.name', 'a.logo', 'b.name AS category', 'u.name as creator_name', 'a.created_at'])
             ->where('categoryID', $categoryID)
-            ->where('divisionID', $divisionID)
-            ->orderBy('name', 'asc')
-            ->paginate(10);
+            ->where('divisionID', $divisionID);
+
+        ListFilters::apply($teams, $filters, 'a.userID', 'a.created_at');
+        $teams->orderBy('name', 'asc');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $teams->get()->map(function ($value) {
+                return [
+                    $value->name,
+                    $value->category,
+                    $value->creator_name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Teams',
+                $filters,
+                ['Name', 'Category', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $teams = $teams->paginate(10);
 
         $teams->getCollection()->transform(function ($value) {
             $parts = explode('/', $value->logo);
@@ -148,11 +173,11 @@ class TeamController extends Controller
             ];
         });
 
-        return view('admin.teams', [
+        return view('admin.teams', array_merge(ListFilters::viewData($request), [
             'teams' => $teams,
             'divisionID' => $divisionID,
             'categoryID' => $categoryID,
-        ]);
+        ]));
     }
 
     public function editTeam($divisionID, $categoryID, $id)

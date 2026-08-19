@@ -14,26 +14,16 @@
         </div>
         <div class="fw-admin-actions" style="flex-wrap:wrap;">
             <a href="{{ route('add.player-suspended', [$divisionID, $categoryID]) }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add player</a>
-            <form action="{{ route('player-suspended', [$divisionID, $categoryID]) }}" method="GET" class="fw-admin-actions">
-                <select name="seasonID" class="form-control" style="width:auto;min-width:140px;">
-                    @foreach ($seasons as $season)
-                        <option value="{{ $season['id'] }}" @selected((int)$seasonID === (int)$season['id'])>
-                            {{ $season['from'] }} - {{ $season['to'] }}
-                        </option>
-                    @endforeach
-                </select>
-                <select name="dayID" class="form-control" style="width:auto;min-width:140px;">
-                    <option value="">All days</option>
-                    @foreach ($days ?? [] as $day)
-                        <option value="{{ $day['id'] }}" @selected(isset($dayID) && (int)$dayID === (int)$day['id'])>
-                            {{ $day['name'] }}
-                        </option>
-                    @endforeach
-                </select>
-                <button type="submit" class="fw-admin-btn fw-admin-btn-secondary">Filter</button>
-            </form>
         </div>
     </div>
+
+    @include('partials.admin-list-filters', [
+        'action' => route('player-suspended', [$divisionID, $categoryID]),
+        'seasonOptions' => $seasonOptions ?? $seasons ?? [],
+        'seasonID' => $seasonID ?? null,
+        'dayOptions' => $dayOptions ?? $days ?? [],
+        'dayID' => $dayID ?? null,
+    ])
 
     <div class="fw-admin-panel">
         <div class="fw-admin-table-wrap">

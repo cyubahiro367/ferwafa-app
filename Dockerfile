@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.3-fpm-alpine
 
 # Avoid OOM on small build VMs when installing aws/aws-sdk-php
 ENV COMPOSER_MEMORY_LIMIT=-1
@@ -7,7 +7,16 @@ ENV COMPOSER_MEMORY_LIMIT=-1
 RUN apk add --no-cache \
     nginx supervisor curl git zip unzip \
     libpng-dev oniguruma-dev libxml2-dev \
-    nodejs npm bash
+    nodejs npm bash \
+    libstdc++ libx11 libxrender libxext fontconfig freetype \
+    ttf-dejavu ttf-liberation
+
+# wkhtmltopdf for Laravel Snappy PDF export
+COPY --from=surnet/alpine-wkhtmltopdf:3.20.2-0.12.6-small \
+    /bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
+COPY --from=surnet/alpine-wkhtmltopdf:3.20.2-0.12.6-full \
+    /bin/wkhtmltoimage /usr/local/bin/wkhtmltoimage
+RUN chmod +x /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltoimage
 
 # PHP extensions
 RUN docker-php-ext-install \

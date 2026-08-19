@@ -11,6 +11,8 @@
         <a href="{{ route('post.photo.view') }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add photo</a>
     </div>
 
+    @include('partials.admin-list-filters', ['action' => route('admin.gallery.list')])
+
     <div class="fw-admin-panel">
         <div class="fw-admin-table-wrap">
             <table class="fw-admin-table">
