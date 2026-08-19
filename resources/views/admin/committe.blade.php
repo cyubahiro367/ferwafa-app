@@ -11,6 +11,8 @@
         <a href="{{ route('add.committe') }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add member</a>
     </div>
 
+    @include('partials.admin-list-filters', ['action' => route('committe')])
+
     <div class="fw-admin-panel">
         <div class="fw-admin-table-wrap">
             <table class="fw-admin-table">

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Committe;
 use App\Models\CommitteeCategory;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -80,16 +82,38 @@ class CommitteController extends Controller
         abort(404);
     }
 
-    public function listCommitte()
+    public function listCommitte(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-dcm')) {
             Auth::logout();
             return redirect('/');
         }
 
-        $committe = Committe::with('creator')
-            ->orderByDesc('id')
-            ->paginate(10);
+        $filters = ListFilters::fromRequest($request);
+
+        $committe = Committe::with('creator');
+        ListFilters::apply($committe, $filters);
+        $committe->orderByDesc('id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $committe->get()->map(function ($value) {
+                return [
+                    $value->name,
+                    $value->position,
+                    optional($value->creator)->name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Committee',
+                $filters,
+                ['Name', 'Position', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $committe = $committe->paginate(10);
 
         $committe->getCollection()->transform(function ($value) {
             $fileUrl = !is_null($value->image_url) ? (explode('/', $value->image_url)[1] ?? null) : null;
@@ -104,9 +128,9 @@ class CommitteController extends Controller
             ];
         });
 
-        return view('admin.committe', [
+        return view('admin.committe', array_merge(ListFilters::viewData($request), [
             'committes' => $committe,
-        ]);
+        ]));
     }
 
     public function listAllCommitte()

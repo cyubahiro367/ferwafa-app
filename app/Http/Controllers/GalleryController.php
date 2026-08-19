@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Gallery;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -52,18 +54,40 @@ class GalleryController extends Controller
             ->with('message', 'Photo crated successfully');
     }
 
-    public function galleryList()
+    public function galleryList(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-dcm')) {
             Auth::logout();
             return redirect('/');
         }
 
+        $filters = ListFilters::fromRequest($request);
+
         $gallerries = DB::table('Gallery as g')
             ->leftJoin('users as u', 'u.id', '=', 'g.userID')
-            ->select('g.*', 'u.name as creator_name')
-            ->orderByDesc('g.id')
-            ->paginate(10);
+            ->select('g.*', 'u.name as creator_name');
+
+        ListFilters::apply($gallerries, $filters, 'g.userID', 'g.created_at');
+        $gallerries->orderByDesc('g.id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $gallerries->get()->map(function ($value) {
+                return [
+                    $value->name,
+                    $value->creator_name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Gallery',
+                $filters,
+                ['Name', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $gallerries = $gallerries->paginate(10);
 
         $gallerries->getCollection()->transform(function ($value) {
             $parts = explode('/', $value->url);
@@ -79,9 +103,9 @@ class GalleryController extends Controller
             ];
         });
 
-        return view('admin.gallery', [
+        return view('admin.gallery', array_merge(ListFilters::viewData($request), [
             'galleries' => $gallerries,
-        ]);
+        ]));
     }
     /**
      * Display a listing of the resource.

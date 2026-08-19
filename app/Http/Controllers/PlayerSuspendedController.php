@@ -9,6 +9,8 @@ use App\Models\Season;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TopScore;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -134,7 +136,9 @@ class PlayerSuspendedController extends Controller
             return redirect('/');
         }
 
-        $season = empty($request->all()) ? Season::orderBy('created_at', 'DESC')->first() : Season::where('id', $request->seasonID)->first();
+        $season = $request->filled('seasonID')
+            ? Season::where('id', $request->seasonID)->first()
+            : Season::orderBy('created_at', 'DESC')->first();
 
         if (is_null($season)) {
             return redirect(`/player-suspended/$divisionID/$categoryID`)
@@ -148,21 +152,57 @@ class PlayerSuspendedController extends Controller
                 ->with('error', 'Division not found');
         }
 
-        $day = empty($request->all()) ? Day::where('seasonID', $season->id)->orderBy('created_at', 'DESC')->first() : Day::where([['seasonID', $season->id], ['id', $request->dayID]])->first();
+        if ($request->filled('dayID')) {
+            $day = Day::where([['seasonID', $season->id], ['id', $request->dayID]])->first();
+        } elseif ($request->has('from') || $request->has('to') || $request->has('userID') || $request->has('seasonID')) {
+            $day = null;
+        } else {
+            $day = Day::where('seasonID', $season->id)->orderBy('created_at', 'DESC')->first();
+        }
 
         $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
         $days = Day::where([['seasonID', $season->id]])->get()->toArray();
+
+        $filters = ListFilters::fromRequest($request);
 
         $playerSuspendeds = PlayerSuspended::with('creator')
             ->where('seasonID', $season->id)
             ->when(!is_null($day), function ($query) use ($day) {
                 return $query->where('dayID', $day->id);
-            })
-            ->orderByDesc('id')
-            ->paginate(10);
+            });
+        ListFilters::apply($playerSuspendeds, $filters);
+        $playerSuspendeds->orderByDesc('id');
 
         $teamsById = collect($teams)->keyBy('id');
         $daysById = collect($days)->keyBy('id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $playerSuspendeds->get()->map(function ($value) use ($teamsById, $daysById) {
+                $team = $teamsById->get($value->teamID);
+                $dayItem = $daysById->get($value->dayID);
+                if (! $team || ! $dayItem) {
+                    return null;
+                }
+
+                return [
+                    $value->name,
+                    $team['name'],
+                    $value->reason,
+                    $dayItem['name'],
+                    optional($value->creator)->name ?? '—',
+                ];
+            })->filter()->values()->all();
+
+            return FilteredExport::download(
+                'Suspensions',
+                $filters,
+                ['Name', 'Team', 'Reason', 'Period', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $playerSuspendeds = $playerSuspendeds->paginate(10);
 
         $playerSuspendeds->getCollection()->transform(function ($value) use ($teamsById, $daysById) {
             $team = $teamsById->get($value->teamID);
@@ -192,15 +232,15 @@ class PlayerSuspendedController extends Controller
             return $item;
         }, $seasons);
 
-        return view('admin.playerSuspended', [
+        return view('admin.playerSuspended', array_merge(ListFilters::viewData($request), [
             'playerSuspendeds' => $playerSuspendeds,
             'seasonID' => $season->id,
-            'seasons' => $seasons,
-            'days' => $days,
+            'seasonOptions' => $seasons,
+            'dayOptions' => $days,
             'dayID' => optional($day)->id,
             'divisionID' => $divisionID,
             'categoryID' => $categoryID,
-        ]);
+        ]));
     }
 
     public function editPlayerSuspended($divisionID, $categoryID, $id)

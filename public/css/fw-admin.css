@@ -487,6 +487,43 @@ body.fw-admin-sidebar-open .fw-admin-overlay { display: block; }
   flex-wrap: wrap;
 }
 
+.fw-admin-list-filters-panel {
+  margin-bottom: 20px;
+}
+
+.fw-admin-list-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+}
+
+.fw-admin-list-filter-field {
+  min-width: 140px;
+  flex: 1 1 140px;
+  margin-bottom: 0;
+}
+
+.fw-admin-list-filter-user {
+  flex: 2 1 240px;
+}
+
+.fw-admin-list-filter-submit {
+  flex: 0 0 auto;
+  min-width: auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fw-admin-list-filters .fw-admin-list-filter-field > label {
+  margin-bottom: 6px;
+}
+
+.fw-admin-list-filters .form-control {
+  width: 100%;
+}
+
 /* -------------------------------------------------------------------- */
 /* Forms                                                                   */
 /* -------------------------------------------------------------------- */

@@ -11,6 +11,10 @@
         <a href="{{ route('add.team', [$divisionID ?? request()->route('divisionID'), $categoryID ?? request()->route('categoryID')]) }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add team</a>
     </div>
 
+    @include('partials.admin-list-filters', [
+        'action' => route('team', [$divisionID ?? request()->route('divisionID'), $categoryID ?? request()->route('categoryID')]),
+    ])
+
     <div class="fw-admin-panel">
         <div class="fw-admin-table-wrap">
             <table class="fw-admin-table">

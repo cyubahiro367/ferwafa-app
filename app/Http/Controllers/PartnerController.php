@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Partner;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -63,16 +65,37 @@ class PartnerController extends Controller
         abort(404);
     }
 
-    public function listPartner()
+    public function listPartner(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-dcm')) {
             Auth::logout();
             return redirect('/');
         }
 
-        $partners = Partner::with('creator')
-            ->orderByDesc('id')
-            ->paginate(10);
+        $filters = ListFilters::fromRequest($request);
+
+        $partners = Partner::with('creator');
+        ListFilters::apply($partners, $filters);
+        $partners->orderByDesc('id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $partners->get()->map(function ($value) {
+                return [
+                    $value->link,
+                    optional($value->creator)->name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Partners',
+                $filters,
+                ['Link', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $partners = $partners->paginate(10);
 
         $partners->getCollection()->transform(function ($value) {
             $parts = explode('/', $value->image_url);
@@ -86,9 +109,9 @@ class PartnerController extends Controller
             ];
         });
 
-        return view('admin.partner', [
+        return view('admin.partner', array_merge(ListFilters::viewData($request), [
             'partners' => $partners,
-        ]);
+        ]));
     }
 
     public function editPartner($id)

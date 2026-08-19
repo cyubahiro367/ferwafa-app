@@ -11,6 +11,8 @@
         <a href="{{ route('news.create') }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add news</a>
     </div>
 
+    @include('partials.admin-list-filters', ['action' => route('news.view')])
+
     <div class="fw-admin-panel">
         <div class="fw-admin-table-wrap">
             <table class="fw-admin-table">

@@ -11,18 +11,14 @@
         </div>
         <div class="fw-admin-actions">
             <a href="{{ route('add.top-score', [$divisionID, $categoryID]) }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add top score</a>
-            <form action="{{ route('top-score', [$divisionID, $categoryID]) }}" method="GET" class="fw-admin-actions">
-                <select name="seasonID" class="form-control" style="width:auto;min-width:140px;">
-                    @foreach ($seasons as $season)
-                        <option value="{{ $season['id'] }}" @selected((int)$seasonID === (int)$season['id'])>
-                            {{ $season['from'] }} - {{ $season['to'] }}
-                        </option>
-                    @endforeach
-                </select>
-                <button type="submit" class="fw-admin-btn fw-admin-btn-secondary">Filter</button>
-            </form>
         </div>
     </div>
+
+    @include('partials.admin-list-filters', [
+        'action' => route('top-score', [$divisionID, $categoryID]),
+        'seasonOptions' => $seasonOptions ?? $seasons ?? [],
+        'seasonID' => $seasonID ?? null,
+    ])
 
     <div class="fw-admin-panel">
         <div class="fw-admin-table-wrap">

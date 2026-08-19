@@ -7,6 +7,8 @@ use App\Models\Season;
 use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TopScore;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -125,7 +127,9 @@ class TopScoreController extends Controller
             return redirect('/');
         }
 
-        $season = empty($request->all()) ? Season::orderBy('created_at', 'DESC')->first() : Season::where('id', $request->seasonID)->first();
+        $season = $request->filled('seasonID')
+            ? Season::where('id', $request->seasonID)->first()
+            : Season::orderBy('created_at', 'DESC')->first();
 
         if (is_null($season)) {
             return redirect("/games/$divisionID/$categoryID")->with('error', 'create season first');
@@ -145,12 +149,37 @@ class TopScoreController extends Controller
 
         $teams = Team::where([['divisionID', $divisionID], ['categoryID', $categoryID]])->get()->toArray();
 
+        $filters = ListFilters::fromRequest($request);
+
         $topScores = TopScore::with('creator')
-            ->where([['seasonID', $season->id], ['divisionID', $divisionID], ['categoryID', $categoryID]])
-            ->orderBy('goals', 'DESC')
-            ->paginate(10);
+            ->where([['seasonID', $season->id], ['divisionID', $divisionID], ['categoryID', $categoryID]]);
+        ListFilters::apply($topScores, $filters);
+        $topScores->orderBy('goals', 'DESC');
 
         $teamNames = collect($teams)->pluck('name')->all();
+
+        if (FilteredExport::requested($request)) {
+            $rows = $topScores->get()
+                ->filter(fn ($value) => in_array($value->teamName, $teamNames, true))
+                ->map(function ($value) {
+                    return [
+                        $value->name,
+                        $value->teamName,
+                        $value->goals,
+                        optional($value->creator)->name ?? '—',
+                    ];
+                })->values()->all();
+
+            return FilteredExport::download(
+                'Top Scores',
+                $filters,
+                ['Name', 'Team', 'Goals', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $topScores = $topScores->paginate(10);
 
         $topScores->getCollection()->transform(function ($value) use ($teamNames) {
             if (!in_array($value->teamName, $teamNames, true)) {
@@ -177,13 +206,13 @@ class TopScoreController extends Controller
             return $item;
         }, $seasons);
 
-        return view('admin.topScore', [
+        return view('admin.topScore', array_merge(ListFilters::viewData($request), [
             'topScores' => $topScores,
             'seasonID' => $season->id,
-            'seasons' => $seasons,
+            'seasonOptions' => $seasons,
             'divisionID' => $divisionID,
             'categoryID' => $categoryID,
-        ]);
+        ]));
     }
 
     public function editTopScore($divisionID, $categoryID, $id)

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Team;
 use App\Models\TeamCategory;
+use App\Support\FilteredExport;
+use App\Support\ListFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -41,16 +43,37 @@ class TeamCategoryController extends Controller
             ->with('message', 'Member is added successfully');
     }
 
-    public function listTeamCategory()
+    public function listTeamCategory(Request $request)
     {
         if (!Gate::allows('is-admin') && !Gate::allows('is-competition-manager')) {
             Auth::logout();
             return redirect('/');
         }
 
-        $teamCategorys = TeamCategory::with('creator')
-            ->orderByDesc('id')
-            ->paginate(10);
+        $filters = ListFilters::fromRequest($request);
+
+        $teamCategorys = TeamCategory::with('creator');
+        ListFilters::apply($teamCategorys, $filters);
+        $teamCategorys->orderByDesc('id');
+
+        if (FilteredExport::requested($request)) {
+            $rows = $teamCategorys->get()->map(function ($value) {
+                return [
+                    $value->name,
+                    optional($value->creator)->name ?? '—',
+                ];
+            })->all();
+
+            return FilteredExport::download(
+                'Team Categories',
+                $filters,
+                ['Name', 'Created by'],
+                $rows,
+                $request->input('format')
+            );
+        }
+
+        $teamCategorys = $teamCategorys->paginate(10);
 
         $teamCategorys->getCollection()->transform(function ($value) {
             return [
@@ -60,9 +83,9 @@ class TeamCategoryController extends Controller
             ];
         });
 
-        return view('admin.teamCategory', [
+        return view('admin.teamCategory', array_merge(ListFilters::viewData($request), [
             'teamCategorys' => $teamCategorys,
-        ]);
+        ]));
     }
 
     public function editTeamCategory($id)
