@@ -36,7 +36,7 @@ class CreatorReportController extends Controller
             return redirect('/');
         }
 
-        $filters = ListFilters::fromRequest($request);
+        $filters = ListFilters::fromRequest($request, true);
         $users = ListFilters::users();
         $userId = $filters['userId'];
         $type = $request->string('type')->toString() ?: null;

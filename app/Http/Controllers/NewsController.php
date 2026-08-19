@@ -226,7 +226,7 @@ class NewsController extends Controller
                                 ON a.statusID = c.id
                                 WHERE  c.id = 1
                                 ORDER BY created_at DESC
-                                LIMIT 4');
+                                LIMIT 6');
 
         $result = [];
 

@@ -20,7 +20,7 @@ class FilteredExport
     }
 
     /**
-     * @param  array{from: string, to: string, userId: int|null}  $filters
+     * @param  array{from: string|null, to: string|null, userId: int|null}  $filters
      * @param  array<int, string>  $headings
      * @param  array<int, array<int, mixed>>  $rows
      * @param  array{
@@ -38,7 +38,7 @@ class FilteredExport
         array $options = [],
     ): BinaryFileResponse|Response {
         $payload = self::payload($title, $filters, $headings, $rows, $options);
-        $filename = Str::slug($title) . '-' . $filters['from'] . '-to-' . $filters['to'];
+        $filename = Str::slug($title) . '-' . ($filters['from'] ?? 'all') . '-to-' . ($filters['to'] ?? 'all');
 
         if ($format === 'xlsx') {
             return Excel::download(new FilteredTableExport($payload), $filename . '.xlsx');
@@ -48,7 +48,7 @@ class FilteredExport
     }
 
     /**
-     * @param  array{from: string, to: string, userId: int|null}  $filters
+     * @param  array{from: string|null, to: string|null, userId: int|null}  $filters
      * @param  array<int, string>  $headings
      * @param  array<int, array<int, mixed>>  $rows
      * @param  array{
@@ -78,7 +78,7 @@ class FilteredExport
     }
 
     /**
-     * @param  array{from: string, to: string, userId: int|null}  $filters
+     * @param  array{from: string|null, to: string|null, userId: int|null}  $filters
      * @param  array<int, string>  $headings
      * @param  array<int, array<int, mixed>>  $rows
      * @param  array{
@@ -114,13 +114,11 @@ class FilteredExport
     }
 
     /**
-     * @param  array{from: string, to: string, userId: int|null}  $filters
+     * @param  array{from: string|null, to: string|null, userId: int|null}  $filters
      */
     public static function subtitle(array $filters): string
     {
-        $range = Carbon::parse($filters['from'])->format('j M Y')
-            . ' – '
-            . Carbon::parse($filters['to'])->format('j M Y');
+        $range = self::dateRangeLabel($filters);
 
         if (! empty($filters['userId'])) {
             $user = User::find($filters['userId']);
@@ -133,15 +131,13 @@ class FilteredExport
     }
 
     /**
-     * @param  array{from: string, to: string, userId: int|null}  $filters
+     * @param  array{from: string|null, to: string|null, userId: int|null}  $filters
      * @param  array<string, string>  $extraFilters
      * @return array<int, array{label: string, value: string}>
      */
     private static function filterSummary(array $filters, int $total, array $extraFilters): array
     {
-        $range = Carbon::parse($filters['from'])->format('j M Y')
-            . ' – '
-            . Carbon::parse($filters['to'])->format('j M Y');
+        $range = self::dateRangeLabel($filters);
 
         $createdBy = 'All users';
         if (! empty($filters['userId'])) {
@@ -163,6 +159,31 @@ class FilteredExport
         $summary[] = ['label' => 'Total', 'value' => (string) $total];
 
         return $summary;
+    }
+
+    /**
+     * @param  array{from: string|null, to: string|null}  $filters
+     */
+    private static function dateRangeLabel(array $filters): string
+    {
+        $from = $filters['from'] ?? null;
+        $to = $filters['to'] ?? null;
+
+        if ($from && $to) {
+            return Carbon::parse($from)->format('j M Y')
+                . ' – '
+                . Carbon::parse($to)->format('j M Y');
+        }
+
+        if ($from) {
+            return 'From ' . Carbon::parse($from)->format('j M Y');
+        }
+
+        if ($to) {
+            return 'Until ' . Carbon::parse($to)->format('j M Y');
+        }
+
+        return 'All dates';
     }
 
     private static function reportTitle(string $title): string
