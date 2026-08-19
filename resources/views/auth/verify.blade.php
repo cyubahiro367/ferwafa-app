@@ -1,28 +1,36 @@
-@extends('layouts.app')
+@extends('layouts.public')
+
+@section('title', 'Verify Email – FERWAFA')
+@section('active', '')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Verify Your Email Address') }}</div>
+@include('partials.fw-page-hero', [
+    'label' => 'Account',
+    'title' => 'Verify Email',
+    'crumb' => [
+        ['label' => 'Verify Email'],
+    ],
+])
 
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            {{ __('A fresh verification link has been sent to your email address.') }}
-                        </div>
-                    @endif
+<section class="fw-section" style="background:var(--off-white);">
+    <div class="fw-wrap">
+        <div class="fw-auth-panel">
+            <h2>Verify Your Email</h2>
+            <p class="fw-auth-sub">Check your inbox for a verification link before continuing.</p>
 
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }},
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
-                    </form>
-                </div>
-            </div>
+            @if (session('resent'))
+                <div class="fw-alert fw-alert-success">A fresh verification link has been sent to your email address.</div>
+            @endif
+
+            <p style="font-size:14px;color:var(--text);margin-bottom:20px;">
+                If you did not receive the email, you can request another link.
+            </p>
+
+            <form method="POST" action="{{ route('verification.resend') }}" class="fw-form" style="max-width:none;">
+                @csrf
+                <button type="submit" class="fw-btn-gold" style="width:100%;justify-content:center;">Resend Verification Email</button>
+            </form>
         </div>
     </div>
-</div>
+</section>
 @endsection

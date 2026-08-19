@@ -18,6 +18,10 @@
         'action' => route('fixtures', [$divisionID, $categoryID]),
         'seasonOptions' => $seasonOptions ?? $seasons ?? [],
         'seasonID' => $seasonID ?? null,
+        'groupOptions' => $groupOptions ?? null,
+        'groupID' => $groupID ?? null,
+        'dayOptions' => $dayOptions ?? null,
+        'dayID' => $dayID ?? null,
     ])
 
     @if (session('error'))

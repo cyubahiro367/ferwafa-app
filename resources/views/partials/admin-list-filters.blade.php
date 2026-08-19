@@ -8,6 +8,8 @@
     $seasonID = $seasonID ?? null;
     $dayOptions = $dayOptions ?? null;
     $dayID = $dayID ?? null;
+    $groupOptions = $groupOptions ?? null;
+    $groupID = $groupID ?? null;
 @endphp
 <div class="fw-admin-panel fw-admin-list-filters-panel">
     <div class="fw-admin-panel-body fw-admin-form">
@@ -34,6 +36,21 @@
                             @php $dayRow = is_array($day) ? $day : $day->toArray(); @endphp
                             <option value="{{ $dayRow['id'] }}" @selected(isset($dayID) && (int) $dayID === (int) $dayRow['id'])>
                                 {{ $dayRow['name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            @if(is_array($groupOptions) || $groupOptions instanceof \Illuminate\Support\Collection)
+                <div class="fw-admin-list-filter-field">
+                    <label for="groupID">Group</label>
+                    <select name="groupID" id="groupID" class="form-control">
+                        <option value="">All groups</option>
+                        @foreach ($groupOptions as $group)
+                            @php $groupRow = is_array($group) ? $group : $group->toArray(); @endphp
+                            <option value="{{ $groupRow['id'] }}" @selected(isset($groupID) && (int) $groupID === (int) $groupRow['id'])>
+                                {{ $groupRow['name'] }}
                             </option>
                         @endforeach
                     </select>
