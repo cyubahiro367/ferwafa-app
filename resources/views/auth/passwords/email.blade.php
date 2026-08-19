@@ -1,47 +1,41 @@
-@extends('layouts.app')
+@extends('layouts.public')
+
+@section('title', 'Forgot Password – FERWAFA')
+@section('active', '')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Reset Password') }}</div>
+@include('partials.fw-page-hero', [
+    'label' => 'Account',
+    'title' => 'Forgot Password',
+    'crumb' => [
+        ['label' => 'Login', 'url' => route('login')],
+        ['label' => 'Forgot Password'],
+    ],
+])
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+<section class="fw-section" style="background:var(--off-white);">
+    <div class="fw-wrap">
+        <div class="fw-auth-panel">
+            <h2>Reset Password</h2>
+            <p class="fw-auth-sub">Enter your email and we will send you a reset link.</p>
 
-                    <form method="POST" action="{{ route('password.email') }}">
-                        @csrf
+            @if (session('status'))
+                <div class="fw-alert fw-alert-success">{{ session('status') }}</div>
+            @endif
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Send Password Reset Link') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+            <form method="POST" action="{{ route('password.email') }}" class="fw-form" style="max-width:none;">
+                @csrf
+                <div class="fw-form-group">
+                    <label class="fw-form-label" for="email">Email</label>
+                    <input class="fw-form-input" id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus />
+                    @error('email')<div class="fw-form-error">{{ $message }}</div>@enderror
                 </div>
-            </div>
+                <button type="submit" class="fw-btn-gold" style="width:100%;justify-content:center;">Send Reset Link</button>
+                <p style="margin-top:16px;text-align:center;font-size:13px;">
+                    <a href="{{ route('login') }}" style="color:var(--blue);">Back to login</a>
+                </p>
+            </form>
         </div>
     </div>
-</div>
+</section>
 @endsection

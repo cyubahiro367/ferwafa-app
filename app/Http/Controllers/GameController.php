@@ -53,6 +53,25 @@ class GameController extends Controller
 
         $filters = ListFilters::fromRequest($request);
 
+        $isSecondDivision = $divisionID === 2;
+        $dayOptions = Day::where('seasonID', $season->id)->orderBy('id')->get();
+        $dayID = $request->integer('dayID') ?: null;
+
+        $groupOptions = $isSecondDivision ? Group::orderBy('name')->get() : null;
+        $groupID = null;
+        if ($isSecondDivision && $groupOptions) {
+            if ($request->has('groupID')) {
+                $groupID = $request->integer('groupID') ?: null;
+            } else {
+                $defaultGroup = $groupOptions->first(function ($group) {
+                    $name = strtolower(trim((string) $group->name));
+
+                    return $name === 'group a' || $name === 'a';
+                });
+                $groupID = $defaultGroup?->id;
+            }
+        }
+
         $games = DB::table('Game')
             ->select(
                 'Game.id',
@@ -61,6 +80,7 @@ class GameController extends Controller
                 'Game.stadeName AS stadium',
                 'Game.date',
                 'Game.groupID',
+                'Group.name AS groupName',
                 'Game.homeTeamGoals',
                 'Game.awayTeamGoals',
                 'Game.isPlayed',
@@ -71,6 +91,7 @@ class GameController extends Controller
             ->join('Team as homeTeam', 'Game.homeTeamID', '=', 'homeTeam.id')
             ->join('Team as awayTeam', 'Game.awayTeamID', '=', 'awayTeam.id')
             ->join('Day', 'Game.dayID', '=', 'Day.id')
+            ->leftJoin('Group', 'Group.id', '=', 'Game.groupID')
             ->leftJoin('users', 'users.id', '=', 'Game.userID')
             ->where('homeTeam.categoryID', $categoryID)
             ->where('awayTeam.categoryID', $categoryID)
@@ -78,16 +99,24 @@ class GameController extends Controller
             ->where('awayTeam.divisionID', $divisionID)
             ->where('Game.seasonID', $season->id);
 
+        if ($dayID) {
+            $games->where('Game.dayID', $dayID);
+        }
+
+        if ($groupID) {
+            $games->where('Game.groupID', $groupID);
+        }
+
         ListFilters::apply($games, $filters, 'Game.userID', 'Game.created_at');
         $games->orderBy('Day.id', 'DESC')->orderBy('Game.id', 'DESC');
 
         if (FilteredExport::requested($request)) {
-            $rows = $games->get()->map(function ($game) {
+            $rows = $games->get()->map(function ($game) use ($isSecondDivision) {
                 $score = ! empty($game->isPlayed)
                     ? $game->homeTeamGoals . ' - ' . $game->awayTeamGoals
                     : '—';
 
-                return [
+                $row = [
                     $game->dayName,
                     $game->homeTeam,
                     $game->awayTeam,
@@ -96,14 +125,36 @@ class GameController extends Controller
                     $score,
                     $game->creator_name ?? '—',
                 ];
+
+                if ($isSecondDivision) {
+                    array_splice($row, 1, 0, [$game->groupName ?? '—']);
+                }
+
+                return $row;
             })->all();
+
+            $headings = ['Match day', 'Home', 'Away', 'Stadium', 'Date', 'Score', 'Created by'];
+            $exportOptions = ['extraFilters' => []];
+
+            if ($dayID) {
+                $exportOptions['extraFilters']['Day'] = $dayOptions->firstWhere('id', $dayID)?->name
+                    ?? (string) $dayID;
+            }
+
+            if ($isSecondDivision) {
+                array_splice($headings, 1, 0, ['Group']);
+                $exportOptions['extraFilters']['Group'] = $groupID
+                    ? ($groupOptions->firstWhere('id', $groupID)?->name ?? (string) $groupID)
+                    : 'All groups';
+            }
 
             return FilteredExport::download(
                 'Fixtures',
                 $filters,
-                ['Match day', 'Home', 'Away', 'Stadium', 'Date', 'Score', 'Created by'],
+                $headings,
                 $rows,
-                $request->input('format')
+                $request->input('format'),
+                $exportOptions
             );
         }
 
@@ -130,6 +181,10 @@ class GameController extends Controller
             'seasonOptions' => $seasons,
             'divisionID' => $divisionID,
             'categoryID' => $categoryID,
+            'groupOptions' => $groupOptions,
+            'groupID' => $groupID,
+            'dayOptions' => $dayOptions,
+            'dayID' => $dayID,
         ]));
     }
 
