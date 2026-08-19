@@ -1,8 +1,8 @@
 @php
     $requireUser = $requireUser ?? false;
     $userId = $userId ?? null;
-    $from = $from ?? now()->subMonth()->toDateString();
-    $to = $to ?? now()->toDateString();
+    $from = $from ?? '';
+    $to = $to ?? '';
     $users = $users ?? collect();
     $seasonOptions = $seasonOptions ?? null;
     $seasonID = $seasonID ?? null;

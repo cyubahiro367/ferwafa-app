@@ -84,7 +84,7 @@
             @endif
             <div class="fw-news-right">
                 @foreach ($result as $index => $news)
-                    @if ($index > 0 && $index <= 4)
+                    @if ($index > 0)
                         <a href="{{ route('single.news', $news['id']) }}" class="fw-news-list-item">
                             <div class="fw-news-list-img"><img src="{{ route('news.images.show', $news['image_id']) }}" alt="{{ $news['title'] }}" loading="lazy" /></div>
                             <div class="fw-news-list-body">
