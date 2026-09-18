@@ -1,4 +1,4 @@
-@if(isset($paginator) && method_exists($paginator, 'links'))
+@if(isset($paginator) && $paginator instanceof \Illuminate\Contracts\Pagination\Paginator)
     <div class="fw-admin-pagination">
         <div class="fw-admin-muted">
             @if($paginator->total() > 0)
