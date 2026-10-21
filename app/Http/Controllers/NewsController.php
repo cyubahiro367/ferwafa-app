@@ -333,7 +333,7 @@ class NewsController extends Controller
             "is_top" => "boolean",
             "statusID" => "required|integer|in:1,2,3",
             "newsTypeID" => "required|numeric",
-            "image" => "required|file|max:5000|mimes:png,jpg,jpeg"
+            "image" => "nullable|file|max:5000|mimes:png,jpg,jpeg"
         ]);
 
         $news = News::where("id", $id)->first();
@@ -351,15 +351,22 @@ class NewsController extends Controller
         $news->newsTypeID = $request->newsTypeID;
         $news->save();
 
-        $path = $request->image->store('newsImages');
+        if ($request->hasFile('image')) {
+            $path = $request->image->store('newsImages');
 
-        $newsImage = NewsUrl::where('news_id', $news->id)->first();
+            $newsImage = NewsUrl::where('news_id', $news->id)->first();
 
-        Storage::delete($newsImage->image_url);
-
-        $newsImage->image_url = $path;
-
-        $newsImage->save();
+            if ($newsImage) {
+                Storage::delete($newsImage->image_url);
+                $newsImage->image_url = $path;
+                $newsImage->save();
+            } else {
+                NewsUrl::create([
+                    'news_id' => $news->id,
+                    'image_url' => $path,
+                ]);
+            }
+        }
 
         return redirect('/news-view')
             ->with('message', 'updated successfully');

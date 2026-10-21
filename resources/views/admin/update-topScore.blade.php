@@ -5,7 +5,7 @@
 @section('content')
     <div class="fw-admin-page-header">
         <div>
-            <h1>Update Partner</h1>
+            @include('partials.admin-competition-heading', ['heading' => 'Update Top Score'])
         </div>
     </div>
 

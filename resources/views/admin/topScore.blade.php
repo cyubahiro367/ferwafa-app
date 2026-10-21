@@ -6,7 +6,7 @@
 @php $divisionID = $divisionID ?? request()->route('divisionID'); $categoryID = $categoryID ?? request()->route('categoryID'); @endphp
     <div class="fw-admin-page-header">
         <div>
-            <h1>Top Scores</h1>
+            @include('partials.admin-competition-heading', ['heading' => 'Top Scores'])
             <p>Track leading scorers for this division.</p>
         </div>
         <div class="fw-admin-actions">

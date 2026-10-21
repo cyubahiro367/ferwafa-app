@@ -5,7 +5,7 @@
 @section('content')
     <div class="fw-admin-page-header">
         <div>
-            <h1>Teams</h1>
+            @include('partials.admin-competition-heading', ['heading' => 'Teams'])
             <p>Manage competition teams.</p>
         </div>
         <a href="{{ route('add.team', [$divisionID ?? request()->route('divisionID'), $categoryID ?? request()->route('categoryID')]) }}" class="fw-admin-btn fw-admin-btn-primary"><i class="fas fa-plus"></i> Add team</a>

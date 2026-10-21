@@ -6,7 +6,7 @@
 @php $divisionID = $divisionID ?? request()->route('divisionID'); $categoryID = $categoryID ?? request()->route('categoryID'); @endphp
     <div class="fw-admin-page-header">
         <div>
-            <h1>Fixtures</h1>
+            @include('partials.admin-competition-heading', ['heading' => 'Fixtures'])
             <p>Schedule and update match fixtures.</p>
         </div>
         <div class="fw-admin-actions">

@@ -5,7 +5,7 @@
 @section('content')
     <div class="fw-admin-page-header">
         <div>
-            <h1>Suspend a Player</h1>
+            @include('partials.admin-competition-heading', ['heading' => 'Suspend a Player'])
         </div>
     </div>
 

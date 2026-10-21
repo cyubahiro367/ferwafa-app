@@ -9,7 +9,7 @@
 @endphp
     <div class="fw-admin-page-header">
         <div>
-            <h1>Suspended players</h1>
+            @include('partials.admin-competition-heading', ['heading' => 'Suspended players'])
             <p>Track player suspensions by season and match day.</p>
         </div>
         <div class="fw-admin-actions" style="flex-wrap:wrap;">

@@ -99,7 +99,7 @@
                                 <a href="{{ $menFixturesUrl }}">Men Football</a>
                                 <ul class="fw-sub-drop-menu">
                                     <li><a href="{{ $menFixturesUrl }}">BK Pro League</a></li>
-                                    <li><a href="{{ $menStandingsUrl }}">Standings</a></li>
+                                    <!-- <li><a href="{{ $menStandingsUrl }}">Standings</a></li> -->
                                     <li class="fw-sub-drop">
                                         <a href="#">Second Division</a>
                                         <ul class="fw-sub-drop-menu">
@@ -248,7 +248,7 @@
             <div class="fw-mob-row"><a href="#">Competitions</a><button class="fw-mob-toggle" type="button" data-target="mob-comp"><i class="fas fa-chevron-down"></i></button></div>
             <ul class="fw-mob-sub" id="mob-comp">
                 <li><a href="{{ $menFixturesUrl }}">BK Pro League</a></li>
-                <li><a href="{{ $menStandingsUrl }}">Standings</a></li>
+                <!-- <li><a href="{{ $menStandingsUrl }}">Standings</a></li> -->
                 <li>
                     <div class="fw-mob-sub-row"><a href="#">Second Division</a><button class="fw-mob-sub-toggle" type="button" data-target="mob-mdiv2"><i class="fas fa-chevron-down"></i></button></div>
                     <ul class="fw-mob-subsub" id="mob-mdiv2">

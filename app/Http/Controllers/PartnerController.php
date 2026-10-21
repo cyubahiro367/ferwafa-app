@@ -141,7 +141,7 @@ class PartnerController extends Controller
 
         $request->validate([
             "link" => "required|string",
-            "image" => "required|file|max:5000|mimes:png,jpg,jpeg,svg"
+            "image" => "nullable|file|max:5000|mimes:png,jpg,jpeg,svg"
 
         ]);
 
@@ -151,11 +151,13 @@ class PartnerController extends Controller
             return redirect()->back()->with('errors', 'Partner not found');
         }
 
-        Storage::delete($partner->image_url);
-        $path = $request->image->store('partner');
-
         $partner->link = $request->link;
-        $partner->image_url = $path;
+
+        if ($request->hasFile('image')) {
+            Storage::delete($partner->image_url);
+            $partner->image_url = $request->image->store('partner');
+        }
+
         $partner->save();
 
         return redirect('/parteners')

@@ -481,7 +481,14 @@ class GameController extends Controller
         }
 
         $team = DB::table('Game as a')
-            ->select('b.id as homeTeamID', 'b.name as homeTeam', 'c.id as awayTeamID', 'c.name as awayTeam')
+            ->select(
+                'b.id as homeTeamID',
+                'b.name as homeTeam',
+                'b.divisionID',
+                'b.categoryID',
+                'c.id as awayTeamID',
+                'c.name as awayTeam'
+            )
             ->join('Team as b', 'a.homeTeamID', '=', 'b.id')
             ->join('Team as c', 'a.awayTeamID', '=', 'c.id')
             ->where('a.id', $id)
@@ -498,6 +505,8 @@ class GameController extends Controller
             'game' => $game,
             'teams' => $teams,
             'days' => $days,
+            'divisionID' => $team->divisionID ?? null,
+            'categoryID' => $team->categoryID ?? null,
         ]);
     }
 

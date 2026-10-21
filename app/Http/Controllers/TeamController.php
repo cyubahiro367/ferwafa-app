@@ -225,7 +225,7 @@ class TeamController extends Controller
 
         $request->validate([
             "name" => "required|string",
-            "logo" => "required|file|max:5000|mimes:png,jpg,jpeg,svg",
+            "logo" => "nullable|file|max:5000|mimes:png,jpg,jpeg,svg",
             "categoryID" => "required|integer",
             "divisionID" => "required|integer"
         ]);
@@ -250,13 +250,15 @@ class TeamController extends Controller
             return redirect()->back()->with('errors', 'Team not found');
         }
 
-        Storage::delete($team->logo);
-        $path = $request->logo->store('team');
-
         $team->name = $request->name;
-        $team->logo = $path;
         $team->categoryID = $request->categoryID;
         $team->divisionID = $request->divisionID;
+
+        if ($request->hasFile('logo')) {
+            Storage::delete($team->logo);
+            $team->logo = $request->logo->store('team');
+        }
+
         $team->save();
 
         return redirect("/team/$request->divisionID/$categoryID")

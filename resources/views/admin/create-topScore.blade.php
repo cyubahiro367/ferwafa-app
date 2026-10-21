@@ -5,7 +5,7 @@
 @section('content')
     <div class="fw-admin-page-header">
         <div>
-            <h1>Create Top Score</h1>
+            @include('partials.admin-competition-heading', ['heading' => 'Create Top Score'])
             <p>Add a goal scorer for this division and category.</p>
         </div>
     </div>

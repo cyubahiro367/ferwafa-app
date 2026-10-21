@@ -446,9 +446,17 @@ body { font-family: 'Barlow', sans-serif; background: var(--white); color: var(-
 }
 .fw-member-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .fw-member-photo {
-  height: 220px; background: var(--off-white); overflow: hidden;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  background: var(--off-white);
+  overflow: hidden;
 }
-.fw-member-photo img { width: 100%; height: 100%; object-fit: cover; }
+.fw-member-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
 .fw-member-body { padding: 18px 16px 22px; }
 .fw-member-name { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--blue); }
 .fw-member-role { font-size: 13px; color: var(--grey); margin-top: 6px; }
@@ -477,11 +485,11 @@ body { font-family: 'Barlow', sans-serif; background: var(--white); color: var(-
 }
 .fw-member-modal-close:hover { background: var(--white); color: var(--blue); }
 .fw-member-modal-photo {
-  width: 100%; aspect-ratio: 3 / 4; max-height: min(62vh, 520px);
+  width: 100%; aspect-ratio: 1 / 1; max-height: min(62vh, 520px);
   background: var(--off-white); overflow: hidden;
 }
 .fw-member-modal-photo img {
-  width: 100%; height: 100%; object-fit: contain; display: block; background: #111;
+  width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
 }
 .fw-member-modal-body { padding: 22px 24px 26px; text-align: center; }
 .fw-member-modal-name {

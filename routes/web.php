@@ -42,7 +42,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*
 Route::get('/home', function () {
     return view('home');
 });
@@ -241,12 +240,3 @@ Route::get('/division/{divisionID}/{categoryID}', function($divisionID, $categor
         "groups" => Group::all(['id', 'name'])
     ]);
 })->whereNumber(['divisionID', 'categoryID'])->name('division');
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/home', function () {
-    return view('welcome');
-});

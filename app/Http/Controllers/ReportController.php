@@ -192,7 +192,7 @@ class ReportController extends Controller
 
         $request->validate([
             "title" => "required|string|max:255",
-            "reportFile" =>  'required|file|max:5000|mimes:pdf',
+            "reportFile" =>  'nullable|file|max:5000|mimes:pdf',
             "typeID" => 'required|integer'
         ]);
 
@@ -202,12 +202,14 @@ class ReportController extends Controller
             return redirect()->back()->with('errors', 'report not found');
         }
 
-        Storage::delete($report->url);
-
-        $path = $request->reportFile->store('documents');
-
         $report->title = $request->title;
-        $report->url = $path;
+        $report->type_id = $request->typeID;
+
+        if ($request->hasFile('reportFile')) {
+            Storage::delete($report->url);
+            $report->url = $request->reportFile->store('documents');
+        }
+
         $report->save();
 
         return redirect('/report-view')

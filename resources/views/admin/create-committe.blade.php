@@ -47,7 +47,8 @@
 
                 <div class="fw-admin-form-group">
                     <label for="image">Select Image</label>
-                    <input type="file" name="image" id="image" class="fw-admin-form-control">
+                    <input type="file" name="image" id="image" class="fw-admin-form-control" accept=".png,.jpg,.jpeg,image/png,image/jpeg">
+                    <p class="fw-admin-muted" style="margin-top:8px;font-size:13px;">Square 1∶1, at least 600×600 px (recommended 900×900 px). Center face and shoulders.</p>
                     @error('image')
                         <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
                     @enderror

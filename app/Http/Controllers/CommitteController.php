@@ -46,8 +46,7 @@ class CommitteController extends Controller
             "committeeCategoryID" => "required|integer|min:1",
             "name" => "required|string",
             "position" => "required|string|max:255",
-            "image" => "nullable|file|max:5000|mimes:png,jpg,jpeg"
-
+            "image" => "nullable|file|max:5000|mimes:png,jpg,jpeg|dimensions:min_width=600,min_height=600,ratio=1/1",
         ]);
 
         $committeeCategory = CommitteeCategory::where('id', $request->committeeCategoryID)->First();
@@ -184,8 +183,7 @@ class CommitteController extends Controller
         $request->validate([
             "name" => "required|string",
             "position" => "required|string|max:255",
-            "image" => "required|file|max:5000|mimes:png,jpg,jpeg"
-
+            "image" => "nullable|file|max:5000|mimes:png,jpg,jpeg|dimensions:min_width=600,min_height=600,ratio=1/1",
         ]);
 
         $committe = Committe::find($id);
@@ -194,12 +192,16 @@ class CommitteController extends Controller
             return redirect()->back()->with('fail', 'member not found');
         }
 
-        Storage::delete($committe->image_url);
-
-        $path = $request->image->store('committe');
         $committe->name = $request->name;
         $committe->position = $request->position;
-        $committe->image_url = $path;
+
+        if ($request->hasFile('image')) {
+            if ($committe->image_url) {
+                Storage::delete($committe->image_url);
+            }
+            $committe->image_url = $request->image->store('committe');
+        }
+
         $committe->save();
 
         return redirect('/committe')

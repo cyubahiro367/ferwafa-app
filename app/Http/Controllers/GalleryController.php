@@ -179,7 +179,7 @@ class GalleryController extends Controller
 
         $request->validate([
             "name" => "required|string",
-            "image" => "required|file|max:5000|mimes:png,jpg,jpeg,svg"
+            "image" => "nullable|file|max:5000|mimes:png,jpg,jpeg,svg"
 
         ]);
 
@@ -189,11 +189,13 @@ class GalleryController extends Controller
             return redirect()->back()->with('failed', 'Photo not found');
         }
 
-        Storage::delete($gallery->url);
-        $path = $request->image->store('gallery');
-
         $gallery->name = $request->name;
-        $gallery->url = $path;
+
+        if ($request->hasFile('image')) {
+            Storage::delete($gallery->url);
+            $gallery->url = $request->image->store('gallery');
+        }
+
         $gallery->save();
 
         return redirect('/gallery-view')
