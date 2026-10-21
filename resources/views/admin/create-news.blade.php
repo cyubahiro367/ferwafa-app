@@ -46,8 +46,9 @@
                 <div class="fw-admin-form-group">
                     <label for="statusID">status</label>
                     <select name="statusID" id="statusID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('statusID') === null || old('statusID') === '')>Select status…</option>
                         @foreach($statuses as $status)
-                            <option value="{{ $status->id }}">{{ $status->name }}</option>
+                            <option value="{{ $status->id }}" @selected((string) old('statusID') === (string) $status->id)>{{ $status->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -55,8 +56,9 @@
                 <div class="fw-admin-form-group">
                     <label for="newsTypeID">News Type</label>
                     <select name="newsTypeID" id="newsTypeID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('newsTypeID') === null || old('newsTypeID') === '')>Select news type…</option>
                         @foreach($newsTypes as $newsType)
-                            <option value="{{ $newsType->id }}">{{ $newsType->name }}</option>
+                            <option value="{{ $newsType->id }}" @selected((string) old('newsTypeID') === (string) $newsType->id)>{{ $newsType->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -64,8 +66,9 @@
                 <div class="fw-admin-form-group">
                     <label for="is_top">Is Top News</label>
                     <select name="is_top" id="is_top" class="fw-admin-form-control" required>
-                        <option value="0">False</option>
-                        <option value="1">True</option>
+                        <option value="" disabled @selected(old('is_top') === null || old('is_top') === '')>Select…</option>
+                        <option value="0" @selected((string) old('is_top') === '0')>False</option>
+                        <option value="1" @selected((string) old('is_top') === '1')>True</option>
                     </select>
                 </div>
 

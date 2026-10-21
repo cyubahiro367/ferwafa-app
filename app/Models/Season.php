@@ -11,7 +11,11 @@ class Season extends Model
 
     protected $table = 'Season';
 
-    protected $fillable = ["from", "to", "userID"];
+    protected $fillable = ["from", "to", "playsInGroups", "userID"];
+
+    protected $casts = [
+        'playsInGroups' => 'boolean',
+    ];
 
     public function creator()
     {

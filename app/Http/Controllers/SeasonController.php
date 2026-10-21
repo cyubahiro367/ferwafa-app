@@ -39,13 +39,14 @@ class SeasonController extends Controller
         }
         $request->validate([
             "from" => "required|date",
-            "to" => "required|date"
-
+            "to" => "required|date",
+            "playsInGroups" => "nullable|boolean",
         ]);
 
         Season::create([
             "from" => strtotime($request->from),
             "to" => strtotime($request->to),
+            "playsInGroups" => $request->boolean('playsInGroups', true),
             "userID" => Auth::id(),
         ]);
 
@@ -92,6 +93,7 @@ class SeasonController extends Controller
                 'id' => $value->id,
                 'from' => Carbon::createFromTimestamp((int) $value->from)->format('Y'),
                 'to' => Carbon::createFromTimestamp((int) $value->to)->format('Y'),
+                'playsInGroups' => (bool) $value->playsInGroups,
                 'creator_name' => optional($value->creator)->name,
             ];
         });

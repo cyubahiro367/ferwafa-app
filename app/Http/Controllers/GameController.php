@@ -11,6 +11,7 @@ use App\Models\Team;
 use App\Models\TeamCategory;
 use App\Models\TeamStatistic;
 use App\Support\FilteredExport;
+use App\Support\GroupFilter;
 use App\Support\ListFilters;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -54,21 +55,17 @@ class GameController extends Controller
         $filters = ListFilters::fromRequest($request);
 
         $isSecondDivision = $divisionID === 2;
+        $usesGroups = GroupFilter::applies($divisionID, $season);
         $dayOptions = Day::where('seasonID', $season->id)->orderBy('id')->get();
         $dayID = $request->integer('dayID') ?: null;
 
-        $groupOptions = $isSecondDivision ? Group::orderBy('name')->get() : null;
+        $groupOptions = $usesGroups ? Group::orderBy('name')->get() : null;
         $groupID = null;
-        if ($isSecondDivision && $groupOptions) {
+        if ($usesGroups && $groupOptions) {
             if ($request->has('groupID')) {
                 $groupID = $request->integer('groupID') ?: null;
             } else {
-                $defaultGroup = $groupOptions->first(function ($group) {
-                    $name = strtolower(trim((string) $group->name));
-
-                    return $name === 'group a' || $name === 'a';
-                });
-                $groupID = $defaultGroup?->id;
+                $groupID = GroupFilter::defaultGroupId();
             }
         }
 
@@ -111,7 +108,7 @@ class GameController extends Controller
         $games->orderBy('Day.id', 'DESC')->orderBy('Game.id', 'DESC');
 
         if (FilteredExport::requested($request)) {
-            $rows = $games->get()->map(function ($game) use ($isSecondDivision) {
+            $rows = $games->get()->map(function ($game) use ($usesGroups) {
                 $score = ! empty($game->isPlayed)
                     ? $game->homeTeamGoals . ' - ' . $game->awayTeamGoals
                     : '—';
@@ -126,7 +123,7 @@ class GameController extends Controller
                     $game->creator_name ?? '—',
                 ];
 
-                if ($isSecondDivision) {
+                if ($usesGroups) {
                     array_splice($row, 1, 0, [$game->groupName ?? '—']);
                 }
 
@@ -141,7 +138,7 @@ class GameController extends Controller
                     ?? (string) $dayID;
             }
 
-            if ($isSecondDivision) {
+            if ($usesGroups) {
                 array_splice($headings, 1, 0, ['Group']);
                 $exportOptions['extraFilters']['Group'] = $groupID
                     ? ($groupOptions->firstWhere('id', $groupID)?->name ?? (string) $groupID)
@@ -227,11 +224,7 @@ class GameController extends Controller
             return redirect("/games/$divisionID/$categoryID")->with('error', 'create day first');
         }
 
-        $groups = Group::all();
-
-        if (is_null($groups)) {
-            return redirect("/games/$divisionID/$categoryID")->with('error', 'No Group Found');
-        }
+        $groups = Group::orderBy('name')->get();
 
         $seasons = Season::all()->toArray();
 
@@ -250,7 +243,8 @@ class GameController extends Controller
             'groups' => $groups,
             'teams' => $teams,
             'days' => $days,
-            'seasons' => $seasons
+            'seasons' => $seasons,
+            'divisionID' => $divisionID,
         ]);
     }
 
@@ -261,15 +255,20 @@ class GameController extends Controller
             return redirect('/');
         }
 
+        $fixtureSeason = Season::find($request->seasonID);
+        $groupRequired = $fixtureSeason && GroupFilter::applies((int) $divisionID, $fixtureSeason);
+
         $request->validate([
             "homeTeamID" => "required|numeric|min:1",
             "awayTeamID" => "required|numeric|min:1",
             "stade" => "required|string",
             "date" => "required|date",
             "dayID" => "required|numeric|min:1",
-            "groupID" => [Rule::requiredIf($divisionID == 2), "nullable", "integer"],
+            "groupID" => [Rule::requiredIf($groupRequired), "nullable", "integer"],
             "seasonID" => "required|numeric|min:1",
         ]);
+
+        $groupID = $groupRequired ? $request->groupID : null;
 
         if ($request->homeTeamID == $request->awayTeamID) {
             return redirect("/games/$divisionID/$categoryID")->with('error', 'choose different Teams');
@@ -310,7 +309,7 @@ class GameController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request) {
+            DB::transaction(function () use ($request, $groupID) {
                 $game = Game::create([
                     "homeTeamID" => $request->homeTeamID,
                     "awayTeamID" => $request->awayTeamID,
@@ -319,7 +318,7 @@ class GameController extends Controller
                     "awayTeamGoals" => 0,
                     "date" => $request->date,
                     "dayID" => $request->dayID,
-                    "groupID" => $request->groupID,
+                    "groupID" => $groupID,
                     "seasonID" => $request->seasonID,
                     "userID" => Auth::id(),
                 ]);

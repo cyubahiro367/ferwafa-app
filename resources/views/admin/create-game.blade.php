@@ -22,40 +22,66 @@
                 class="fw-admin-submit-guard">
                 @csrf
 
-                @if (request()->route('divisionID') == 2)
-                    <div class="fw-admin-form-group">
+                <div class="fw-admin-form-group">
+                    <label for="seasonID">Season</label>
+                    <select name="seasonID" id="seasonID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('seasonID') === null || old('seasonID') === '')>Select season…</option>
+                        @foreach ($seasons as $season)
+                            <option value="{{ $season['id'] }}"
+                                data-plays-in-groups="{{ ($season['playsInGroups'] ?? true) ? '1' : '0' }}"
+                                @selected((string) old('seasonID') === (string) $season['id'])>
+                                {{ $season['from'] }} - {{ $season['to'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('seasonID')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                @if (($divisionID ?? request()->route('divisionID')) == 2)
+                    <div class="fw-admin-form-group" id="groupFieldWrap" style="display:none;">
                         <label for="groupID">Select Group</label>
                         <select name="groupID" id="groupID" class="fw-admin-form-control">
+                            <option value="" disabled @selected(old('groupID') === null || old('groupID') === '')>Select group…</option>
                             @foreach ($groups as $group)
-                                <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                <option value="{{ $group->id }}" @selected((string) old('groupID') === (string) $group->id)>
+                                    {{ $group->name }}
+                                </option>
                             @endforeach
                         </select>
+                        @error('groupID')
+                            <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                        @enderror
                     </div>
                 @endif
 
                 <div class="fw-admin-form-group">
                     <label for="dayID">Day</label>
-                    <select name="dayID" id="dayID" class="fw-admin-form-control">
+                    <select name="dayID" id="dayID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('dayID') === null || old('dayID') === '')>Select day…</option>
                         @foreach ($days as $day)
-                            <option value="{{ $day->id }}">{{ $day->name }}</option>
+                            <option value="{{ $day->id }}" @selected((string) old('dayID') === (string) $day->id)>{{ $day->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="fw-admin-form-group">
                     <label for="homeTeamID">Home Team</label>
-                    <select name="homeTeamID" id="homeTeamID" class="fw-admin-form-control">
+                    <select name="homeTeamID" id="homeTeamID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('homeTeamID') === null || old('homeTeamID') === '')>Select home team…</option>
                         @foreach ($teams as $team)
-                            <option value="{{ $team['id'] }}">{{ $team['name'] }}</option>
+                            <option value="{{ $team['id'] }}" @selected((string) old('homeTeamID') === (string) $team['id'])>{{ $team['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="fw-admin-form-group">
                     <label for="awayTeamID">Away Team</label>
-                    <select name="awayTeamID" id="awayTeamID" class="fw-admin-form-control">
+                    <select name="awayTeamID" id="awayTeamID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('awayTeamID') === null || old('awayTeamID') === '')>Select away team…</option>
                         @foreach ($teams as $team)
-                            <option value="{{ $team['id'] }}">{{ $team['name'] }}</option>
+                            <option value="{{ $team['id'] }}" @selected((string) old('awayTeamID') === (string) $team['id'])>{{ $team['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -66,15 +92,6 @@
                     @error('date')
                         <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
                     @enderror
-                </div>
-
-                <div class="fw-admin-form-group">
-                    <label for="seasonID">Season</label>
-                    <select name="seasonID" id="seasonID" class="fw-admin-form-control">
-                        @foreach ($seasons as $season)
-                            <option value="{{ $season['id'] }}">{{ $season['from'] }} - {{ $season['to'] }}</option>
-                        @endforeach
-                    </select>
                 </div>
 
                 <div class="fw-admin-form-group">
@@ -89,4 +106,34 @@
             </form>
         </div>
     </div>
+
+    @if (($divisionID ?? request()->route('divisionID')) == 2)
+        <script>
+            (function () {
+                var seasonSelect = document.getElementById('seasonID');
+                var groupWrap = document.getElementById('groupFieldWrap');
+                var groupSelect = document.getElementById('groupID');
+                if (!seasonSelect || !groupWrap || !groupSelect) {
+                    return;
+                }
+                function syncGroupField() {
+                    if (!seasonSelect.value) {
+                        groupWrap.style.display = 'none';
+                        groupSelect.required = false;
+                        groupSelect.value = '';
+                        return;
+                    }
+                    var option = seasonSelect.options[seasonSelect.selectedIndex];
+                    var show = option && option.getAttribute('data-plays-in-groups') === '1';
+                    groupWrap.style.display = show ? '' : 'none';
+                    groupSelect.required = show;
+                    if (!show) {
+                        groupSelect.value = '';
+                    }
+                }
+                seasonSelect.addEventListener('change', syncGroupField);
+                syncGroupField();
+            })();
+        </script>
+    @endif
 @endsection

@@ -32,18 +32,20 @@
 
                 <div class="fw-admin-form-group">
                     <label for="categoryID">Category</label>
-                    <select name="categoryID" id="categoryID" class="fw-admin-form-control">
+                    <select name="categoryID" id="categoryID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('categoryID') === null || old('categoryID') === '')>Select category…</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+                            <option value="{{ $category['id'] }}" @selected((string) old('categoryID') === (string) $category['id'])>{{ $category['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="fw-admin-form-group">
                     <label for="divisionID">Division</label>
-                    <select name="divisionID" id="divisionID" class="fw-admin-form-control">
+                    <select name="divisionID" id="divisionID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('divisionID') === null || old('divisionID') === '')>Select division…</option>
                         @foreach($divisions as $division)
-                            <option value="{{ $division['id'] }}">{{ $division['name'] }}</option>
+                            <option value="{{ $division['id'] }}" @selected((string) old('divisionID') === (string) $division['id'])>{{ $division['name'] }}</option>
                         @endforeach
                     </select>
                 </div>

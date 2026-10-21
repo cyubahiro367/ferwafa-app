@@ -25,9 +25,10 @@
 
                 <div class="fw-admin-form-group">
                     <label for="typeID">Type</label>
-                    <select name="typeID" id="typeID" class="fw-admin-form-control">
+                    <select name="typeID" id="typeID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('typeID') === null || old('typeID') === '')>Select type…</option>
                         @foreach ($types as $type)
-                            <option value="{{ $type->id}}">{{$type->name}}</option>
+                            <option value="{{ $type->id }}" @selected((string) old('typeID') === (string) $type->id)>{{ $type->name }}</option>
                         @endforeach
                     </select>
                 </div>

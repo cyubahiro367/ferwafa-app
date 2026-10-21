@@ -31,6 +31,17 @@
                     @enderror
                 </div>
 
+                <div class="fw-admin-form-group">
+                    <input type="hidden" name="playsInGroups" value="0">
+                    <label class="fw-admin-checkbox-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" name="playsInGroups" id="playsInGroups" value="1" checked>
+                        <span>Play in groups</span>
+                    </label>
+                    @error('playsInGroups')
+                        <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <button type="submit" class="fw-admin-btn fw-admin-btn-primary">Add</button>
             </form>
         </div>

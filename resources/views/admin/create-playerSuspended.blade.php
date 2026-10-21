@@ -39,10 +39,9 @@
                 <div class="fw-admin-form-group">
                     <label for="seasonID">Season <span class="text-danger">*</span></label>
                     <select name="seasonID" id="seasonID" class="fw-admin-form-control" required>
-                        <option value="">Select Season</option>
+                        <option value="" disabled @selected(old('seasonID') === null || old('seasonID') === '')>Select season…</option>
                         @foreach ($seasons as $season)
-                            <option value="{{ $season['id'] }}"
-                                {{ old('seasonID') == $season['id'] ? 'selected' : '' }}>
+                            <option value="{{ $season['id'] }}" @selected((string) old('seasonID') === (string) $season['id'])>
                                 {{ $season['from'] }} - {{ $season['to'] }}
                             </option>
                         @endforeach
@@ -55,7 +54,7 @@
                 <div class="fw-admin-form-group">
                     <label for="dayID">Day <span class="text-danger">*</span></label>
                     <select name="dayID" id="dayID" class="fw-admin-form-control" required>
-                        <option value="">Select Season First</option>
+                        <option value="" disabled selected>Select season first…</option>
                     </select>
                     @error('dayID')
                         <div class="fw-admin-flash fw-admin-flash-error" style="margin-top:8px;">{{ $message }}</div>
@@ -76,10 +75,9 @@
                 <div class="fw-admin-form-group">
                     <label for="teamID">Team <span class="text-danger">*</span></label>
                     <select name="teamID" id="teamID" class="fw-admin-form-control" required>
-                        <option value="">Select Team</option>
+                        <option value="" disabled @selected(old('teamID') === null || old('teamID') === '')>Select team…</option>
                         @foreach ($teams as $team)
-                            <option value="{{ $team['id'] }}"
-                                {{ old('teamID') == $team['id'] ? 'selected' : '' }}>
+                            <option value="{{ $team['id'] }}" @selected((string) old('teamID') === (string) $team['id'])>
                                 {{ $team['name'] }}
                             </option>
                         @endforeach
@@ -161,12 +159,12 @@
                 console.log('Loading days for season:', seasonId);
                 
                 if (!seasonId) {
-                    $('#dayID').html('<option value="">Select Season First</option>');
+                    $('#dayID').html('<option value="" disabled selected>Select season first…</option>');
                     return;
                 }
                 
                 // Clear existing options
-                $('#dayID').html('<option value="">Loading days...</option>');
+                $('#dayID').html('<option value="" disabled selected>Loading days…</option>');
                 
                 // Fetch days from API
                 $.ajax({
@@ -177,7 +175,7 @@
                         console.log('Days data received:', data);
                         
                         // Clear loading message
-                        $('#dayID').html('<option value="">Select Day</option>');
+                        $('#dayID').html('<option value="" disabled selected>Select day…</option>');
                         
                         // Check data format
                         var days = [];

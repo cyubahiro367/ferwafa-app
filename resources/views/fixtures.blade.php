@@ -13,36 +13,26 @@
     ],
 ])
 
+@php
+    $divisionID = $divisionID ?? request()->route('divisionID');
+    $fixturesRoute = [$seasonID, $divisionID, $categoryID, $day->id ?? 1];
+    $standingsRoute = [$seasonID, $divisionID, $categoryID];
+    if (!empty($showGroupFilter) && !empty($groupID)) {
+        $fixturesRoute[] = $groupID;
+        $standingsRoute[] = $groupID;
+    }
+@endphp
+
 <section class="fw-section" style="background:var(--off-white);">
     <div class="fw-wrap">
-        <form action="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id ?? 1, request()->route('groupID')]) }}" method="GET" style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-bottom:28px;">
-            <div class="fw-form-group" style="margin:0;min-width:180px;">
-                <label class="fw-form-label" for="seasonSelect">Season</label>
-                <select id="seasonSelect" name="seasonID" class="fw-form-select" required>
-                    @foreach ($seasons as $season)
-                        <option value="{{ $season['id'] }}" {{ (int)$seasonID === (int)$season['id'] ? 'selected' : '' }}>
-                            {{ $season['from'] }} - {{ $season['to'] }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="fw-form-group" style="margin:0;min-width:140px;">
-                <label class="fw-form-label" for="daySelect">Matchday</label>
-                <select id="daySelect" name="dayID" class="fw-form-select" required>
-                    @foreach ($days as $value)
-                        <option value="{{ $value->id }}" {{ ($day->id ?? null) == $value->id ? 'selected' : '' }}>
-                            {{ $value->abbreviation ?? $value->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="submit" class="fw-btn-gold">Show Matches</button>
-        </form>
+        @include('partials.competition-filters', [
+            'filterFormAction' => route('fixtures.show', [$seasonID, $divisionID, $categoryID, $day->id ?? 1]),
+        ])
 
         <div class="fw-day-nav" style="margin-bottom:28px;">
             @if ($day)
-                <a class="fw-day-pill active" href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $day->id, request()->route('groupID')]) }}">Results &amp; Fixtures</a>
-                <a class="fw-day-pill" href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standings</a>
+                <a class="fw-day-pill active" href="{{ route('fixtures.show', $fixturesRoute) }}">Results &amp; Fixtures</a>
+                <a class="fw-day-pill" href="{{ route('men.first-division-table', $standingsRoute) }}">Standings</a>
             @endif
         </div>
 

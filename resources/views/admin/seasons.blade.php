@@ -20,6 +20,7 @@
                     <tr>
                         <th>#</th>
                         <th>Season</th>
+                        <th>Groups</th>
                         <th>Created by</th>
                         <th>Actions</th>
                     </tr>
@@ -29,6 +30,7 @@
                         <tr>
                             <td>{{ $item['id'] }}</td>
                             <td>{{ $item['from'] }} – {{ $item['to'] }}</td>
+                            <td>{{ ($item['playsInGroups'] ?? true) ? 'Yes' : 'No' }}</td>
                             <td class="fw-admin-muted">{{ $item['creator_name'] ?? '—' }}</td>
                             <td>
                                 <button type="button" class="fw-admin-btn fw-admin-btn-danger fw-admin-btn-sm delete-item" data-toggle="modal" data-target="#confirmDeleteModal" data-id="{{ $item['id'] }}">Delete</button>
@@ -36,7 +38,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4">
+                            <td colspan="5">
                                 <div class="fw-admin-empty">
                                     <h3>No seasons yet.</h3>
                                 </div>

@@ -33,9 +33,12 @@
 
                 <div class="fw-admin-form-group">
                     <label for="seasonID">Season</label>
-                    <select name="seasonID" id="seasonID" class="fw-admin-form-control">
+                    <select name="seasonID" id="seasonID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('seasonID') === null || old('seasonID') === '')>Select season…</option>
                         @foreach($seasons as $season)
-                            <option value="{{ $season['id'] }}">{{ date('Y', strtotime($season['from'])) }}-{{ date('Y', strtotime($season['to'])) }}</option>
+                            <option value="{{ $season['id'] }}" @selected((string) old('seasonID') === (string) $season['id'])>
+                                {{ date('Y', strtotime($season['from'])) }}-{{ date('Y', strtotime($season['to'])) }}
+                            </option>
                         @endforeach
                     </select>
                 </div>

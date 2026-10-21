@@ -33,10 +33,11 @@
 
                 <div class="fw-admin-form-group">
                     <label for="statusID">status</label>
-                    <select name="statusID" id="statusID" class="fw-admin-form-control">
-                        <option value="1">publish</option>
-                        <option value="2">draft</option>
-                        <option value="3">unpublish</option>
+                    <select name="statusID" id="statusID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('statusID') === null || old('statusID') === '')>Select status…</option>
+                        <option value="1" @selected((string) old('statusID') === '1')>publish</option>
+                        <option value="2" @selected((string) old('statusID') === '2')>draft</option>
+                        <option value="3" @selected((string) old('statusID') === '3')>unpublish</option>
                     </select>
                 </div>
 

@@ -105,7 +105,7 @@
         <div class="fw-section-label" style="color:var(--gold);">Rwanda Football</div>
         <h2 class="fw-section-title" style="color:#fff;">Competitions</h2>
         <div class="fw-comp-grid">
-            <a href="{{ route('all.news') }}" class="fw-comp-card"><div class="fw-comp-icon"><i class="fas fa-shield-halved"></i></div><div><div class="fw-comp-name">BK Pro League</div><div class="fw-comp-meta">Men · First Division</div></div></a>
+            <a href="https://rwandapremierleague.rw/" target="_blank" rel="noopener noreferrer" class="fw-comp-card"><div class="fw-comp-icon"><i class="fas fa-shield-halved"></i></div><div><div class="fw-comp-name">BK Pro League</div><div class="fw-comp-meta">Men · First Division</div></div></a>
             <a href="{{ route('seniorWomen.news') }}" class="fw-comp-card"><div class="fw-comp-icon"><i class="fas fa-venus"></i></div><div><div class="fw-comp-name">Women Super League</div><div class="fw-comp-meta">Women · First Division</div></div></a>
             <a href="{{ route('youth.news') }}" class="fw-comp-card"><div class="fw-comp-icon"><i class="fas fa-seedling"></i></div><div><div class="fw-comp-name">Youth Leagues</div><div class="fw-comp-meta">U-17 · U-20 · U-23</div></div></a>
             <a href="{{ route('all.events') }}" class="fw-comp-card"><div class="fw-comp-icon"><i class="fas fa-trophy"></i></div><div><div class="fw-comp-name">Events</div><div class="fw-comp-meta">Fixtures &amp; Cups</div></div></a>

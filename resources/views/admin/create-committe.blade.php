@@ -21,10 +21,10 @@
 
                 <div class="fw-admin-form-group">
                     <label for="committeeCategoryID">Category</label>
-                    <select name="committeeCategoryID" id="committeeCategoryID" class="fw-admin-form-control">
-                        <option>Select Category</option>
+                    <select name="committeeCategoryID" id="committeeCategoryID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('committeeCategoryID') === null || old('committeeCategoryID') === '')>Select category…</option>
                         @foreach($committees as $committee)
-                            <option value="{{ $committee['id'] }}">{{ $committee['name'] }}</option>
+                            <option value="{{ $committee['id'] }}" @selected((string) old('committeeCategoryID') === (string) $committee['id'])>{{ $committee['name'] }}</option>
                         @endforeach
                     </select>
                 </div>

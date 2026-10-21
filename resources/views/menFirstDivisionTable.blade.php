@@ -13,11 +13,26 @@
     ],
 ])
 
+@php
+    $divisionID = $divisionID ?? request()->route('divisionID');
+    $navDayId = $navDayId ?? ($day->id ?? 1);
+    $fixturesRoute = [$seasonID, $divisionID, $categoryID, $navDayId];
+    $standingsRoute = [$seasonID, $divisionID, $categoryID];
+    if (!empty($showGroupFilter) && !empty($groupID)) {
+        $fixturesRoute[] = $groupID;
+        $standingsRoute[] = $groupID;
+    }
+@endphp
+
 <section class="fw-section" style="background:var(--off-white);">
     <div class="fw-wrap">
-        <div class="fw-day-nav">
-            <a class="fw-day-pill" href="{{ route('fixtures.show', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, $days->dayID ?? 1, request()->route('groupID')]) }}">Results &amp; Fixtures</a>
-            <a class="fw-day-pill active" href="{{ route('men.first-division-table', [request()->route('seasonID'), request()->route('divisionID'), $categoryID, request()->route('groupID')]) }}">Standings</a>
+        @include('partials.competition-filters', [
+            'filterFormAction' => route('men.first-division-table', [$seasonID, $divisionID, $categoryID]),
+        ])
+
+        <div class="fw-day-nav" style="margin-bottom:28px;">
+            <a class="fw-day-pill" href="{{ route('fixtures.show', $fixturesRoute) }}">Results &amp; Fixtures</a>
+            <a class="fw-day-pill active" href="{{ route('men.first-division-table', $standingsRoute) }}">Standings</a>
         </div>
 
         <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:28px;align-items:start;" class="fw-standings-grid">

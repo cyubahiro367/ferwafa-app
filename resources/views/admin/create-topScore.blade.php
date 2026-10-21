@@ -20,9 +20,12 @@
 
                 <div class="fw-admin-form-group">
                     <label for="seasonID">Season</label>
-                    <select name="seasonID" id="seasonID" class="fw-admin-form-control">
+                    <select name="seasonID" id="seasonID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('seasonID') === null || old('seasonID') === '')>Select season…</option>
                         @foreach ($seasons as $season)
-                            <option value="{{ $season['id'] }}">{{ $season['from'] }} - {{ $season['to'] }}</option>
+                            <option value="{{ $season['id'] }}" @selected((string) old('seasonID') === (string) $season['id'])>
+                                {{ $season['from'] }} - {{ $season['to'] }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -45,9 +48,10 @@
 
                 <div class="fw-admin-form-group">
                     <label for="teamID">Team</label>
-                    <select name="teamID" id="teamID" class="fw-admin-form-control">
+                    <select name="teamID" id="teamID" class="fw-admin-form-control" required>
+                        <option value="" disabled @selected(old('teamID') === null || old('teamID') === '')>Select team…</option>
                         @foreach ($teams as $team)
-                            <option value="{{ $team['id'] }}">{{ $team['name'] }}</option>
+                            <option value="{{ $team['id'] }}" @selected((string) old('teamID') === (string) $team['id'])>{{ $team['name'] }}</option>
                         @endforeach
                     </select>
                     @error('teamID')
